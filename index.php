@@ -11,18 +11,18 @@
 	<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
 
 	<link rel='stylesheet' href='css/bootstrap.min.css'>
-	<link rel='stylesheet' href='css/r-calendar.css'>
+	<link rel='stylesheet' href='css/r-calendar-temp.css'>
 	
 	<script src='js/jquery-3.4.1.min.js'></script>
 	<script src='js/bootstrap.min.js'></script>
 	<script src='js/bootstrap.bundle.min.js'></script>
-	<script src='js/r-calendar.js'></script>
+	<!--<script src='js/r-calendar.js'></script>-->
 </head>	
 <body>
 	<script>
-		$(function(){
+		/*$(function(){
 			$('.r-calendar').myCalendar();
-		});
+		});*/
 	</script>
 	
 	<!--<div><label class="myCalendar">Hello world!</label></div>-->
@@ -53,8 +53,95 @@
 		</div>
 		
 		<div class="r-calendar-widget">
+			<div class="r-calendar-thead">
+				<div class="r-calendar-day-week" style="width:5%;">#</div>
+				<div class="r-calendar-day-week">пн</div>
+				<div class="r-calendar-day-week">вт</div>
+				<div class="r-calendar-day-week">ср</div>
+				<div class="r-calendar-day-week">чт</div>
+				<div class="r-calendar-day-week">пт</div>
+				<div class="r-calendar-day-week">сб</div>
+				<div class="r-calendar-day-week">вс</div>
+			</div>
 			
-			<table class="table table-bordered text-center">
+			<div class="r-calendar-thead">
+				<div class="r-calendar-day-week" style="width:5%;">#</div>
+				<div class="r-calendar-day-week">пн</div>
+				<div class="r-calendar-day-week">вт</div>
+				<div class="r-calendar-day-week">ср</div>
+				<div class="r-calendar-day-week">чт</div>
+				<div class="r-calendar-day-week">пт</div>
+				<div class="r-calendar-day-week">сб</div>
+				<div class="r-calendar-day-week">вс</div>
+			</div>
+			
+			<div class="r-calendar-week-1">
+				<div class="r-calendar-day-week" style="width:5%;">#</div>
+				<div class="r-calendar-day-week">пн</div>
+				<div class="r-calendar-day-week">вт</div>
+				<div class="r-calendar-day-week">ср</div>
+				<div class="r-calendar-day-week">чт</div>
+				<div class="r-calendar-day-week">пт</div>
+				<div class="r-calendar-day-week">сб</div>
+				<div class="r-calendar-day-week">вс</div>
+			</div>
+			
+			<div class="r-calendar-week-1">
+				<div class="r-calendar-day-week" style="width:5%;">#</div>
+				<div class="r-calendar-day-week">пн</div>
+				<div class="r-calendar-day-week">вт</div>
+				<div class="r-calendar-day-week">ср</div>
+				<div class="r-calendar-day-week">чт</div>
+				<div class="r-calendar-day-week">пт</div>
+				<div class="r-calendar-day-week">сб</div>
+				<div class="r-calendar-day-week">вс</div>
+			</div>
+			
+			<div class="r-calendar-week-1">
+				<div class="r-calendar-day-week" style="width:5%;">#</div>
+				<div class="r-calendar-day-week">пн</div>
+				<div class="r-calendar-day-week">вт</div>
+				<div class="r-calendar-day-week">ср</div>
+				<div class="r-calendar-day-week">чт</div>
+				<div class="r-calendar-day-week">пт</div>
+				<div class="r-calendar-day-week">сб</div>
+				<div class="r-calendar-day-week">вс</div>
+			</div>
+			
+			<div class="r-calendar-week-1">
+				<div class="r-calendar-day-week" style="width:5%;">#</div>
+				<div class="r-calendar-day-week">пн</div>
+				<div class="r-calendar-day-week">вт</div>
+				<div class="r-calendar-day-week">ср</div>
+				<div class="r-calendar-day-week">чт</div>
+				<div class="r-calendar-day-week">пт</div>
+				<div class="r-calendar-day-week">сб</div>
+				<div class="r-calendar-day-week">вс</div>
+			</div>
+			
+			<div class="r-calendar-week-1">
+				<div class="r-calendar-day-week" style="width:5%;">#</div>
+				<div class="r-calendar-day-week">пн</div>
+				<div class="r-calendar-day-week">вт</div>
+				<div class="r-calendar-day-week">ср</div>
+				<div class="r-calendar-day-week">чт</div>
+				<div class="r-calendar-day-week">пт</div>
+				<div class="r-calendar-day-week">сб</div>
+				<div class="r-calendar-day-week">вс</div>
+			</div>
+			
+			<div class="r-calendar-week-1">
+				<div class="r-calendar-day-week" style="width:5%;">#</div>
+				<div class="r-calendar-day-week">пн</div>
+				<div class="r-calendar-day-week">вт</div>
+				<div class="r-calendar-day-week">ср</div>
+				<div class="r-calendar-day-week">чт</div>
+				<div class="r-calendar-day-week">пт</div>
+				<div class="r-calendar-day-week">сб</div>
+				<div class="r-calendar-day-week">вс</div>
+			</div>
+			
+			<!--<table class="table table-bordered text-center">
 				<thead>
 					<tr>
 						<th style="width:50px;">#</th>
@@ -136,7 +223,7 @@
 					</tr>
 
 				</tbody>
-			</table>
+			</table>-->
 			
 		</div>
 	
