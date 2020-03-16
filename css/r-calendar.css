@@ -40,26 +40,17 @@
 }
 
 .r-calendar-week-0,.r-calendar-week-1,.r-calendar-week-2,.r-calendar-week-3,.r-calendar-week-4,.r-calendar-week-5,.r-calendar-week-6 {
-	height: 80px;
-}
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 
-.r-calendar-day {
-	top: 0;
-	text-align: right;
-	transition: 0.3s;
-	-webkit-transition: 0.3s;
-	-moz-transition: 0.3s;
-	-o-transition: 0.3s;
-}
-
-.r-calendar-day:hover {
-	background-color: #F2F2F2;
-	cursor: pointer;
-	transform: scale(1.1);
-	-moz-transform: scale(1.1);
-	-ms-transform: scale(1.1);
-	-webkit-transform: scale(1.1);
-	-o-transform: scale(1.1);
+	-webkit-align-items: center;
+	-webkit-flex-direction: row;
+	-webkit-justify-content: space-between;
+	
+	-ms-flex-direction: row;
 }
 
 .number-week {
@@ -82,16 +73,112 @@
 	color: #FFFFFF;
 }
 
-.r-calendar-disable-day {
-	top: 0;
-	text-align: right;
-	background-color: #FAFAFA;
-}
-
 .r-calendar-current-day {
 	color: #04B404;
 }
 
 .r-calendar-btn-today {
 	margin: 0px 0px 0px 10px;
+}
+
+.r-calendar-thead {
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+
+	-webkit-align-items: center;
+	-webkit-flex-direction: row;
+	-webkit-justify-content: space-between;
+	
+	-ms-flex-direction: row;
+}
+
+.r-calendar-tbody {
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+
+	-webkit-align-items: center;
+	-webkit-flex-direction: row;
+	-webkit-justify-content: space-between;
+	
+	-ms-flex-direction: row;
+}
+
+.r-calendar-day {
+	text-align: center;
+	border: 1px solid #dee2e6;
+	width: 13.6%;
+	margin: 0px;
+	height: 80px;
+}
+
+.r-calendar-day-active {
+	top: 0;
+	transition: 0.3s;
+	-webkit-transition: 0.3s;
+	-moz-transition: 0.3s;
+	-o-transition: 0.3s;
+}
+
+.r-calendar-day-active:hover {
+	background-color: #F2F2F2;
+	cursor: pointer;
+	transform: scale(1.1);
+	-moz-transform: scale(1.1);
+	-ms-transform: scale(1.1);
+	-webkit-transform: scale(1.1);
+	-o-transform: scale(1.1);
+}
+
+.r-calendar-day-disable {
+	top: 0;
+	background-color: #FAFAFA;
+}
+
+.r-calendar-thead-day {
+	text-align: center;
+	border: 1px solid #dee2e6;
+	width: 13.6%;
+	margin: 0px;
+	font-weight: bold;
+}
+
+.r-calendar-daytime {
+	display: flex;
+	display: -webkit-flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+
+	-webkit-align-items: center;
+	-webkit-flex-direction: row;
+	-webkit-justify-content: space-between;
+	
+	-ms-flex-direction: row;
+}
+
+.r-calendar-daytime-grid-thead {
+	text-align: center;
+	border: 1px solid #dee2e6;
+	margin: 0px;
+}
+
+.r-calendar-daytime-grid {
+	text-align: center;
+	border: 1px solid #dee2e6;
+	margin: 0px;
+	height: 50px;
+}
+
+.r-calendar-daytime-grid-10 {
+	width: 10%;
+}
+
+.r-calendar-daytime-grid-90 {
+	width: 90%;
 }
