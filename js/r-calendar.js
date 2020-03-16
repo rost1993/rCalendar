@@ -19,7 +19,7 @@
 	};
 
 	var methods = {
-		init: function(e, year, month, day, period){
+		init: function(e, year, month, day, period) {
 			
 			if(e === undefined)
 				return;
@@ -155,13 +155,13 @@
 			for(var i = 0; i < 6; i++) {
 				var tr = $("<tr class='r-calendar-week-" + i + "'>");
 				tr.append("<td class='number-week'>" + (firstWeek++) + "</td>");
-				tr.append("<td class='" + daysRCalendar[i][1]['class'] + " monday' data-date='" + daysRCalendar[i][1]['date'] + "'>" + daysRCalendar[i][1]['value'] + "</td>");
-				tr.append("<td class='" + daysRCalendar[i][2]['class'] + " monday' data-date='" + daysRCalendar[i][2]['date'] + "'>" + daysRCalendar[i][2]['value'] + "</td>");
-				tr.append("<td class='" + daysRCalendar[i][3]['class'] + " monday' data-date='" + daysRCalendar[i][3]['date'] + "'>" + daysRCalendar[i][3]['value'] + "</td>");
-				tr.append("<td class='" + daysRCalendar[i][4]['class'] + " monday' data-date='" + daysRCalendar[i][4]['date'] + "'>" + daysRCalendar[i][4]['value'] + "</td>");
-				tr.append("<td class='" + daysRCalendar[i][5]['class'] + " monday' data-date='" + daysRCalendar[i][5]['date'] + "'>" + daysRCalendar[i][5]['value'] + "</td>");
-				tr.append("<td class='" + daysRCalendar[i][6]['class'] + " monday' data-date='" + daysRCalendar[i][6]['date'] + "'>" + daysRCalendar[i][6]['value'] + "</td>");
-				tr.append("<td class='" + daysRCalendar[i][0]['class'] + " monday' data-date='" + daysRCalendar[i][0]['date'] + "'>" + daysRCalendar[i][0]['value'] + "</td>");
+				tr.append("<td class='" + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'>" + daysRCalendar[i][1]['value'] + "</td>");
+				tr.append("<td class='" + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'>" + daysRCalendar[i][2]['value'] + "</td>");
+				tr.append("<td class='" + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'>" + daysRCalendar[i][3]['value'] + "</td>");
+				tr.append("<td class='" + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'>" + daysRCalendar[i][4]['value'] + "</td>");
+				tr.append("<td class='" + daysRCalendar[i][5]['class'] + "' data-date='" + daysRCalendar[i][5]['date'] + "'>" + daysRCalendar[i][5]['value'] + "</td>");
+				tr.append("<td class='" + daysRCalendar[i][6]['class'] + "' data-date='" + daysRCalendar[i][6]['date'] + "'>" + daysRCalendar[i][6]['value'] + "</td>");
+				tr.append("<td class='" + daysRCalendar[i][0]['class'] + "' data-date='" + daysRCalendar[i][0]['date'] + "'>" + daysRCalendar[i][0]['value'] + "</td>");
 				tr.append("</tr>");
 				
 				tbody.append(tr);
@@ -226,6 +226,14 @@
 				return;
 
 			methods.init(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate());
+		},
+		
+		initDay: function(e, year, month, day, period) {
+			
+			for(var i = 0;i < 24; i++) {
+				
+			}
+			
 		}
 	};
 	
@@ -237,6 +245,7 @@
 			period: 'month'
 		}, options);
 		
+		//return methods.init($(this), options.year, options.month, options.day, options.period);
 		return methods.init($(this), options.year, options.month, options.day, options.period);
 		
 		/*function main(e) {
