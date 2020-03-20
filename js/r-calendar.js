@@ -62,6 +62,24 @@
 		} else if(period == 'day') {
 			flgBtnGridDay = 'disabled';
 			rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + mainDate.getDate() + "&nbsp;" + defaults.textMonth2[mainDate.getMonth()] + "&nbsp;" + mainDate.getFullYear() + "</strong></span>");
+		} else {
+			var tt = mainDate;
+			do {
+				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
+			} while(mainDate.getWeek() == tt.getWeek());
+			tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
+			
+			var weekText = tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
+			
+			tt = mainDate;
+			do {
+				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
+			} while(mainDate.getWeek() != tt.getWeek());
+			tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
+			weekText += "&nbsp;-&nbsp;" + tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
+			
+			flgBtnGridWeek = 'disabled';
+			rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + weekText + "</strong></span>");
 		}
 		
 		rCalendarToolbarCenterBlock.append("</div>");
@@ -217,12 +235,19 @@
 			if(year == -1 || month == -1 || day == -1)
 				return;
 
-			
 			var tempDate;
-			if(period == 'month')
+			if(period == 'month') {
 				tempDate = new Date(year, (month - 1), day);
-			else if(period == 'day')
+			} else if(period == 'day') {
 				tempDate = new Date(year, month, (day - 1));
+			} else if(period == 'week') {
+				tempDate = new Date(year, month, day);
+				var tt = tempDate;
+				do {
+					tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
+				} while(tempDate.getWeek() == tt.getWeek());
+				tempDate = tt;
+			}
 
 			var rCalendar = $(this).closest('.r-calendar');
 			if(rCalendar === undefined)
@@ -232,6 +257,8 @@
 				methods.init(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
 			else if(period == 'day')
 				methods.initDay(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
+			else
+				methods.initWeek(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
 		},
 		
 		// Метод для вычисления следующего периода
@@ -246,11 +273,19 @@
 				return;
 
 			var tempDate;
-			if(period == 'month')
+			if(period == 'month') {
 				tempDate = new Date(year, (month + 1), day);
-			else if(period == 'day')
+			} else if(period == 'day') {
 				tempDate = new Date(year, month, (day + 1));
-			
+			} else if(period == 'week') {
+				tempDate = new Date(year, month, day);
+				var tt = tempDate;
+				do {
+					tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
+				} while(tempDate.getWeek() == tt.getWeek());
+				tempDate = tt;
+			}
+
 			var rCalendar = $(this).closest('.r-calendar');
 			if(rCalendar === undefined)
 				return;
@@ -259,6 +294,8 @@
 				methods.init(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
 			else if(period == 'day')
 				methods.initDay(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
+			else
+				methods.initWeek(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
 		},
 		
 		nowDatePeriod: function() {
@@ -273,6 +310,8 @@
 				methods.init(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
 			else if(period == 'day')
 				methods.initDay(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
+			else if(period == 'week')
+				methods.initWeek(rCalendar,tempDate.getFullYear(),tempDate.getMonth(), tempDate.getDate(), period);
 		},
 		
 		initDay: function(e, year, month, day, period) {
@@ -308,6 +347,58 @@
 			rCalendarWidget.append(tbody);
 			
 			rCalendarWidget.appendTo(e);
+		},
+		
+		initWeek: function(e, year, month, day, period) {
+			
+			_renderingToolbar(e, year, month, day, period);
+			
+			// Текущая дата
+			var now = new Date();
+			
+			// Дата по которой надо строить календарь
+			var mainDate;
+			if(year != -1 && month != -1 && day != -1)
+				mainDate = new Date(year, month, day);
+			else
+				mainDate = new Date();
+
+			// Определяем деня начала недели
+			var tt = mainDate;
+			do {
+				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
+			} while(mainDate.getWeek() == tt.getWeek());
+			mainDate = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
+			
+			var rCalendarWidget = $("<div class='r-calendar-widget'>");
+			var thead = $("<div class='r-calendar-thead'>");
+			thead.append("<div class='r-calendar-week-grid-thead r-calendar-week-grid-10'>&nbsp;</div>");
+			
+			for(var i = 0; i < 7; i++) {
+				var tempDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), (mainDate.getDate() + i));
+				thead.append("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12'>" + defaults.textDayRussian[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>");
+			}
+			thead.append("</div>");
+			
+			rCalendarWidget.append(thead);
+			
+			var tbody = $("<div class='r-calendar-body'>");
+			for(var i = 0; i < 24; i++) {
+				tbody.append("<div class='r-calendar-week'>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10'>" + defaults.timeDay[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
+					+ "</div>");
+			}
+			tbody.append("</div>");
+			rCalendarWidget.append(tbody);
+			
+			rCalendarWidget.appendTo(e);
 		}
 	};
 	
@@ -316,11 +407,14 @@
 			year: -1,
 			month: -1,
 			day: -1,
-			period: 'day'
+			period: 'week'
 		}, options);
 		
 		//return methods.init($(this), options.year, options.month, options.day, options.period);
-		return methods.initDay($(this), options.year, options.month, options.day, options.period);
+		//return methods.initDay($(this), options.year, options.month, options.day, options.period);
+		return methods.initWeek($(this), options.year, options.month, options.day, options.period);
+
+		
 		
 		/*function main(e) {
 			
