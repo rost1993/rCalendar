@@ -16,13 +16,13 @@
 	<script src='js/jquery-3.4.1.min.js'></script>
 	<script src='js/bootstrap.min.js'></script>
 	<script src='js/bootstrap.bundle.min.js'></script>
-	<script src='js/r-calendar.js'></script>
+	<script src='js/r-calendar-temp-2.js'></script>
 </head>	
 <body>
 	<script>
 		$(function(){
 			//$('.my-calendar').rCalendar({ year : "2019", month : "11", day : "23" });
-			$('.r-calendar').rCalendar();
+			$('.r-calendar').rCalendar({ "language" : "en"});
 		});
 	</script>
 

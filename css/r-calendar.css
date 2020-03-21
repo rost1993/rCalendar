@@ -239,3 +239,31 @@
 	-webkit-transform: scale(1.01);
 	-o-transform: scale(1.01);
 }
+
+@media (min-width: 576px) {
+	.r-calendar {
+		width: 100%;
+		max-width: 540px;
+	}
+}
+
+@media (min-width: 768px) {
+	.r-calendar {
+		width: 100%;
+		max-width: 720px;
+	}
+}
+
+@media (min-width: 992px) {
+	.r-calendar {
+		width: 90%;
+		max-width: 960px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.r-calendar {
+		width: 80%;
+		max-width: 1140px;
+	}
+}
