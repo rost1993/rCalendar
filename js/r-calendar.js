@@ -74,7 +74,7 @@
 			tt = mainDate;
 			do {
 				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
-			} while(mainDate.getWeek() != tt.getWeek());
+			} while(mainDate.getWeek() == tt.getWeek());
 			tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
 			weekText += "&nbsp;-&nbsp;" + tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
 			
