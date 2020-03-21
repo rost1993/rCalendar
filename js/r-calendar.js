@@ -340,7 +340,7 @@
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-daytime'>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10'>" + defaults.timeDay[i] + "</div>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90'></div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active'></div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -385,14 +385,14 @@
 			var tbody = $("<div class='r-calendar-body'>");
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-week'>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10'>" + defaults.timeDay[i] + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10 r-calendar-day-active'>" + defaults.timeDay[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -410,9 +410,9 @@
 			period: 'week'
 		}, options);
 		
-		//return methods.init($(this), options.year, options.month, options.day, options.period);
+		return methods.init($(this), options.year, options.month, options.day, options.period);
 		//return methods.initDay($(this), options.year, options.month, options.day, options.period);
-		return methods.initWeek($(this), options.year, options.month, options.day, options.period);
+		//return methods.initWeek($(this), options.year, options.month, options.day, options.period);
 
 		
 		
