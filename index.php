@@ -22,7 +22,7 @@
 	<script>
 		$(function(){
 			//$('.my-calendar').rCalendar({ year : "2019", month : "11", day : "23" });
-			$('.r-calendar').rCalendar({ "language" : "ru", "view" : "weeks" });
+			$('.r-calendar').rCalendar({ "language" : "ru"});
 		});
 	</script>
 
