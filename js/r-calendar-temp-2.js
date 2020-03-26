@@ -40,6 +40,7 @@
 			this._defineLocale(this.opts.language);
 			this._renderingToolBar();
 			this._renderingWidget();
+			this._bindEvents();
 		},
 		
 		_defineLocale: function(lang) {
@@ -341,13 +342,20 @@
 			rCalendarWidget.appendTo(this.$el);
 		},
 		
+		// Метод навешивания событий
+		_bindEvents: function() {
+			this.$el.find('.r-calendar-day, .r-calendar-week-grid, .r-calendar-daytime-grid').unbind();
+			this.$el.find('.r-calendar-day, .r-calendar-week-grid, .r-calendar-daytime-grid').on('click', this.showModalWindow);
+		},
 		
-		
+		// Обновление HTML кода календаря
 		update: function() {
 			this._renderingToolBar();
 			this._renderingWidget();
+			this._bindEvents();
 		},
 		
+		// Переключение на режим отображения "месяц"
 		selectMonth: function() {
 			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 			if(rCalendar.opts.view == 'months')
@@ -357,6 +365,7 @@
 			rCalendar.update();
 		},
 		
+		// Переключение на режим отображения "неделя"
 		selectWeek: function() {
 			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 			if(rCalendar.opts.view == 'weeks')
@@ -366,6 +375,7 @@
 			rCalendar.update();
 		},
 		
+		// Переключение на режим отображения "день"
 		selectDay: function() {
 			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 			if(rCalendar.opts.view == 'days')
@@ -375,6 +385,21 @@
 			rCalendar.update();
 		},
 	
+		// Отрисовка модального окна
+		showModalWindow: function() {
+			var modal = $("<div class='r-calendar-modal show'>"
+					+ "<div class='r-calendar-modal-content'>"
+						+ "<div class='r-calendar-modal-header'>1</div>"
+						+ "<div class='r-calendar-modal-body'>2</div>"
+						+ "<div class='r-calendar-modal-footer'>3</div>"
+					+ "</div>"
+					+ "</div>");
+
+		$('body').append(modal);
+		//$('body').find('.modal').modal('toggle');
+			
+		},
+		
 		// Функция отрисовывает предыдущий временной период
 		prev: function() {
 			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
