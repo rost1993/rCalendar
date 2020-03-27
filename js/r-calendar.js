@@ -12,122 +12,167 @@
 								- 3 + (week1.getDay() + 6) % 7) / 7);
 	}
 
-	var defaults = {
-		textMonth: ['ЯНВАРЬ', 'ФЕВРАЛЬ', 'МАРТ', 'АПРЕЛЬ', 'МАЙ', 'ИЮНЬ', 'ИЮЛЬ', 'АВГУСТ', 'СЕНТЯБРЬ', 'ОКТЯБРЬ', 'НОЯБРЬ', 'ДЕКАБРЬ'],
-		textMonth2: ['ЯНВАРЯ', 'ФЕВРАЛЯ', 'МАРТА', 'АПРЕЛЯ', 'МАЯ', 'ИЮНЯ', 'ИЮЛЯ', 'АВГУСТА', 'СЕНТЯБРЯ', 'ОКТЯБРЯ', 'НОЯБРЯ', 'ДЕКАБРЯ'],
-		textDay: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
-		textDayRussian: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
-		textDayAllRussian: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-		timeDay: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
-	};
 
-
-	var _renderingToolbar = function(e, year, month, day, period) {
-		// Текущая дата
-		var now = new Date();
+	var VERSION = '1.0',
+		pluginName = 'rCalendar',
+		defaults = {
+			language: 'ru',
+			startDay: new Date(),
+			view: 'months'
+		}, rCalendar;
+	
+	
+	var rCalendar = function(el, options) {
+		this.el = el;
+        this.$el = $(el);
 		
-		// Дата по которой надо строить календарь
-		var mainDate;
-		if(year != -1 && month != -1 && day != -1)
-			mainDate = new Date(year, month, day);
-		else
-			mainDate = new Date();
+		this.opts = $.extend(true, {}, defaults, options, this.$el.data());
 		
-		var rCalendarToolbar = $("<div class='r-calendar-toolbar'>");
-			
-		var rCalendarToolbarLeftBlock = $("<div class='r-calendar-toolbar-right r-calendar-group-btn'>");
-		rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn' id='btnBeforeDate' data-period='" + period + "' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'><</button>");
-		rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn' id='btnAfterDate' data-period='" + period + "' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'>></button>");
-
-		rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn r-calendar-btn-today' id='btnNowDate' data-period='" + period + "' data-year='" + now.getFullYear() + "' data-month='" + now.getMonth() + "' data-day='" + now.getDate() + "' type='button'>Сегодня</button>");
-		rCalendarToolbarLeftBlock.append("</div>");
-		
-		rCalendarToolbarLeftBlock.find('#btnBeforeDate').unbind('click', methods.beforeDatePeriod);
-		rCalendarToolbarLeftBlock.find('#btnBeforeDate').on('click', methods.beforeDatePeriod);
-		rCalendarToolbarLeftBlock.find('#btnAfterDate').unbind('click', methods.afterDatePeriod);
-		rCalendarToolbarLeftBlock.find('#btnAfterDate').on('click', methods.afterDatePeriod);
-		
-		rCalendarToolbarLeftBlock.find('#btnNowDate').unbind('click', methods.nowDatePeriod);
-		rCalendarToolbarLeftBlock.find('#btnNowDate').on('click', methods.nowDatePeriod);
-		
-		rCalendarToolbar.append(rCalendarToolbarLeftBlock);
-
-		var rCalendarToolbarCenterBlock = $("<div class='r-calendar-toolbar-center'>");
-		var flgBtnGridMonth, flgBtnGridWeek, flgBtnGridDay;
-		flgBtnGridMonth = flgBtnGridWeek = flgBtnGridDay = '';
-		
-		if(period == 'month') {
-			flgBtnGridMonth = 'disabled';
-			rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + defaults.textMonth[mainDate.getMonth()] + "&nbsp;" + mainDate.getFullYear() + "</strong></span>");
-		} else if(period == 'day') {
-			flgBtnGridDay = 'disabled';
-			rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + mainDate.getDate() + "&nbsp;" + defaults.textMonth2[mainDate.getMonth()] + "&nbsp;" + mainDate.getFullYear() + "</strong></span>");
-		} else {
-			var tt = mainDate;
-			do {
-				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
-			} while(mainDate.getWeek() == tt.getWeek());
-			tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
-			
-			var weekText = tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
-			
-			tt = mainDate;
-			do {
-				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
-			} while(mainDate.getWeek() == tt.getWeek());
-			tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
-			weekText += "&nbsp;-&nbsp;" + tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
-			
-			flgBtnGridWeek = 'disabled';
-			rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + weekText + "</strong></span>");
-		}
-		
-		rCalendarToolbarCenterBlock.append("</div>");
-		rCalendarToolbar.append(rCalendarToolbarCenterBlock);
-			
-		var rCalendarToolbarRightBlock = $("<div class='r-calendar-toolbar-left r-calendar-group-btn'>");
-		rCalendarToolbarRightBlock.append("<div class='btn-group' role='group'>");
-		rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridMonth + "' type='button' id='btnGridMonth' data-period='month'>Месяц</button>");
-		rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridWeek + "' type='button' id='btnGridWeek' data-period='week'>Неделя</button>");
-		rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridDay + "' type='button' id='btnGridDay' data-period='day'>День</button>");
-		//rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn' type='button'>Повестка дня</button>");
-		rCalendarToolbarRightBlock.append("</div>");
-		rCalendarToolbarRightBlock.append("</div>");
-		
-		rCalendarToolbarRightBlock.find('#btnGridMonth').unbind();
-		rCalendarToolbarRightBlock.find('#btnGridMonth').on('click', methods.nowDatePeriod);
-		
-		rCalendarToolbarRightBlock.find('#btnGridWeek').unbind();
-		rCalendarToolbarRightBlock.find('#btnGridWeek').on('click', methods.nowDatePeriod);
-		
-		rCalendarToolbarRightBlock.find('#btnGridDay').unbind();
-		rCalendarToolbarRightBlock.find('#btnGridDay').on('click', methods.nowDatePeriod);
-		
-		rCalendarToolbar.append(rCalendarToolbarRightBlock);
-
-		rCalendarToolbar.append("</div>");
-		e.html(rCalendarToolbar);
+		this.init();
 	};
 	
-	var methods = {
-		init: function(e, year, month, day, period){
-			
-			if(e === undefined)
-				return;
-			
-			e.empty();
-			
-			if(period != 'month' || period != 'day' || period != 'year')
-				period = 'month';
-			
+	rCalendar = rCalendar;
+	
+	rCalendar.prototype = {
+		VERSION: VERSION,
+		
+		init: function() {
+			this._defineLocale(this.opts.language);
+			this._renderingToolBar();
+			this._renderingWidget();
+			this._bindEvents();
+		},
+		
+		// Установка локали для языка
+		_defineLocale: function(lang) {
+			if(typeof lang == 'string') {
+				this.loc = $.fn.rCalendar.language[lang];
+				
+				if(!this.loc) {
+					console.warn('Can\'t find language "' + lang + '" in rCalendar.language, will use "ru" instead');
+					this.loc = $.extend(true, {}, $.fn.rCalendar.language.ru)
+				}
+				
+				this.loc = $.extend(true, {}, $.fn.rCalendar.language.ru, $.fn.rCalendar.language[lang])
+			} else {
+				this.loc = $.extend(true, {}, $.fn.rCalendar.language.ru, lang)
+			}
+		},
+		
+		_renderingToolBar: function() {
 			// Текущая дата
 			var now = new Date();
 			
 			// Дата по которой надо строить календарь
-			var mainDate;
-			if(year != -1 && month != -1 && day != -1)
-				mainDate = new Date(year, month, day);
-			else
+			var mainDate = this.opts.startDay;
+			if(mainDate === undefined)
+				mainDate = new Date();
+			
+			var rCalendarToolbar = $("<div class='r-calendar-toolbar'>");
+			
+			var rCalendarToolbarLeftBlock = $("<div class='r-calendar-toolbar-right r-calendar-group-btn'>");
+			rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn' id='btnBeforeDate' data-period='' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'><</button>");
+			rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn' id='btnAfterDate' data-period='' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'>></button>");
+	
+			rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn r-calendar-btn-today' id='btnNowDate' data-period='' data-year='" + now.getFullYear() + "' data-month='" + now.getMonth() + "' data-day='" + now.getDate() + "' type='button'>" + this.loc.today + "</button>");
+			rCalendarToolbarLeftBlock.append("</div>");
+			
+			rCalendarToolbarLeftBlock.find('#btnBeforeDate').unbind();
+			rCalendarToolbarLeftBlock.find('#btnBeforeDate').on('click', this.prev);
+			rCalendarToolbarLeftBlock.find('#btnAfterDate').unbind();
+			rCalendarToolbarLeftBlock.find('#btnAfterDate').on('click', this.next);
+			
+			rCalendarToolbarLeftBlock.find('#btnNowDate').unbind();
+			rCalendarToolbarLeftBlock.find('#btnNowDate').on('click', this.today);
+			
+			rCalendarToolbar.append(rCalendarToolbarLeftBlock);
+	
+			var rCalendarToolbarCenterBlock = $("<div class='r-calendar-toolbar-center'>");
+			var flgBtnGridMonth, flgBtnGridWeek, flgBtnGridDay;
+			flgBtnGridMonth = flgBtnGridWeek = flgBtnGridDay = '';
+		
+			if(this.opts.view == 'months') {
+				flgBtnGridMonth = 'disabled';
+				rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + this.loc.months[mainDate.getMonth()] + "&nbsp;" + mainDate.getFullYear() + "</strong></span>");
+			} else if(this.opts.view == 'days') {
+				flgBtnGridDay = 'disabled';
+				rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + mainDate.getDate() + "&nbsp;" + this.loc.months2[mainDate.getMonth()] + "&nbsp;" + mainDate.getFullYear() + "</strong></span>");
+			} else {
+				var tt = mainDate;
+				do {
+					tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
+				} while(mainDate.getWeek() == tt.getWeek());
+				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
+				
+				//var weekText = tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
+				var weekText = tt.getDate() + "&nbsp;" + this.loc.months2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
+				
+				tt = mainDate;
+				do {
+					tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
+				} while(mainDate.getWeek() == tt.getWeek());
+				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
+				//weekText += "&nbsp;-&nbsp;" + tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
+				weekText += "&nbsp;-&nbsp;" + tt.getDate() + "&nbsp;" + this.loc.months2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
+				
+				flgBtnGridWeek = 'disabled';
+				rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + weekText + "</strong></span>");
+			}
+		
+			rCalendarToolbarCenterBlock.append("</div>");
+			rCalendarToolbar.append(rCalendarToolbarCenterBlock);
+				
+			var rCalendarToolbarRightBlock = $("<div class='r-calendar-toolbar-left r-calendar-group-btn'>");
+			rCalendarToolbarRightBlock.append("<div class='btn-group' role='group'>");
+			rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridMonth + "' type='button' id='btnGridMonth' data-period='month'>" + this.loc.month + "</button>");
+			rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridWeek + "' type='button' id='btnGridWeek' data-period='week'>" + this.loc.week + "</button>");
+			rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridDay + "' type='button' id='btnGridDay' data-period='day'>" + this.loc.day + "</button>");
+			rCalendarToolbarRightBlock.append("</div>");
+			rCalendarToolbarRightBlock.append("</div>");
+			
+			rCalendarToolbarRightBlock.find('#btnGridMonth').unbind();
+			rCalendarToolbarRightBlock.find('#btnGridMonth').on('click', this.selectMonth);
+			
+			rCalendarToolbarRightBlock.find('#btnGridWeek').unbind();
+			rCalendarToolbarRightBlock.find('#btnGridWeek').on('click', this.selectWeek);
+			
+			rCalendarToolbarRightBlock.find('#btnGridDay').unbind();
+			rCalendarToolbarRightBlock.find('#btnGridDay').on('click', this.selectDay);
+			
+			rCalendarToolbar.append(rCalendarToolbarRightBlock);
+	
+			rCalendarToolbar.append("</div>");
+			//rCalendarToolbar.appendTo(this.$el);
+			this.$el.html(rCalendarToolbar);
+		},
+		
+		_renderingWidget:function() {
+			switch(this.opts.view){
+				case 'months':
+					this._renderingWidgetMonths();
+					break;
+				
+				case 'weeks':
+					this._renderingWidgetWeeks();
+					break;
+				
+				case 'days':
+					this._renderingWidgetDays();
+					break;
+				
+				default:
+					this._renderingWidgetMonths();
+					break;
+			}
+		},
+		
+		_renderingWidgetMonths: function() {
+			// Текущая дата
+			var now = new Date();
+			
+			// Дата по которой надо строить календарь
+			var mainDate = this.opts.startDay;
+			if(mainDate === undefined)
 				mainDate = new Date();
 
 			var thead = $("<div class='r-calendar-thead'>");			
@@ -135,10 +180,8 @@
 			thead.append("<div class='r-calendar-thead-day' style='width:5%;'>#</div>");
 			
 			for(var i = 0; i < 7; i++)
-				thead.append("<div class='r-calendar-thead-day'>" + defaults.textDayRussian[i] + "</div>");
+				thead.append("<div class='r-calendar-thead-day'>" + this.loc.daysShort[i] + "</div>");
 			thead.append("</div>");
-			
-			_renderingToolbar(e, year, month, day, period);
 			
 			var rCalendarWidget = $("<div class='r-calendar-widget'>");
 			rCalendarWidget.append(thead);
@@ -218,149 +261,16 @@
 			rCalendarWidget.append(tbody);
 			rCalendarWidget.append("</div>");
 
-			rCalendarWidget.appendTo(e);
-
-			return e;
+			rCalendarWidget.appendTo(this.$el);
 		},
 		
-		// Метод для вычисления предыдущего периода
-		beforeDatePeriod: function() {
-			var period = $(this).data('period');
-			
-			var year, month, day;
-			year = ($(this).data('year') === undefined) ? -1 : $(this).data('year');
-			month = ($(this).data('month') === undefined) ? -1 : $(this).data('month');
-			day = ($(this).data('day') === undefined) ? -1 : $(this).data('day');
-			
-			if(year == -1 || month == -1 || day == -1)
-				return;
-
-			var tempDate;
-			if(period == 'month') {
-				tempDate = new Date(year, (month - 1), day);
-			} else if(period == 'day') {
-				tempDate = new Date(year, month, (day - 1));
-			} else if(period == 'week') {
-				tempDate = new Date(year, month, day);
-				var tt = tempDate;
-				do {
-					tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
-				} while(tempDate.getWeek() == tt.getWeek());
-				tempDate = tt;
-			}
-
-			var rCalendar = $(this).closest('.r-calendar');
-			if(rCalendar === undefined)
-				return;
-
-			if(period == 'month')
-				methods.init(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
-			else if(period == 'day')
-				methods.initDay(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
-			else
-				methods.initWeek(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
-		},
-		
-		// Метод для вычисления следующего периода
-		afterDatePeriod: function() {
-			var period = $(this).data('period');
-			var year, month, day;
-			year = ($(this).data('year') === undefined) ? -1 : $(this).data('year');
-			month = ($(this).data('month') === undefined) ? -1 : $(this).data('month');
-			day = ($(this).data('day') === undefined) ? -1 : $(this).data('day');
-			
-			if(year == -1 || month == -1 || day == -1)
-				return;
-
-			var tempDate;
-			if(period == 'month') {
-				tempDate = new Date(year, (month + 1), day);
-			} else if(period == 'day') {
-				tempDate = new Date(year, month, (day + 1));
-			} else if(period == 'week') {
-				tempDate = new Date(year, month, day);
-				var tt = tempDate;
-				do {
-					tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
-				} while(tempDate.getWeek() == tt.getWeek());
-				tempDate = tt;
-			}
-
-			var rCalendar = $(this).closest('.r-calendar');
-			if(rCalendar === undefined)
-				return;
-
-			if(period == 'month')
-				methods.init(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
-			else if(period == 'day')
-				methods.initDay(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
-			else
-				methods.initWeek(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
-		},
-		
-		nowDatePeriod: function() {
-			var period = $(this).data('period');
-			tempDate = new Date();
-			
-			var rCalendar = $(this).closest('.r-calendar');
-			if(rCalendar === undefined)
-				return;
-
-			if(period == 'month')
-				methods.init(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
-			else if(period == 'day')
-				methods.initDay(rCalendar, tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate(), period);
-			else if(period == 'week')
-				methods.initWeek(rCalendar,tempDate.getFullYear(),tempDate.getMonth(), tempDate.getDate(), period);
-		},
-		
-		initDay: function(e, year, month, day, period) {
-			
-			_renderingToolbar(e, year, month, day, period);
-			
+		_renderingWidgetWeeks: function() {
 			// Текущая дата
 			var now = new Date();
 			
 			// Дата по которой надо строить календарь
-			var mainDate;
-			if(year != -1 && month != -1 && day != -1)
-				mainDate = new Date(year, month, day);
-			else
-				mainDate = new Date();
-			
-			var rCalendarWidget = $("<div class='r-calendar-widget'>");
-			var thead = $("<div class='r-calendar-thead'>"
-				+ "<div class='r-calendar-daytime-grid-thead r-calendar-daytime-grid-10'>Время</div>"
-				+ "<div class='r-calendar-daytime-grid-thead r-calendar-daytime-grid-90'>" + defaults.textDayAllRussian[mainDate.getDay()] + "</div>"
-				+ "</div>");
-			
-			rCalendarWidget.append(thead);
-			
-			var tbody = $("<div class='r-calendar-body'>");
-			for(var i = 0; i < 24; i++) {
-				tbody.append("<div class='r-calendar-daytime'>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10'>" + defaults.timeDay[i] + "</div>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active'></div>"
-					+ "</div>");
-			}
-			tbody.append("</div>");
-			rCalendarWidget.append(tbody);
-			
-			rCalendarWidget.appendTo(e);
-		},
-		
-		initWeek: function(e, year, month, day, period) {
-			
-			_renderingToolbar(e, year, month, day, period);
-			
-			// Текущая дата
-			var now = new Date();
-			
-			// Дата по которой надо строить календарь
-			var mainDate;
-			if(year != -1 && month != -1 && day != -1)
-				mainDate = new Date(year, month, day);
-			else
+			var mainDate = this.opts.startDay;
+			if(mainDate === undefined)
 				mainDate = new Date();
 
 			// Определяем деня начала недели
@@ -376,7 +286,7 @@
 			
 			for(var i = 0; i < 7; i++) {
 				var tempDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), (mainDate.getDate() + i));
-				thead.append("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12'>" + defaults.textDayRussian[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>");
+				thead.append("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12'>" + this.loc.daysShort[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>");
 			}
 			thead.append("</div>");
 			
@@ -385,7 +295,7 @@
 			var tbody = $("<div class='r-calendar-body'>");
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-week'>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10 r-calendar-day-active'>" + defaults.timeDay[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10 r-calendar-day-active'>" + this.loc.hours[i] + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
@@ -398,29 +308,222 @@
 			tbody.append("</div>");
 			rCalendarWidget.append(tbody);
 			
-			rCalendarWidget.appendTo(e);
-		}
+			rCalendarWidget.appendTo(this.$el);
+		},
+		
+		_renderingWidgetDays: function() {
+			// Текущая дата
+			var now = new Date();
+			
+			// Дата по которой надо строить календарь
+			// Дата по которой надо строить календарь
+			var mainDate = this.opts.startDay;
+			if(mainDate === undefined)
+				mainDate = new Date();
+			
+			var rCalendarWidget = $("<div class='r-calendar-widget'>");
+			var thead = $("<div class='r-calendar-thead'>"
+				+ "<div class='r-calendar-daytime-grid-thead r-calendar-daytime-grid-10'>" + this.loc.time + "</div>"
+				+ "<div class='r-calendar-daytime-grid-thead r-calendar-daytime-grid-90'>" + this.loc.days[mainDate.getDay()] + "</div>"
+				+ "</div>");
+			
+			rCalendarWidget.append(thead);
+			
+			var tbody = $("<div class='r-calendar-body'>");
+			for(var i = 0; i < 24; i++) {
+				tbody.append("<div class='r-calendar-daytime'>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10'>" + this.loc.hours[i] + "</div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active'></div>"
+					+ "</div>");
+			}
+			tbody.append("</div>");
+			rCalendarWidget.append(tbody);
+			
+			
+			rCalendarWidget.appendTo(this.$el);
+		},
+		
+		// Метод навешивания событий
+		_bindEvents: function() {
+			this.$el.find('.r-calendar-day, .r-calendar-week-grid, .r-calendar-daytime-grid').unbind();
+			this.$el.find('.r-calendar-day, .r-calendar-week-grid, .r-calendar-daytime-grid').on('click', this.showModalWindow);
+		},
+		
+		// Обновление HTML кода календаря
+		update: function() {
+			this._renderingToolBar();
+			this._renderingWidget();
+			this._bindEvents();
+		},
+		
+		// Переключение на режим отображения "месяц"
+		selectMonth: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			if(rCalendar.opts.view == 'months')
+				return;
+			
+			rCalendar.opts.view = 'months';
+			rCalendar.update();
+		},
+		
+		// Переключение на режим отображения "неделя"
+		selectWeek: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			if(rCalendar.opts.view == 'weeks')
+				return;
+			
+			rCalendar.opts.view = 'weeks';
+			rCalendar.update();
+		},
+		
+		// Переключение на режим отображения "день"
+		selectDay: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			if(rCalendar.opts.view == 'days')
+				return;
+			
+			rCalendar.opts.view = 'days';
+			rCalendar.update();
+		},
+	
+		// Отрисовка модального окна
+		showModalWindow: function() {
+			var modal = $("<div class='r-calendar-modal r-calendar-modal-show'>"
+			+ "<div class='r-calendar-modal-dialog r-calendar-modal-dialog-centered'>"
+				+ "<div class='r-calendar-modal-content'>"
+					+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Бронирование стола</div><button class='r-calendar-close'>&times;</button></div>"
+					+ "<div class='r-calendar-modal-body'>123</div>"
+					+ "<div class='r-calendar-modal-footer'>132</div>"
+				+ "</div>"
+			+ "</div>"
+			+ "</div>");
+			
+			// Устанавливаем событие для закрытия окошка
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			modal.find('.r-calendar-close').unbind();
+			modal.find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
+			/*modal.find('.r-calendar-modal').unbind();
+			modal.find('.r-calendar-modal').on('click', rCalendar.closeModalWindow);*/
+
+			var modal_backdrop = $("<div class='r-calendar-modal-backdrop'></div>");
+			/*modal_backdrop.find('.r-calendar-modal-backdrop').unbind();
+			modal_backdrop.find('.r-calendar-modal-backdrop').on('click', rCalendar.closeModalWindow);*/
+		
+			$('body').append(modal);
+			$('body').append(modal_backdrop);
+			//$('body').addClass('r-calendar-modal-open');
+		},
+		
+		// Закрытие всплывающего модального окна
+		closeModalWindow: function() {
+			$('body').find('.r-calendar-modal').remove();
+			$('body').find('.r-calendar-modal-backdrop').remove();
+			$('body').removeClass('r-calendar-modal-open');
+		},
+		
+		// Функция отрисовывает предыдущий временной период
+		prev: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			switch(rCalendar.opts.view) {
+				case 'months':
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() - 1), rCalendar.opts.startDay.getDate());
+					break;
+
+				case 'weeks':
+					var tt = rCalendar.opts.startDay;
+					do {
+						tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
+					} while(rCalendar.opts.startDay.getWeek() == tt.getWeek());
+					rCalendar.opts.startDay = tt;
+					break;
+				
+				case 'days':
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), rCalendar.opts.startDay.getMonth(), (rCalendar.opts.startDay.getDate() - 1));
+					break;
+				
+				default:
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() - 1), rCalendar.opts.startDay.getDate());
+					break;
+			}
+			rCalendar.update();
+		},
+		
+		// Функция отрисовывает следующий временной период
+		next: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			switch(rCalendar.opts.view) {
+				case 'months':
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() + 1), rCalendar.opts.startDay.getDate());
+					break;
+				
+				case 'weeks':
+					var tt = rCalendar.opts.startDay;
+					do {
+						tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
+					} while(rCalendar.opts.startDay.getWeek() == tt.getWeek());
+					rCalendar.opts.startDay = tt;
+					break;
+				
+				case 'days':
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), rCalendar.opts.startDay.getMonth(), (rCalendar.opts.startDay.getDate() + 1));
+					break;
+				
+				default:
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() + 1), rCalendar.opts.startDay.getDate());
+					break;
+			}
+			rCalendar.update();
+		},
+		
+		// Функция отрисовывает текущую дату
+		today: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			rCalendar.opts.startDay = new Date();
+			rCalendar.update();
+		},
 	};
 	
 	$.fn.rCalendar = function(options) {
-		var options = $.extend({
-			year: -1,
-			month: -1,
-			day: -1,
-			period: 'week'
-		}, options);
+		return this.each(function() {
+			if(!$.data(this, pluginName)) {
+				$.data(this, pluginName, new rCalendar(this, options));
+			} else {
+				var _this = $.data(this, pluginName);
+				
+				_this.opts = $.extend(true, _this.opts, options);
+				//_this.update();
+			}
+		});
+	};
+	
+	$.fn.rCalendar.language = {
+		ru: {
+			days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+			daysShort: ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'],
+			months: ['ЯНВАРЬ', 'ФЕВРАЛЬ', 'МАРТ', 'АПРЕЛЬ', 'МАЙ', 'ИЮНЬ', 'ИЮЛЬ', 'АВГУСТ', 'СЕНТЯБРЬ', 'ОКТЯБРЬ', 'НОЯБРЬ', 'ДЕКАБРЬ'],
+			months2: ['ЯНВАРЯ', 'ФЕВРАЛЯ', 'МАРТА', 'АПРЕЛЯ', 'МАЯ', 'ИЮНЯ', 'ИЮЛЯ', 'АВГУСТА', 'СЕНТЯБРЯ', 'ОКТЯБРЯ', 'НОЯБРЯ', 'ДЕКАБРЯ'],
+			monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+			hours: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+			today: 'Сегодня',
+			time: 'Время',
+			month: 'Месяц',
+			week: 'Неделя',
+			day: 'День'
+		},
 		
-		return methods.init($(this), options.year, options.month, options.day, options.period);
-		//return methods.initDay($(this), options.year, options.month, options.day, options.period);
-		//return methods.initWeek($(this), options.year, options.month, options.day, options.period);
-
-		
-		
-		/*function main(e) {
-			
-		};
-		this.each(function() { main($(this)); });
-		return this;*/
+		en: {
+			days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+			daysShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+			months: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'],
+			months2: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'],
+			monthsShort: ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'],
+			hours: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+			today: 'Today',
+			time: 'Time',
+			month: 'Month',
+			week: 'Week',
+			day: 'Day'
+		}
 	};
 	
 	

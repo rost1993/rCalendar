@@ -16,7 +16,7 @@
 	<script src='js/jquery-3.4.1.min.js'></script>
 	<script src='js/bootstrap.min.js'></script>
 	<script src='js/bootstrap.bundle.min.js'></script>
-	<script src='js/r-calendar-temp-2.js'></script>
+	<script src='js/r-calendar.js'></script>
 </head>	
 <body>
 	<script>
