@@ -295,7 +295,7 @@
 			var tbody = $("<div class='r-calendar-body'>");
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-week'>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10 r-calendar-day-active'>" + this.loc.hours[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10'>" + this.loc.hours[i] + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
@@ -315,7 +315,6 @@
 			// Текущая дата
 			var now = new Date();
 			
-			// Дата по которой надо строить календарь
 			// Дата по которой надо строить календарь
 			var mainDate = this.opts.startDay;
 			if(mainDate === undefined)
@@ -338,15 +337,13 @@
 			}
 			tbody.append("</div>");
 			rCalendarWidget.append(tbody);
-			
-			
 			rCalendarWidget.appendTo(this.$el);
 		},
 		
 		// Метод навешивания событий
 		_bindEvents: function() {
-			this.$el.find('.r-calendar-day, .r-calendar-week-grid, .r-calendar-daytime-grid').unbind();
-			this.$el.find('.r-calendar-day, .r-calendar-week-grid, .r-calendar-daytime-grid').on('click', this.showModalWindow);
+			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').unbind();
+			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', this.showModalWindow);
 		},
 		
 		// Обновление HTML кода календаря
@@ -392,26 +389,41 @@
 			+ "<div class='r-calendar-modal-dialog r-calendar-modal-dialog-centered'>"
 				+ "<div class='r-calendar-modal-content'>"
 					+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Бронирование стола</div><button class='r-calendar-close'>&times;</button></div>"
-					+ "<div class='r-calendar-modal-body'>123</div>"
-					+ "<div class='r-calendar-modal-footer'>132</div>"
+					+ "<div class='r-calendar-modal-body'>"
+						+ "<div class='r-calendar-form-row'>"
+							+ "<label class='r-calendar-label-form'>Название бронирования</label>"
+							+ "<input type='text' class='r-calendar-form-control' style=''>"
+						+ "</div>"
+						+ "<div class='r-calendar-form-row'>"
+							+ "<label class='r-calendar-label-form'>Номер стола</label>"
+							+ "<select type='text' class='r-calendar-form-control'><option value='1'></option></select>"
+						+ "</div>"
+						+ "<div class='r-calendar-form-row'>"
+							+ "<label class='r-calendar-label-form'>Комментарий</label>"
+							+ "<textarea class='r-calendar-form-control' rows='3'></textarea>"
+						+ "</div>"
+					+ "</div>"
+					+ "<div class='r-calendar-modal-footer'><button class='btn btn-success'>Сохранить</button></div>"
 				+ "</div>"
 			+ "</div>"
 			+ "</div>");
 			
-			// Устанавливаем событие для закрытия окошка
-			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-			modal.find('.r-calendar-close').unbind();
-			modal.find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
-			/*modal.find('.r-calendar-modal').unbind();
-			modal.find('.r-calendar-modal').on('click', rCalendar.closeModalWindow);*/
-
 			var modal_backdrop = $("<div class='r-calendar-modal-backdrop'></div>");
-			/*modal_backdrop.find('.r-calendar-modal-backdrop').unbind();
-			modal_backdrop.find('.r-calendar-modal-backdrop').on('click', rCalendar.closeModalWindow);*/
-		
+			
 			$('body').append(modal);
 			$('body').append(modal_backdrop);
-			//$('body').addClass('r-calendar-modal-open');
+			$('body').addClass('r-calendar-modal-open');
+			
+			// Устанавливаем событие для закрытия окошка
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			$('body').find('.r-calendar-close').unbind();
+			$('body').find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
+			/*$('body').find('.r-calendar-modal-show').unbind();
+			$('body').find('.r-calendar-modal-show').on('click', rCalendar.closeModalWindow);*/
+
+			
+			/*modal_backdrop.find('.r-calendar-modal-backdrop').unbind();
+			modal_backdrop.find('.r-calendar-modal-backdrop').on('click', rCalendar.test2);*/		
 		},
 		
 		// Закрытие всплывающего модального окна
