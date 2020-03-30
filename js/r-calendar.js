@@ -18,7 +18,9 @@
 		defaults = {
 			language: 'ru',
 			startDay: new Date(),
-			view: 'months'
+			view: 'months',
+			selectTable: '',
+			selectCustomer: []
 		}, rCalendar;
 	
 	
@@ -385,6 +387,41 @@
 	
 		// Отрисовка модального окна
 		showModalWindow: function() {
+			
+			// Устанавливаем событие для закрытия окошка
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			var selectTableList, selectCustomerList;
+			
+			// Разбираем список столов
+			try {
+				var temp = JSON.parse(rCalendar.opts.selectTable);
+				selectTableList = "<option value='0'></option>";
+				for(var key in temp)
+					selectTableList += "<option value='" + key + "'>" + temp[key] + "</option>";
+			} catch{
+				selectTableList = "<option value=''></option>";
+				if(typeof(rCalendar.opts.selectTable) === 'object') {
+					var temp = eval(rCalendar.opts.selectTable);
+					for(var i = 0; i < temp.length; i++)
+						selectTableList += "<option value='" + temp[i] + "'>" + temp[i] + "</option>";
+				}
+			}
+			
+			// Разбираем список клиентов
+			try {
+				var temp = JSON.parse(rCalendar.opts.selectCustomer);
+				selectCustomerList = "<option value='0'></option>";
+				for(var key in temp)
+					selectCustomerList += "<option value='" + key + "'>" + temp[key] + "</option>";
+			} catch {
+				selectCustomerList = "<option value=''></option>"
+				if(typeof(rCalendar.opts.selectCustomer) === 'object') {
+					var temp = eval(rCalendar.opts.selectCustomer);
+					for(var i = 0; i < temp.length; i++)
+						selectCustomerList += "<option value='" + temp[i] + "'>" + temp[i] + "</option>";
+				}
+			}
+			
 			var modal = $("<div class='r-calendar-modal r-calendar-modal-show'>"
 			+ "<div class='r-calendar-modal-dialog r-calendar-modal-dialog-centered'>"
 				+ "<div class='r-calendar-modal-content'>"
@@ -392,15 +429,19 @@
 					+ "<div class='r-calendar-modal-body'>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Название бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' style=''>"
+							+ "<input type='text' class='r-calendar-form-control' id='nameReservation'>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Номер стола</label>"
-							+ "<select type='text' class='r-calendar-form-control'><option value='1'></option></select>"
+							+ "<select type='text' class='r-calendar-form-control' id='numberTableReservation'>" + selectTableList + "</select>"
+						+ "</div>"
+						+ "<div class='r-calendar-form-row'>"
+							+ "<label class='r-calendar-label-form'>Клиенты</label>"
+							+ "<select type='text' class='r-calendar-form-control' id='customerReservation'>" + selectCustomerList + "</select>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Комментарий</label>"
-							+ "<textarea class='r-calendar-form-control' rows='3'></textarea>"
+							+ "<textarea class='r-calendar-form-control' rows='3' id='commentReservation'></textarea>"
 						+ "</div>"
 					+ "</div>"
 					+ "<div class='r-calendar-modal-footer'><button class='btn btn-success'>Сохранить</button></div>"
@@ -413,9 +454,7 @@
 			$('body').append(modal);
 			$('body').append(modal_backdrop);
 			$('body').addClass('r-calendar-modal-open');
-			
-			// Устанавливаем событие для закрытия окошка
-			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+
 			$('body').find('.r-calendar-close').unbind();
 			$('body').find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
 			/*$('body').find('.r-calendar-modal-show').unbind();

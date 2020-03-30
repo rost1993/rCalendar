@@ -22,7 +22,10 @@
 	<script>
 		$(function(){
 			//$('.my-calendar').rCalendar({ year : "2019", month : "11", day : "23" });
-			$('.r-calendar').rCalendar({ "language" : "ru"});
+			var selectTable = '{"1" : "1-й стол", "2" : "2-й стол", "3" : "3-й стол", "4" : "4-й стол"}';
+			var selectCustomer = ["1-й клиент", "2-й клиент", "3-й клиент"];
+			//var selectCustomer = '{"1-й клиент", "2-й клиент", "3-й клиент"}';
+			$('.r-calendar').rCalendar({ "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer });
 		});
 	</script>
 
