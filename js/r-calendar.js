@@ -38,6 +38,7 @@
 	rCalendar.prototype = {
 		VERSION: VERSION,
 		
+		// Инициализации начлаьного состояния календаря
 		init: function() {
 			this._defineLocale(this.opts.language);
 			this._renderingToolBar();
@@ -61,6 +62,7 @@
 			}
 		},
 		
+		// Отрисовка верхнего меню интерфейса для кнопок 
 		_renderingToolBar: function() {
 			// Текущая дата
 			var now = new Date();
@@ -148,6 +150,7 @@
 			this.$el.html(rCalendarToolbar);
 		},
 		
+		// Отрисовка основного содержимого календаря
 		_renderingWidget:function() {
 			switch(this.opts.view){
 				case 'months':
@@ -168,6 +171,7 @@
 			}
 		},
 		
+		// Отрисовка в режиме "Месяц"
 		_renderingWidgetMonths: function() {
 			// Текущая дата
 			var now = new Date();
@@ -250,22 +254,23 @@
 			for(var i = 0; i < 6; i++) {
 				tbody.append("<div class='r-calendar-week-" + i + "'>" + 
 				"<div class='r-calendar-day number-week' style='width: 5%;'>" + (firstWeek++) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'>" + daysRCalendar[i][1]['value'] + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'>" + daysRCalendar[i][2]['value'] + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'>" + daysRCalendar[i][3]['value'] + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'>" + daysRCalendar[i][4]['value'] + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][5]['class'] + "' data-date='" + daysRCalendar[i][5]['date'] + "'>" + daysRCalendar[i][5]['value'] + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][6]['class'] + "' data-date='" + daysRCalendar[i][6]['date'] + "'>" + daysRCalendar[i][6]['value'] + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][0]['class'] + "' data-date='" + daysRCalendar[i][0]['date'] + "'>" + daysRCalendar[i][0]['value'] + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][2]['value'] + "</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][3]['value'] + "</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][4]['value'] + "</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][5]['class'] + "' data-date='" + daysRCalendar[i][5]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][5]['value'] + "</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][6]['class'] + "' data-date='" + daysRCalendar[i][6]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][6]['value'] + "</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][0]['class'] + "' data-date='" + daysRCalendar[i][0]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][0]['value'] + "</span></div>" +
 				"</div>");
 			}
-			tbody.append("</div>");
+			tbody.append("</div>");		
 			rCalendarWidget.append(tbody);
 			rCalendarWidget.append("</div>");
 
 			rCalendarWidget.appendTo(this.$el);
 		},
 		
+		// Отрисовка в режиме "Неделя"
 		_renderingWidgetWeeks: function() {
 			// Текущая дата
 			var now = new Date();
@@ -313,6 +318,7 @@
 			rCalendarWidget.appendTo(this.$el);
 		},
 		
+		// Отрисовка в режиме "День"
 		_renderingWidgetDays: function() {
 			// Текущая дата
 			var now = new Date();
@@ -386,8 +392,18 @@
 		},
 	
 		// Отрисовка модального окна
-		showModalWindow: function() {
+		showModalWindow: function(event) {
 			
+			// Если обработчик сработал на тэге SPAN то переключаем в режим дня
+			if(event.target.tagName == 'SPAN'){
+				var split_date = $(this).closest('.r-calendar-day').data('date').split('-');
+				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+				rCalendar.opts.startDay = new Date(split_date[0], split_date[1], split_date[2]);
+				rCalendar.opts.view = 'days';
+				rCalendar.update();
+				return;
+			}
+		
 			// Устанавливаем событие для закрытия окошка
 			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 			var selectTableList, selectCustomerList;
@@ -547,6 +563,7 @@
 		});
 	};
 	
+	// Массив с языками
 	$.fn.rCalendar.language = {
 		ru: {
 			days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],

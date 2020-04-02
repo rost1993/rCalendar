@@ -59,6 +59,10 @@
 	vertical-align: center;
 }
 
+.r-calendar-text-day:hover {
+	text-decoration: underline;
+}
+
 .r-calendar-group-btn {
 	margin: 10px;
 }
