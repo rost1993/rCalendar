@@ -395,7 +395,7 @@
 		showModalWindow: function(event) {
 			
 			// Если обработчик сработал на тэге SPAN то переключаем в режим дня
-			if(event.target.tagName == 'SPAN'){
+			if(event.target.tagName == 'SPAN' && event.target.className == 'r-calendar-text-day'){
 				var split_date = $(this).closest('.r-calendar-day').data('date').split('-');
 				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 				rCalendar.opts.startDay = new Date(split_date[0], split_date[1], split_date[2]);
