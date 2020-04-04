@@ -107,8 +107,7 @@
 					tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
 				} while(mainDate.getWeek() == tt.getWeek());
 				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
-				
-				//var weekText = tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
+
 				var weekText = tt.getDate() + "&nbsp;" + this.loc.months2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
 				
 				tt = mainDate;
@@ -116,7 +115,6 @@
 					tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
 				} while(mainDate.getWeek() == tt.getWeek());
 				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
-				//weekText += "&nbsp;-&nbsp;" + tt.getDate() + "&nbsp;" + defaults.textMonth2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
 				weekText += "&nbsp;-&nbsp;" + tt.getDate() + "&nbsp;" + this.loc.months2[tt.getMonth()] + "&nbsp;" + tt.getFullYear();
 				
 				flgBtnGridWeek = 'disabled';
@@ -146,7 +144,6 @@
 			rCalendarToolbar.append(rCalendarToolbarRightBlock);
 	
 			rCalendarToolbar.append("</div>");
-			//rCalendarToolbar.appendTo(this.$el);
 			this.$el.html(rCalendarToolbar);
 		},
 		
@@ -291,25 +288,27 @@
 			var thead = $("<div class='r-calendar-thead'>");
 			thead.append("<div class='r-calendar-week-grid-thead r-calendar-week-grid-10'>&nbsp;</div>");
 			
+			var arrayDate = [];
+			
 			for(var i = 0; i < 7; i++) {
 				var tempDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), (mainDate.getDate() + i));
 				thead.append("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12'>" + this.loc.daysShort[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>");
+				arrayDate[i] = tempDate.getFullYear() + "-" + tempDate.getMonth() + "-" + tempDate.getDate();
 			}
 			thead.append("</div>");
 			
 			rCalendarWidget.append(thead);
-			
 			var tbody = $("<div class='r-calendar-body'>");
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-week'>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10'>" + this.loc.hours[i] + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time=''>" + this.loc.hours[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[0] + "'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[1] + "'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[2] + "'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[3] + "'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[4] + "'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[5] + "'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[6] + "'></div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -340,7 +339,7 @@
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-daytime'>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10'>" + this.loc.hours[i] + "</div>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active'></div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDay() + "'></div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -443,6 +442,25 @@
 				+ "<div class='r-calendar-modal-content'>"
 					+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Бронирование стола</div><button class='r-calendar-close'>&times;</button></div>"
 					+ "<div class='r-calendar-modal-body'>"
+					
+						+ "<div class='r-calendar-form-row'>"
+							+ "<label class='r-calendar-label-form'>Начало бронирования</label>"
+							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='dd.mm.yyyy' value=''>"
+								+ "<span class='r-calendar-input-group-text'>ч.</span>"
+								+ "<input type='number' class='r-calendar-form-control' id='' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
+								+ "<span class='r-calendar-input-group-text'>м.</span>"
+							+ "<input type='number' class='r-calendar-form-control' id='' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='45' step='15'>"
+						+ "</div>"
+						
+						+ "<div class='r-calendar-form-row'>"
+							+ "<label class='r-calendar-label-form'>Окончание бронирования</label>"
+							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='dd.mm.yyyy' value=''>"
+								+ "<span class='r-calendar-input-group-text'>ч.</span>"
+								+ "<input type='number' class='r-calendar-form-control' id='' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
+								+ "<span class='r-calendar-input-group-text'>м.</span>"
+							+ "<input type='number' class='r-calendar-form-control' id='' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='45' step='15'>"
+						+ "</div>"
+					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Название бронирования</label>"
 							+ "<input type='text' class='r-calendar-form-control' id='nameReservation'>"
@@ -594,5 +612,5 @@
 		}
 	};
 	
-	
+//});
 })(jQuery);
