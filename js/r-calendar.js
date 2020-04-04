@@ -94,7 +94,7 @@
 			var rCalendarToolbarCenterBlock = $("<div class='r-calendar-toolbar-center'>");
 			var flgBtnGridMonth, flgBtnGridWeek, flgBtnGridDay;
 			flgBtnGridMonth = flgBtnGridWeek = flgBtnGridDay = '';
-		
+
 			if(this.opts.view == 'months') {
 				flgBtnGridMonth = 'disabled';
 				rCalendarToolbarCenterBlock.append("<span class='r-calendar-toolbar-current-day'><strong>" + this.loc.months[mainDate.getMonth()] + "&nbsp;" + mainDate.getFullYear() + "</strong></span>");
@@ -326,7 +326,7 @@
 			var mainDate = this.opts.startDay;
 			if(mainDate === undefined)
 				mainDate = new Date();
-			
+
 			var rCalendarWidget = $("<div class='r-calendar-widget'>");
 			var thead = $("<div class='r-calendar-thead'>"
 				+ "<div class='r-calendar-daytime-grid-thead r-calendar-daytime-grid-10'>" + this.loc.time + "</div>"
@@ -339,7 +339,7 @@
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-daytime'>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10'>" + this.loc.hours[i] + "</div>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDay() + "'></div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate() + "'></div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -402,10 +402,14 @@
 				rCalendar.update();
 				return;
 			}
-		
+
 			// Устанавливаем событие для закрытия окошка
 			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 			var selectTableList, selectCustomerList;
+			
+			// Получаем выбранную дату
+			var selectedDate = rCalendar.getDateToNormalFormat($(this).data('date'));
+			selectedDate = (!selectedDate) ? '00-00-0000': selectedDate;
 			
 			// Разбираем список столов
 			try {
@@ -445,7 +449,7 @@
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Начало бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value=''>"
+							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
 								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
@@ -454,7 +458,7 @@
 						
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Окончание бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value=''>"
+							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
 								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
@@ -500,6 +504,22 @@
 		checkValueTime: function() {
 			var x = (/\d+/i.exec($(this).val()) === null) ? 0 : String(/\d+/i.exec($(this).val())).substr(0, 2);
 			$(this).val((Number(x) > Number($(this).prop('max'))) ? $(this).prop('max'): (x == 0) ? '' : x);
+		},
+		
+		// Конвертация данных в человеческий вид
+		getDateToNormalFormat: function(date) {
+			var temp = String(date).split('-');
+			var year = temp[0];
+			var month = temp[1];
+			var day = temp[2];
+			if((new Date(year, month, day)) === undefined)
+				return false;
+			
+			month = Number(month) + 1;
+			month = (String(month).length == 2) ? month : '0' + String(month);
+			day = (String(day).length == 2) ? day : '0' + String(day);
+			
+			return day + '.' + month + '.' + year;
 		},
 		
 		// Закрытие всплывающего модального окна
