@@ -445,20 +445,20 @@
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Начало бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='dd.mm.yyyy' value=''>"
+							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value=''>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
+								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='45' step='15'>"
+							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='45' step='15'>"
 						+ "</div>"
 						
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Окончание бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='dd.mm.yyyy' value=''>"
+							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value=''>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
+								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='45' step='15'>"
+							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='45' step='15'>"
 						+ "</div>"
 					
 						+ "<div class='r-calendar-form-row'>"
@@ -491,12 +491,15 @@
 
 			$('body').find('.r-calendar-close').unbind();
 			$('body').find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
-			/*$('body').find('.r-calendar-modal-show').unbind();
-			$('body').find('.r-calendar-modal-show').on('click', rCalendar.closeModalWindow);*/
 
-			
-			/*modal_backdrop.find('.r-calendar-modal-backdrop').unbind();
-			modal_backdrop.find('.r-calendar-modal-backdrop').on('click', rCalendar.test2);*/		
+			$('body').find('.r-calendar-modal').unbind();
+			$('body').find('.r-calendar-modal').find("[type='number']").on('input', rCalendar.checkValueTime);
+		},
+		
+		// Функция проверки ввода времени на корректность
+		checkValueTime: function() {
+			var x = (/\d+/i.exec($(this).val()) === null) ? 0 : String(/\d+/i.exec($(this).val())).substr(0, 2);
+			$(this).val((Number(x) > Number($(this).prop('max'))) ? $(this).prop('max'): (x == 0) ? '' : x);
 		},
 		
 		// Закрытие всплывающего модального окна
