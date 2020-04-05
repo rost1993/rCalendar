@@ -464,40 +464,45 @@
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Начало бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "'>"
+							+ "<input type='text' class='r-calendar-form-control' id='sartDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "' data-mandatory='true' data-datatype='date'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "'>"
+								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "' data-mandatory='true' data-datatype='number'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + selectedMinute + "'>"
+							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + selectedMinute + "' data-mandatory='true' data-datatype='number'>"
 						+ "</div>"
 						
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Окончание бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "'>"
+							+ "<input type='text' class='r-calendar-form-control' id='endDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "' data-mandatory='true' data-datatype='date'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "'>"
+								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "' data-mandatory='true' data-datatype='number'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + selectedMinute + "'>"
+							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + selectedMinute + "' data-mandatory='true' data-datatype='number'>"
 						+ "</div>"
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Название бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='nameReservation'>"
+							+ "<input type='text' class='r-calendar-form-control' id='nameReservation' data-mandatory='true' data-datatype='char'>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Номер стола</label>"
-							+ "<select type='text' class='r-calendar-form-control' id='numberTableReservation'>" + selectTableList + "</select>"
+							+ "<select class='r-calendar-form-control' id='numberTableReservation' data-datatype='number'>" + selectTableList + "</select>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Клиенты</label>"
-							+ "<select type='text' class='r-calendar-form-control' id='customerReservation'>" + selectCustomerList + "</select>"
+							+ "<select class='r-calendar-form-control' id='customerReservation' data-datatype='number'>" + selectCustomerList + "</select>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Комментарий</label>"
-							+ "<textarea class='r-calendar-form-control' rows='3' id='commentReservation'></textarea>"
+							+ "<textarea class='r-calendar-form-control' rows='3' id='commentReservation' data-datatype='char'></textarea>"
 						+ "</div>"
+						
+						+ "<div class='r-calendar-form-row'>"
+							+ "<div class='r-calendar-modal-text-error'></div>"
+						+ "</div>"
+						
 					+ "</div>"
-					+ "<div class='r-calendar-modal-footer'><button class='btn btn-success'>Сохранить</button></div>"
+					+ "<div class='r-calendar-modal-footer'><button class='btn btn-success' id='btnSaveData'>Сохранить</button></div>"
 				+ "</div>"
 			+ "</div>"
 			+ "</div>");
@@ -511,8 +516,11 @@
 			$('body').find('.r-calendar-close').unbind();
 			$('body').find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
 
-			$('body').find('.r-calendar-modal').unbind();
+			$('body').find('.r-calendar-modal').find("[type='number']").unbind();
 			$('body').find('.r-calendar-modal').find("[type='number']").on('input', rCalendar.checkValueTime);
+			
+			$('body').find('.r-calendar-modal').find('#btnSaveData').unbind();
+			$('body').find('.r-calendar-modal').find('#btnSaveData').on('click', rCalendar.save);
 		},
 		
 		// Функция проверки ввода времени на корректность
@@ -523,6 +531,85 @@
 			else
 				$(this).val((Number(x) > Number($(this).prop('max'))) ? $(this).prop('max'): (x == 0) ? '' : x);
 		},
+		
+		// Функция проверка вводимых данных пользователем
+		saveCheckData: function() {
+			var flgCheck = true;
+			var messageError = '';
+			var arrSaveItem = {};
+
+			//$('.r-calendar-modal-body input, .r-calendar-modal-body select, .r-calendar-modal-body textarea').each(function() {
+			
+			$('.r-calendar-modal-body textarea, .r-calendar-modal-body select, .r-calendar-modal-body input').each(function() {
+				//alert($(this).prop('id') + ' : ' + $(this).data('datatype') + ' : ' + $(this).val());
+				
+				alert($(this).prop('id'));
+				
+				if($(this).data('mandatory')) {
+					if($(this).prop('tagName').toUpperCase() == 'SELECT') {
+						if($(this).val() == 0 || $(this).val() === undefined || $(this).val() == null) {
+							messageError = $(this).data('messageError');
+							flgCheck = false;
+							return false;
+						}
+					} else {
+						if($(this).val().trim().length == 0) {
+							messageError = $(this).data('messageError');
+							flgCheck = false;
+							return false;
+						}
+					}
+			
+					var nameItem = $(this).prop('id');
+					var arrayTemp = {}
+					
+					if($(this).prop('type') == 'CHECKBOX')
+						arrayTemp['value'] = $(this).prop('checked');
+					else
+						arrayTemp['value'] = $(this).val().trim();
+					
+					arrayTemp['type'] = $(this).data('datatype');
+					arrSaveItem[nameItem] = arrayTemp;
+				} else {
+					var nameItem = $(this).prop('id');
+					var arrayTemp = {}
+					
+					if($(this).prop('tagName').toUpperCase() == 'SELECT') {
+						arrayTemp['value'] = $(this).val();
+					} else {
+						if(($(this).prop('type').toUpperCase() == 'CHECKBOX') || ($(this).prop('type').toUpperCase() == 'RADIO'))
+							arrayTemp['value'] = $(this).prop('checked');
+						else
+							arrayTemp['value'] = $(this).val().trim();
+					}
+					
+					arrayTemp['type'] = $(this).data('datatype');
+					arrSaveItem[nameItem] = arrayTemp;
+				}
+			});
+			
+			var arrayResult = {};
+	
+			if(!flgCheck) {
+				arrayResult[0] = false;
+				arrayResult[1] = messageError;
+			} else {
+				arrayResult[0] = true;
+				arrayResult[1] = arrSaveItem;
+			}
+		
+			return arrayResult;
+		},
+		
+		// Функция сохранения данных на сервере
+		save: function() {
+			
+			var rCalendar = $('body').find('.r-calendar').data('rCalendar');
+			var arrayResult = rCalendar.saveCheckData();
+			alert(JSON.stringify(arrayResult));
+		},
+		
+		
 		
 		// Конвертация данных в человеческий вид
 		getDateToNormalFormat: function(date) {
