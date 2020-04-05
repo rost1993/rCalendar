@@ -301,7 +301,7 @@
 			var tbody = $("<div class='r-calendar-body'>");
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-week'>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time=''>" + this.loc.hours[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hours[i] + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[0] + "'></div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[1] + "'></div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[2] + "'></div>"
@@ -338,7 +338,7 @@
 			var tbody = $("<div class='r-calendar-body'>");
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-daytime'>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10'>" + this.loc.hours[i] + "</div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hours[i] + "</div>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate() + "'></div>"
 					+ "</div>");
 			}
@@ -409,8 +409,23 @@
 			
 			// Получаем выбранную дату
 			var selectedDate = rCalendar.getDateToNormalFormat($(this).data('date'));
-			selectedDate = (!selectedDate) ? '00-00-0000': selectedDate;
 			
+			var selectedHour, selectedMinute;
+			
+			if(rCalendar.opts.view == 'weeks') {
+				var temp = $(this).closest('.r-calendar-week').find('.r-calendar-week-grid-10').data('time');
+				var tempSplit = (temp === undefined) ? '00:00'.split(':') : temp.split(':');
+				selectedHour = (tempSplit.length > 1) ? tempSplit[0] : '00';
+				selectedMinute = (tempSplit.length > 1) ? tempSplit[1] : '00';
+			} else if(rCalendar.opts.view == 'days') {
+				var temp = $(this).closest('.r-calendar-daytime').find('.r-calendar-daytime-grid-10').data('time');
+				var tempSplit = (temp === undefined) ? '00:00'.split(':') : temp.split(':');
+				selectedHour = (tempSplit.length > 1) ? tempSplit[0] : '00';
+				selectedMinute = (tempSplit.length > 1) ? tempSplit[1] : '00';
+			} else {
+				selectedHour = selectedMinute = '00';
+			}
+
 			// Разбираем список столов
 			try {
 				var temp = JSON.parse(rCalendar.opts.selectTable);
@@ -451,18 +466,18 @@
 							+ "<label class='r-calendar-label-form'>Начало бронирования</label>"
 							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
+								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='45' step='15'>"
+							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + selectedMinute + "'>"
 						+ "</div>"
 						
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Окончание бронирования</label>"
 							+ "<input type='text' class='r-calendar-form-control' id='' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1'>"
+								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='45' step='15'>"
+							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + selectedMinute + "'>"
 						+ "</div>"
 					
 						+ "<div class='r-calendar-form-row'>"
@@ -503,7 +518,10 @@
 		// Функция проверки ввода времени на корректность
 		checkValueTime: function() {
 			var x = (/\d+/i.exec($(this).val()) === null) ? 0 : String(/\d+/i.exec($(this).val())).substr(0, 2);
-			$(this).val((Number(x) > Number($(this).prop('max'))) ? $(this).prop('max'): (x == 0) ? '' : x);
+			if(x == 0)
+				$(this).val($(this).val().substr(0, 2));
+			else
+				$(this).val((Number(x) > Number($(this).prop('max'))) ? $(this).prop('max'): (x == 0) ? '' : x);
 		},
 		
 		// Конвертация данных в человеческий вид
@@ -513,7 +531,7 @@
 			var month = temp[1];
 			var day = temp[2];
 			if((new Date(year, month, day)) === undefined)
-				return false;
+				return "00.00.0000";
 			
 			month = Number(month) + 1;
 			month = (String(month).length == 2) ? month : '0' + String(month);
