@@ -464,7 +464,7 @@
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Начало бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='sartDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "' data-mandatory='true' data-datatype='date'>"
+							+ "<input type='text' class='r-calendar-form-control' id='startDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "' data-mandatory='true' data-datatype='date'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
 								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "' data-mandatory='true' data-datatype='number'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
@@ -533,46 +533,49 @@
 		},
 		
 		// Функция проверка вводимых данных пользователем
-		saveCheckData: function() {
+		saveCheckData: function(modalWindow) {
+			
 			var flgCheck = true;
 			var messageError = '';
 			var arrSaveItem = {};
-
-			//$('.r-calendar-modal-body input, .r-calendar-modal-body select, .r-calendar-modal-body textarea').each(function() {
 			
-			$('.r-calendar-modal-body textarea, .r-calendar-modal-body select, .r-calendar-modal-body input').each(function() {
-				//alert($(this).prop('id') + ' : ' + $(this).data('datatype') + ' : ' + $(this).val());
-				
-				alert($(this).prop('id'));
-				
+			// Пробегаемся по всем элементам чтобы сбросить класс ошибок
+			$(modalWindow.find('input,select,textarea')).each(function() {
+				$(this).removeClass('r-calendar-field-error');
+			});
+			
+			$(modalWindow.find('input,select,textarea')).each(function() {
+				$(this).removeClass('r-calendar-field-error');
 				if($(this).data('mandatory')) {
 					if($(this).prop('tagName').toUpperCase() == 'SELECT') {
 						if($(this).val() == 0 || $(this).val() === undefined || $(this).val() == null) {
-							messageError = $(this).data('messageError');
+							messageError = 'Не заполнено поле: ' + $(this).closest('.r-calendar-form-row').find('label').html();
+							$(this).addClass('r-calendar-field-error');
 							flgCheck = false;
 							return false;
 						}
 					} else {
 						if($(this).val().trim().length == 0) {
-							messageError = $(this).data('messageError');
+							messageError = 'Не заполнено поле: ' + $(this).closest('.r-calendar-form-row').find('label').html();
+							$(this).addClass('r-calendar-field-error');
 							flgCheck = false;
 							return false;
 						}
 					}
-			
+					
 					var nameItem = $(this).prop('id');
-					var arrayTemp = {}
+					var arrayTemp = {};
 					
 					if($(this).prop('type') == 'CHECKBOX')
 						arrayTemp['value'] = $(this).prop('checked');
 					else
-						arrayTemp['value'] = $(this).val().trim();
+						arrayTemp['value'] = $(this).val().trim().toUpperCase();
 					
 					arrayTemp['type'] = $(this).data('datatype');
 					arrSaveItem[nameItem] = arrayTemp;
 				} else {
 					var nameItem = $(this).prop('id');
-					var arrayTemp = {}
+					var arrayTemp = {};
 					
 					if($(this).prop('tagName').toUpperCase() == 'SELECT') {
 						arrayTemp['value'] = $(this).val();
@@ -580,16 +583,16 @@
 						if(($(this).prop('type').toUpperCase() == 'CHECKBOX') || ($(this).prop('type').toUpperCase() == 'RADIO'))
 							arrayTemp['value'] = $(this).prop('checked');
 						else
-							arrayTemp['value'] = $(this).val().trim();
+							arrayTemp['value'] = $(this).val().trim().toUpperCase();
 					}
 					
 					arrayTemp['type'] = $(this).data('datatype');
 					arrSaveItem[nameItem] = arrayTemp;
 				}
 			});
-			
-			var arrayResult = {};
 	
+			var arrayResult = {};
+			
 			if(!flgCheck) {
 				arrayResult[0] = false;
 				arrayResult[1] = messageError;
@@ -597,16 +600,24 @@
 				arrayResult[0] = true;
 				arrayResult[1] = arrSaveItem;
 			}
-		
+
 			return arrayResult;
 		},
 		
 		// Функция сохранения данных на сервере
 		save: function() {
-			
+			var arrSaveItem = {};
 			var rCalendar = $('body').find('.r-calendar').data('rCalendar');
-			var arrayResult = rCalendar.saveCheckData();
-			alert(JSON.stringify(arrayResult));
+			var resultCollectionsItems = rCalendar.saveCheckData($(this).closest('.r-calendar-modal'));
+			if(resultCollectionsItems[0]) {
+				arrSaveItem = resultCollectionsItems[1];
+			} else {
+				$(this).closest('.r-calendar-modal').find('.r-calendar-modal-text-error').html(resultCollectionsItems[1]);
+				//showModal('ModalWindow', resultCollectionsItems[1]);
+				return;
+			}
+			
+			alert(JSON.stringify(arrSaveItem));
 		},
 		
 		

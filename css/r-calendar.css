@@ -491,4 +491,10 @@ textarea.r-calendar-form-control {
 
 .r-calendar-modal-text-error {
 	color: red;
+	width: 100%;
+	text-align: center;
+}
+
+.r-calendar-field-error {
+	border: solid 2px red;
 }
