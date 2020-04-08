@@ -493,6 +493,7 @@ textarea.r-calendar-form-control {
 	color: red;
 	width: 100%;
 	text-align: center;
+	font-weight: bold; 
 }
 
 .r-calendar-field-error {

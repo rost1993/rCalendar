@@ -667,12 +667,29 @@
 		
 		// Обработка ответа от сервера в случае успеха
 		ajaxStatusSuccess: function(data, modalWindow) {
-			alert('Success!');
+			try {
+				var result = eval(data);
+				if(res[0] == 'OK') {
+					$(modalWindow).remove();
+					$('body').find('.r-calendar-modal-backdrop').remove();
+					$('body').removeClass('r-calendar-modal-open');
+				} else {
+					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
+				}
+			} catch {
+				if(data == 'OK') {
+					$(modalWindow).remove();
+					$('body').find('.r-calendar-modal-backdrop').remove();
+					$('body').removeClass('r-calendar-modal-open');
+				} else {
+					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
+				}
+			}
 		},
 		
 		// Обработка ответа от сервера в случае ошибки
 		ajaxStatusError: function(data, modalWindow) {
-			$(modalWindow).find('.r-calendar-modal-text-error').html('Ошибка!');
+			$(modalWindow).find('.r-calendar-modal-text-error').html('При обработке запроса произошла ошибка!');
 		},
 
 		// Конвертация данных в человеческий вид
