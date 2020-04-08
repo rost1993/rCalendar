@@ -239,7 +239,6 @@
 			j = 0;
 			var afterDate = new Date(lastMonthDay.getFullYear(), (lastMonthDay.getMonth() + 1), 1);
 			for(var i = lastWeekCurrentMonth; i < 6; i++) {
-
 				do {
 					var temp = new Date(afterDate.getFullYear(), afterDate.getMonth(), (afterDate.getDate() + j));
 					daysRCalendar[i][temp.getDay()]['value'] = temp.getDate();
@@ -251,7 +250,7 @@
 			for(var i = 0; i < 6; i++) {
 				tbody.append("<div class='r-calendar-week-" + i + "'>" + 
 				"<div class='r-calendar-day number-week' style='width: 5%;'>" + (firstWeek++) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span><span class='r-calendar-badge'>2 события</span></div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][2]['value'] + "</span></div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][3]['value'] + "</span></div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][4]['value'] + "</span></div>" +
@@ -394,12 +393,18 @@
 		showModalWindow: function(event) {
 			
 			// Если обработчик сработал на тэге SPAN то переключаем в режим дня
-			if(event.target.tagName == 'SPAN' && event.target.className == 'r-calendar-text-day'){
+			if(event.target.tagName.toUpperCase() == 'SPAN' && event.target.className == 'r-calendar-text-day'){
 				var split_date = $(this).closest('.r-calendar-day').data('date').split('-');
 				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 				rCalendar.opts.startDay = new Date(split_date[0], split_date[1], split_date[2]);
 				rCalendar.opts.view = 'days';
 				rCalendar.update();
+				return;
+			}
+			
+			if(event.target.tagName.toUpperCase() == 'SPAN' && event.target.className == 'r-calendar-badge') {
+				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+				rCalendar.showModalWindowListEvents();
 				return;
 			}
 
@@ -529,6 +534,11 @@
 			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', rCalendar.closeModalWindow);
 		},
 		
+		
+		showModalWindowListEvents: function() {
+			alert(111);
+		},
+		
 		// Функция проверки ввода времени на корректность
 		checkValueTime: function() {
 			var x = (/\d+/i.exec($(this).val()) === null) ? 0 : String(/\d+/i.exec($(this).val())).substr(0, 2);
@@ -612,29 +622,28 @@
 		
 		// Функция сохранения данных на сервере
 		save: function(event) {
+			var rCalendar = event.data.rCalendar;
+			var modalWindow = $(this).closest('.r-calendar-modal');
+			
 			var arrSaveItem = {};
-			var resultCollectionsItems = event.data.rCalendar.saveCheckData($(this).closest('.r-calendar-modal'));
+			var resultCollectionsItems = rCalendar.saveCheckData($(this).closest('.r-calendar-modal'));
 			if(resultCollectionsItems[0]) {
 				arrSaveItem = resultCollectionsItems[1];
 			} else {
 				$(this).closest('.r-calendar-modal').find('.r-calendar-modal-text-error').html(resultCollectionsItems[1]);
 				return;
 			}
-			
-			alert(event.data.rCalendar.ajaxQuery(event.data.rCalendar, JSON.stringify(arrSaveItem)));
-			
-			//var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-
-			//alert(JSON.stringify(arrSaveItem));
+			rCalendar.ajaxQuery(rCalendar, modalWindow, JSON.stringify(arrSaveItem), rCalendar.ajaxStatusSuccess, rCalendar.ajaxStatusError);
 		},
 		
 		/*
 			Ajax метод сохранения информации
 			rCalendar - указатель на объект, который инициировал сохранение
+			modalWindow - указатель на модальное окно на котором была нажата кнопка
 			data - запрос для сохранения информации
 			callback - функция обратного вызова
 		*/
-		ajaxQuery: function(rCalendar, data, callback) {
+		ajaxQuery: function(rCalendar, modalWindow, data, callbackSuccess, callbackError) {
 			var url = (rCalendar.opts.handlersScript === undefined || String(rCalendar.opts.handlersScript).length == 0) ? null : rCalendar.opts.handlersScript;
 			$.ajax({
 				type: 'POST',
@@ -645,26 +654,25 @@
 				contentType: 'application/x-www-form-urlencoded',
 				
 				success: function(data) {
-					alert(1);
-					return true;
-					/*if(callback != null)
-						callback(data);*/
+					if(callbackSuccess != null)
+						callbackSuccess(data, modalWindow);
 				},
 				
 				error: function(data, status, xhr) {
-					alert(2);
-					return false;
-				},
-				
-				statusCode: {
-					404: function() {
-						alert(3);
-						return false;
-						//document.location.href = '/pages/service-pages/not-found.php';
-					}
+					if(callbackError != null)
+						callbackError(data, modalWindow);
 				}
 			});
-			return true;
+		},
+		
+		// Обработка ответа от сервера в случае успеха
+		ajaxStatusSuccess: function(data, modalWindow) {
+			alert('Success!');
+		},
+		
+		// Обработка ответа от сервера в случае ошибки
+		ajaxStatusError: function(data, modalWindow) {
+			$(modalWindow).find('.r-calendar-modal-text-error').html('Ошибка!');
 		},
 
 		// Конвертация данных в человеческий вид
