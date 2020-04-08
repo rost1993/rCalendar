@@ -14,15 +14,15 @@
 
 
 	var VERSION = '1.0',
-		currentObject = null,
 		pluginName = 'rCalendar',
 		defaults = {
 			language: 'ru',
 			startDay: new Date(),
 			view: 'months',
-			selectTable: '',
+			selectTable: [],
 			selectCustomer: [],
-			handlersScript: 'handlers-events.php'
+			handlersScript: 'handlers-events.php',
+			arrayDataEvents: []
 		}, rCalendar;
 	
 	
@@ -44,6 +44,23 @@
 			this._renderingToolBar();
 			this._renderingWidget();
 			this._bindEvents();
+			
+			
+			/*try {
+				var temp = JSON.parse(this.opts.arrayDataEvents);
+				
+				for(var key in temp) {
+					
+					if(typeof(temp[key]) == 'object') {
+						for(var key2 in temp[key])
+							alert(key + " : " + key2 + " : " + temp[key][key2]);
+					}
+				}
+				
+			} catch {
+				alert('Error!');
+			}*/
+			
 		},
 		
 		// Установка локали для языка
@@ -404,7 +421,7 @@
 			
 			if(event.target.tagName.toUpperCase() == 'SPAN' && event.target.className == 'r-calendar-badge') {
 				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-				rCalendar.showModalWindowListEvents();
+				rCalendar.showModalWindowListEvents($(this).data('date'));
 				return;
 			}
 
@@ -534,9 +551,59 @@
 			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', rCalendar.closeModalWindow);
 		},
 		
-		
-		showModalWindowListEvents: function() {
-			alert(111);
+		// Отрисовка модального окна с мероприятими
+		showModalWindowListEvents: function(date) {
+			if(date === undefined)
+				return;
+			
+			var selectedDate = this.getDateToNormalFormat(date);
+			var html = "";
+			
+			try {
+				var temp = JSON.parse(this.opts.arrayDataEvents);
+				for(var item in temp) {
+
+					if(selectedDate == this.getDateToNormalFormat(temp[item]['startDate'], false)) {
+					
+						html += "<div class='r-calendar-form-row'>"
+								+ temp[item]['startDate'] + "&nbsp;"
+								+ temp[item]['startDateHour'] + ":"
+								+ temp[item]['startDateMinute'] + "&nbsp;-&nbsp;"
+								+ temp[item]['endDate'] + "&nbsp;"
+								+ temp[item]['endDateHour'] + ":"
+								+ temp[item]['endDateMinute']
+								+ "&nbsp;" + temp[item]['nameReservation']
+								+ "&nbsp;" + temp[item]['numberTableReservation']
+								+ "&nbsp;" + temp[item]['customerReservation']
+								+ "&nbsp;" + temp[item]['commentReservation']
+								+ "</div>";
+					}
+				}
+			} catch {
+			}
+			
+			var modal = $("<div class='r-calendar-modal r-calendar-modal-show'>"
+			+ "<div class='r-calendar-modal-dialog-2 r-calendar-modal-dialog-centered'>"
+				+ "<div class='r-calendar-modal-content'>"
+					+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Список бронирований на&nbsp;" + selectedDate + "</div><button class='r-calendar-close'>&times;</button></div>"
+					+ "<div class='r-calendar-modal-body'>" + html + "</div>"
+					+ "<div class='r-calendar-modal-footer'>"
+						+ "<button class='btn btn-danger' id='btnCloseModalWindow'>Закрыть</button>"
+					+ "</div>"
+				+ "</div>"
+			+ "</div>"
+			+ "</div>");
+			
+			var modal_backdrop = $("<div class='r-calendar-modal-backdrop'></div>");
+			
+			$('body').append(modal);
+			$('body').append(modal_backdrop);
+			
+			$('body').find('.r-calendar-close').unbind();
+			$('body').find('.r-calendar-close').on('click', this.closeModalWindow);
+			
+			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').unbind();
+			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', this.closeModalWindow);
 		},
 		
 		// Функция проверки ввода времени на корректность
@@ -693,15 +760,27 @@
 		},
 
 		// Конвертация данных в человеческий вид
-		getDateToNormalFormat: function(date) {
-			var temp = String(date).split('-');
-			var year = temp[0];
-			var month = temp[1];
-			var day = temp[2];
-			if((new Date(year, month, day)) === undefined)
-				return "00.00.0000";
-			
-			month = Number(month) + 1;
+		// Флаг addMonth отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
+		getDateToNormalFormat: function(date, addMonth) {
+			var year, month, day;
+			if(String(date).indexOf('-') != -1) {
+				var temp = String(date).split('-');
+				year = temp[0];
+				month = temp[1];
+				day = temp[2];
+				if((new Date(year, month, day)) === undefined)
+					return "00.00.0000";
+			} else if(String(date).indexOf('.') != -1) {
+				var temp = String(date).split('.');
+				year = temp[2];
+				month = temp[1];
+				day = temp[0];
+				if((new Date(year, month, day)) === undefined)
+					return "00.00.0000";
+			}
+
+			if(addMonth === undefined || addMonth === true)
+				month = Number(month) + 1;
 			month = (String(month).length == 2) ? month : '0' + String(month);
 			day = (String(day).length == 2) ? day : '0' + String(day);
 			

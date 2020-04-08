@@ -24,8 +24,12 @@
 			//$('.my-calendar').rCalendar({ year : "2019", month : "11", day : "23" });
 			var selectTable = '{"1" : "1-й стол", "2" : "2-й стол", "3" : "3-й стол", "4" : "4-й стол"}';
 			var selectCustomer = ["1-й клиент", "2-й клиент", "3-й клиент"];
+			
+			var data = '[{ "startDate" : "13.04.2020", "startDateHour" : "2", "startDateMinute" : "55", "endDate" : "10.03.2018", "endDateHour" : "2", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "numberTableReservation" : "1-й стол", "customerReservation" : "1-й клиент", "commentReservation" : "Комментарий"},'
+					  + '{ "startDate" : "10.04.2018", "startDateHour" : "2", "startDateMinute" : "55", "endDate" : "10.03.2018", "endDateHour" : "2", "endDateMinute" : "55", "nameReservation" : "1", "numberTableReservation" : "1", "customerReservation" : "123", "commentReservation" : "123"} ]';
+			
 			//var selectCustomer = '{"1-й клиент", "2-й клиент", "3-й клиент"}';
-			$('.r-calendar-test-1').rCalendar({ "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer });
+			$('.r-calendar-test-1').rCalendar({ "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer, "arrayDataEvents" : data });
 			
 			//$('.r-calendar-test-2').rCalendar({ "language" : "en", "handlersScript" : "123.php" });
 		});
