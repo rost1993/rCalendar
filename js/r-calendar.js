@@ -14,22 +14,22 @@
 
 
 	var VERSION = '1.0',
+		currentObject = null,
 		pluginName = 'rCalendar',
 		defaults = {
 			language: 'ru',
 			startDay: new Date(),
 			view: 'months',
 			selectTable: '',
-			selectCustomer: []
+			selectCustomer: [],
+			handlersScript: 'handlers-events.php'
 		}, rCalendar;
 	
 	
 	var rCalendar = function(el, options) {
 		this.el = el;
         this.$el = $(el);
-		
 		this.opts = $.extend(true, {}, defaults, options, this.$el.data());
-		
 		this.init();
 	};
 	
@@ -502,7 +502,10 @@
 						+ "</div>"
 						
 					+ "</div>"
-					+ "<div class='r-calendar-modal-footer'><button class='btn btn-success' id='btnSaveData'>Сохранить</button></div>"
+					+ "<div class='r-calendar-modal-footer'>"
+						+ "<button class='btn btn-success' id='btnSaveData' style='margin-right: 10px;'>Сохранить</button>"
+						+ "<button class='btn btn-danger' id='btnCloseModalWindow'>Закрыть</button>"
+					+ "</div>"
 				+ "</div>"
 			+ "</div>"
 			+ "</div>");
@@ -520,7 +523,10 @@
 			$('body').find('.r-calendar-modal').find("[type='number']").on('input', rCalendar.checkValueTime);
 			
 			$('body').find('.r-calendar-modal').find('#btnSaveData').unbind();
-			$('body').find('.r-calendar-modal').find('#btnSaveData').on('click', rCalendar.save);
+			$('body').find('.r-calendar-modal').find('#btnSaveData').on('click', { rCalendar : rCalendar }, rCalendar.save);
+			
+			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').unbind();
+			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', rCalendar.closeModalWindow);
 		},
 		
 		// Функция проверки ввода времени на корректность
@@ -543,6 +549,8 @@
 			$(modalWindow.find('input,select,textarea')).each(function() {
 				$(this).removeClass('r-calendar-field-error');
 			});
+			// Очищаем поле для вывода ошибок
+			$(modalWindow).find('.r-calendar-modal-text-error').html('');
 			
 			$(modalWindow.find('input,select,textarea')).each(function() {
 				$(this).removeClass('r-calendar-field-error');
@@ -570,8 +578,7 @@
 						arrayTemp['value'] = $(this).prop('checked');
 					else
 						arrayTemp['value'] = $(this).val().trim().toUpperCase();
-					
-					arrayTemp['type'] = $(this).data('datatype');
+
 					arrSaveItem[nameItem] = arrayTemp;
 				} else {
 					var nameItem = $(this).prop('id');
@@ -585,8 +592,7 @@
 						else
 							arrayTemp['value'] = $(this).val().trim().toUpperCase();
 					}
-					
-					arrayTemp['type'] = $(this).data('datatype');
+
 					arrSaveItem[nameItem] = arrayTemp;
 				}
 			});
@@ -605,23 +611,62 @@
 		},
 		
 		// Функция сохранения данных на сервере
-		save: function() {
+		save: function(event) {
 			var arrSaveItem = {};
-			var rCalendar = $('body').find('.r-calendar').data('rCalendar');
-			var resultCollectionsItems = rCalendar.saveCheckData($(this).closest('.r-calendar-modal'));
+			var resultCollectionsItems = event.data.rCalendar.saveCheckData($(this).closest('.r-calendar-modal'));
 			if(resultCollectionsItems[0]) {
 				arrSaveItem = resultCollectionsItems[1];
 			} else {
 				$(this).closest('.r-calendar-modal').find('.r-calendar-modal-text-error').html(resultCollectionsItems[1]);
-				//showModal('ModalWindow', resultCollectionsItems[1]);
 				return;
 			}
 			
-			alert(JSON.stringify(arrSaveItem));
+			alert(event.data.rCalendar.ajaxQuery(event.data.rCalendar, JSON.stringify(arrSaveItem)));
+			
+			//var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+
+			//alert(JSON.stringify(arrSaveItem));
 		},
 		
-		
-		
+		/*
+			Ajax метод сохранения информации
+			rCalendar - указатель на объект, который инициировал сохранение
+			data - запрос для сохранения информации
+			callback - функция обратного вызова
+		*/
+		ajaxQuery: function(rCalendar, data, callback) {
+			var url = (rCalendar.opts.handlersScript === undefined || String(rCalendar.opts.handlersScript).length == 0) ? null : rCalendar.opts.handlersScript;
+			$.ajax({
+				type: 'POST',
+				url: url,
+				data: data,
+				cache: true,
+				processData: true,
+				contentType: 'application/x-www-form-urlencoded',
+				
+				success: function(data) {
+					alert(1);
+					return true;
+					/*if(callback != null)
+						callback(data);*/
+				},
+				
+				error: function(data, status, xhr) {
+					alert(2);
+					return false;
+				},
+				
+				statusCode: {
+					404: function() {
+						alert(3);
+						return false;
+						//document.location.href = '/pages/service-pages/not-found.php';
+					}
+				}
+			});
+			return true;
+		},
+
 		// Конвертация данных в человеческий вид
 		getDateToNormalFormat: function(date) {
 			var temp = String(date).split('-');

@@ -25,11 +25,15 @@
 			var selectTable = '{"1" : "1-й стол", "2" : "2-й стол", "3" : "3-й стол", "4" : "4-й стол"}';
 			var selectCustomer = ["1-й клиент", "2-й клиент", "3-й клиент"];
 			//var selectCustomer = '{"1-й клиент", "2-й клиент", "3-й клиент"}';
-			$('.r-calendar').rCalendar({ "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer });
+			$('.r-calendar-test-1').rCalendar({ "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer });
+			
+			//$('.r-calendar-test-2').rCalendar({ "language" : "en", "handlersScript" : "123.php" });
 		});
 	</script>
 
-	<div class="r-calendar"></div>
+	<div class="r-calendar r-calendar-test-1"></div>
+	
+	<!--<div class="r-calendar r-calendar-test-2"></div>-->
 	
 </body>
 </html>
