@@ -410,11 +410,14 @@
 			
 			var selectedDate, selectTableList, selectCustomerList, selectedHour, selectedMinute;
 			
-			var startDate, startDateHour, startDateMinute, endDate, endDateHour, endDateMinute, nameReservation, numberTableReservation, customerReservation, commentReservation;
+			var startDate, startDateHour, startDateMinute, endDate, endDateHour, endDateMinute, nameReservation, numberTableReservation, customerReservation, commentReservation, idReservation;
 			startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = numberTableReservation = customerReservation = commentReservation = '';
 			
 			// Указатель на класс rCalendar, будем получать взависимости от режима работы
 			var rCalendar;
+			
+			// Кнопка удаления мероприятия
+			var btnRemoveEvent = "";
 			
 			if(event.data.mode == "add") {
 				// Устанавливаем событие для закрытия окошка
@@ -440,6 +443,8 @@
 				} else {
 					startDateHour = startDateMinute = endDateHour = endDateMinute = '00';
 				}
+
+				idReservation = -1;
 			} else if(event.data.mode == "update") {
 				
 				rCalendar = event.data.rCalendar;
@@ -456,6 +461,10 @@
 				numberTableReservation = (event.data.arrayEvent['numberTableReservation'] === undefined) ? '' : event.data.arrayEvent['numberTableReservation'];
 				customerReservation = (event.data.arrayEvent['customerReservation'] === undefined) ? '' : event.data.arrayEvent['customerReservation'];
 				commentReservation = (event.data.arrayEvent['commentReservation'] === undefined) ? '' : event.data.arrayEvent['commentReservation'];
+				
+				idReservation = (event.data.arrayEvent['id'] === undefined) ? -1 : event.data.arrayEvent['id'];
+				
+				btnRemoveEvent = "<button type='button' class='btn btn-warning' id='btnRemoveEvent' data-id='" + idReservation + "' style='margin-right: 10px;'>Удалить</button>";
 			} else {
 				return;
 			}
@@ -553,30 +562,33 @@
 						
 					+ "</div>"
 					+ "<div class='r-calendar-modal-footer'>"
-						+ "<button class='btn btn-success' id='btnSaveData' style='margin-right: 10px;'>Сохранить</button>"
+						+ "<button class='btn btn-success' id='btnSaveData' data-id='" + idReservation + "' style='margin-right: 10px;'>Сохранить</button>"
+						+ btnRemoveEvent
 						+ "<button class='btn btn-danger' id='btnCloseModalWindow'>Закрыть</button>"
 					+ "</div>"
 				+ "</div>"
 			+ "</div>"
 			+ "</div>");
+
+			$(modal).find('.r-calendar-close').unbind();
+			$(modal).find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
+
+			$(modal).find("[type='number']").unbind();
+			$(modal).find("[type='number']").on('input', rCalendar.checkValueTime);
 			
-			var modal_backdrop = $("<div class='r-calendar-modal-backdrop'></div>");
+			$(modal).find('#btnSaveData').unbind();
+			$(modal).find('#btnSaveData').on('click', { rCalendar : rCalendar }, rCalendar.save);
 			
+			$(modal).find('#btnCloseModalWindow').unbind();
+			$(modal).find('#btnCloseModalWindow').on('click', rCalendar.closeModalWindow);
+			
+			$(modal).find('#btnRemoveEvent').unbind();
+			$(modal).find('#btnRemoveEvent').on('click', rCalendar.remove);
+
 			$('body').append(modal);
-			$('body').append(modal_backdrop);
+			if(!$('body').is('.r-calendar-modal-backdrop'))
+				$('body').append($("<div class='r-calendar-modal-backdrop'></div>"));
 			$('body').addClass('r-calendar-modal-open');
-
-			$('body').find('.r-calendar-close').unbind();
-			$('body').find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
-
-			$('body').find('.r-calendar-modal').find("[type='number']").unbind();
-			$('body').find('.r-calendar-modal').find("[type='number']").on('input', rCalendar.checkValueTime);
-			
-			$('body').find('.r-calendar-modal').find('#btnSaveData').unbind();
-			$('body').find('.r-calendar-modal').find('#btnSaveData').on('click', { rCalendar : rCalendar }, rCalendar.save);
-			
-			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').unbind();
-			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', rCalendar.closeModalWindow);
 		},
 		
 		// Отрисовка модального окна с мероприятими
@@ -636,16 +648,16 @@
 			$(modal_dialog).append(modal_content);
 			$(modal).append(modal_dialog);
 			
-			var modal_backdrop = $("<div class='r-calendar-modal-backdrop'></div>");
+			$(modal).find('.r-calendar-close').unbind();
+			$(modal).find('.r-calendar-close').on('click', this.closeModalWindow);
 			
+			$(modal).find('#btnCloseModalWindow').unbind();
+			$(modal).find('#btnCloseModalWindow').on('click', this.closeModalWindow);
+
 			$('body').append(modal);
-			$('body').append(modal_backdrop);
 			
-			$('body').find('.r-calendar-close').unbind();
-			$('body').find('.r-calendar-close').on('click', this.closeModalWindow);
-			
-			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').unbind();
-			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', this.closeModalWindow);
+			if(!$('body').is('.r-calendar-modal-backdrop'))
+				$('body').append($("<div class='r-calendar-modal-backdrop'></div>"));
 		},
 		
 		// Функция получения массива бронирований по выбранной дате
@@ -787,6 +799,11 @@
 				return;
 			}
 			rCalendar.ajaxQuery(rCalendar, modalWindow, JSON.stringify(arrSaveItem), rCalendar.ajaxStatusSuccess, rCalendar.ajaxStatusError);
+		},
+		
+		// Функция удаления бронирования
+		remove: function() {
+			alert(123);
 		},
 		
 		/*
