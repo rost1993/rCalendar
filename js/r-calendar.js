@@ -558,8 +558,7 @@
 			
 			var selectedDate = this.getDateToNormalFormat(date);
 			var html = "";
-			
-			
+
 			html = "<div class='r-calendar-form-row'><table class='table table-sm table-bordered text-center table-hover'>"
 				+ "<tr>"
 				+ "<th>№ п/п</th>"
@@ -573,7 +572,7 @@
 			var arrayEvents = this.getEventsSelectedDate(selectedDate);
 			
 			for(var i = 0; i < arrayEvents.length; i++) {
-				html += "<tr>"
+				html += "<tr class='r-calendar-tr-events' id='" + arrayEvents[i]['id'] + "'>"
 					  + "<td>" + (i + 1) + "</td>"
 					  + "<td>" + arrayEvents[i]['startDate'] + "&nbsp;" + arrayEvents[i]['startDateHour'] + ":" + arrayEvents[i]['startDateMinute'] + "</td>"
 					  + "<td>" + arrayEvents[i]['endDate'] + "&nbsp;" + arrayEvents[i]['endDateHour'] + ":" + arrayEvents[i]['endDateMinute'] + "</td>"
@@ -607,6 +606,9 @@
 			
 			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').unbind();
 			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', this.closeModalWindow);
+			
+			$('body').find('.r-calendar-modal').find('.r-calendar-tr-events').unbind();
+			$('body').find('.r-calendar-modal').find('.r-calendar-tr-events').on('click', this.showModalWindow);
 		},
 		
 		// Функция получения массива бронирований по выбранной дате
@@ -633,6 +635,7 @@
 						temp['nameReservation'] = (arrayDataEvents[item]['nameReservation'] === undefined) ? '' : arrayDataEvents[item]['nameReservation'];
 						temp['numberTableReservation'] = (arrayDataEvents[item]['numberTableReservation'] === undefined) ? '' : arrayDataEvents[item]['numberTableReservation'];
 						temp['customerReservation'] = (arrayDataEvents[item]['customerReservation'] === undefined) ? '' : arrayDataEvents[item]['customerReservation'];
+						temp['id'] = (arrayDataEvents[item]['id'] === undefined) ? '0' : arrayDataEvents[item]['id'];
 
 						arrayEvents.push(temp);
 					}
