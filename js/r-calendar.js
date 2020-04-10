@@ -559,38 +559,41 @@
 			var selectedDate = this.getDateToNormalFormat(date);
 			var html = "";
 			
-			try {
-				var temp = JSON.parse(this.opts.arrayDataEvents);
-				for(var item in temp) {
+			
+			html = "<div class='r-calendar-form-row'><table class='table table-sm table-bordered text-center table-hover'>"
+				+ "<tr>"
+				+ "<th>№ п/п</th>"
+				+ "<th>Начало</th>"
+				+ "<th>Окончание</th>"
+				+ "<th>Название</th>"
+				+ "<th>№ стола</th>"
+				+ "<th>Клиент</th>"
+				+ "</tr>";
 
-					if(selectedDate == this.getDateToNormalFormat(temp[item]['startDate'], false)) {
-					
-						html += "<div class='r-calendar-form-row'>"
-								+ temp[item]['startDate'] + "&nbsp;"
-								+ temp[item]['startDateHour'] + ":"
-								+ temp[item]['startDateMinute'] + "&nbsp;-&nbsp;"
-								+ temp[item]['endDate'] + "&nbsp;"
-								+ temp[item]['endDateHour'] + ":"
-								+ temp[item]['endDateMinute']
-								+ "&nbsp;" + temp[item]['nameReservation']
-								+ "&nbsp;" + temp[item]['numberTableReservation']
-								+ "&nbsp;" + temp[item]['customerReservation']
-								+ "&nbsp;" + temp[item]['commentReservation']
-								+ "</div>";
-					}
-				}
-			} catch {
+			var arrayEvents = this.getEventsSelectedDate(selectedDate);
+			
+			for(var i = 0; i < arrayEvents.length; i++) {
+				html += "<tr>"
+					  + "<td>" + (i + 1) + "</td>"
+					  + "<td>" + arrayEvents[i]['startDate'] + "&nbsp;" + arrayEvents[i]['startDateHour'] + ":" + arrayEvents[i]['startDateMinute'] + "</td>"
+					  + "<td>" + arrayEvents[i]['endDate'] + "&nbsp;" + arrayEvents[i]['endDateHour'] + ":" + arrayEvents[i]['endDateMinute'] + "</td>"
+					  + "<td>" + arrayEvents[i]['nameReservation'] + "</td>"
+					  + "<td>" + arrayEvents[i]['numberTableReservation'] + "</td>"
+					  + "<td>" + arrayEvents[i]['customerReservation'] + "</td>"
+					  + "</tr>";
 			}
 			
+			html += "</table>";
+
 			var modal = $("<div class='r-calendar-modal r-calendar-modal-show'>"
 			+ "<div class='r-calendar-modal-dialog-2 r-calendar-modal-dialog-centered'>"
 				+ "<div class='r-calendar-modal-content'>"
-					+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Список бронирований на&nbsp;" + selectedDate + "</div><button class='r-calendar-close'>&times;</button></div>"
-					+ "<div class='r-calendar-modal-body'>" + html + "</div>"
+						+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Список бронирований на&nbsp;" + selectedDate + "</div><button class='r-calendar-close'>&times;</button></div>"
+						+ "<div class='r-calendar-modal-body'>" + html + "</div>"
+					+ "</div>"
 					+ "<div class='r-calendar-modal-footer'>"
 						+ "<button class='btn btn-danger' id='btnCloseModalWindow'>Закрыть</button>"
 					+ "</div>"
-				+ "</div>"
 			+ "</div>"
 			+ "</div>");
 			
@@ -604,6 +607,41 @@
 			
 			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').unbind();
 			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', this.closeModalWindow);
+		},
+		
+		// Функция получения массива бронирований по выбранной дате
+		getEventsSelectedDate: function(selectedDate) {
+			var arrayEvents = [];
+			var date = this.getObjectDate(selectedDate);
+			
+			try {
+				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
+
+				for(var item in arrayDataEvents) {
+					var dateStart = this.getObjectDate(arrayDataEvents[item]['startDate']);
+					var dateEnd = this.getObjectDate(arrayDataEvents[item]['endDate']);
+
+					if(date >= dateStart && date <= dateEnd) {
+						var temp = [];
+						
+						temp['startDate'] = (arrayDataEvents[item]['startDate'] === undefined) ? '' : arrayDataEvents[item]['startDate'];
+						temp['startDateHour'] = (arrayDataEvents[item]['startDateHour'] === undefined) ? '' : arrayDataEvents[item]['startDateHour'];
+						temp['startDateMinute'] = (arrayDataEvents[item]['startDateMinute'] === undefined) ? '' : arrayDataEvents[item]['startDateMinute'];
+						temp['endDate'] = (arrayDataEvents[item]['endDate'] === undefined) ? '' : arrayDataEvents[item]['endDate'];
+						temp['endDateHour'] = (arrayDataEvents[item]['endDateHour'] === undefined) ? '' : arrayDataEvents[item]['endDateHour'];
+						temp['endDateMinute'] = (arrayDataEvents[item]['endDateMinute'] === undefined) ? '' : arrayDataEvents[item]['endDateMinute'];
+						temp['nameReservation'] = (arrayDataEvents[item]['nameReservation'] === undefined) ? '' : arrayDataEvents[item]['nameReservation'];
+						temp['numberTableReservation'] = (arrayDataEvents[item]['numberTableReservation'] === undefined) ? '' : arrayDataEvents[item]['numberTableReservation'];
+						temp['customerReservation'] = (arrayDataEvents[item]['customerReservation'] === undefined) ? '' : arrayDataEvents[item]['customerReservation'];
+
+						arrayEvents.push(temp);
+					}
+				}
+			} catch {
+				arrayEvents = [];
+			}
+			
+			return arrayEvents;
 		},
 		
 		// Функция проверки ввода времени на корректность
@@ -685,6 +723,14 @@
 			}
 
 			return arrayResult;
+		},
+		
+		// Функция возвращения JS объекта даты
+		// Принимает на вход данные в формате string даты и возвращает объект Data
+		getObjectDate: function(stringDate) {
+			var temp = this.getDateToNormalFormat(stringDate, false);
+			var objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
+			return objectDate;
 		},
 		
 		// Функция сохранения данных на сервере
