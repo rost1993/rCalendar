@@ -44,23 +44,6 @@
 			this._renderingToolBar();
 			this._renderingWidget();
 			this._bindEvents();
-			
-			
-			/*try {
-				var temp = JSON.parse(this.opts.arrayDataEvents);
-				
-				for(var key in temp) {
-					
-					if(typeof(temp[key]) == 'object') {
-						for(var key2 in temp[key])
-							alert(key + " : " + key2 + " : " + temp[key][key2]);
-					}
-				}
-				
-			} catch {
-				alert('Error!');
-			}*/
-			
 		},
 		
 		// Установка локали для языка
@@ -430,11 +413,11 @@
 			var startDate, startDateHour, startDateMinute, endDate, endDateHour, endDateMinute, nameReservation, numberTableReservation, customerReservation, commentReservation;
 			startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = numberTableReservation = customerReservation = commentReservation = '';
 			
+			// Указатель на класс rCalendar, будем получать взависимости от режима работы
 			var rCalendar;
 			
 			if(event.data.mode == "add") {
 				// Устанавливаем событие для закрытия окошка
-				//var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 				rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 
 				// Получаем выбранную дату
@@ -481,14 +464,22 @@
 			try {
 				var temp = JSON.parse(rCalendar.opts.selectTable);
 				selectTableList = "<option value='0'></option>";
-				for(var key in temp)
-					selectTableList += "<option value='" + key + "'>" + temp[key] + "</option>";
+				for(var key in temp) {
+					if(key == numberTableReservation || temp[key] == numberTableReservation)
+						selectTableList += "<option value='" + key + "' selected>" + temp[key] + "</option>";
+					else
+						selectTableList += "<option value='" + key + "'>" + temp[key] + "</option>";
+				}
 			} catch{
 				selectTableList = "<option value=''></option>";
 				if(typeof(rCalendar.opts.selectTable) === 'object') {
 					var temp = eval(rCalendar.opts.selectTable);
-					for(var i = 0; i < temp.length; i++)
-						selectTableList += "<option value='" + temp[i] + "'>" + temp[i] + "</option>";
+					for(var i = 0; i < temp.length; i++) {
+						if(temp[i] == numberTableReservation)
+							selectTableList += "<option value='" + temp[i] + "' selected>" + temp[i] + "</option>";
+						else
+							selectTableList += "<option value='" + temp[i] + "'>" + temp[i] + "</option>";
+					}
 				}
 			}
 			
@@ -496,14 +487,22 @@
 			try {
 				var temp = JSON.parse(rCalendar.opts.selectCustomer);
 				selectCustomerList = "<option value='0'></option>";
-				for(var key in temp)
-					selectCustomerList += "<option value='" + key + "'>" + temp[key] + "</option>";
+				for(var key in temp) {
+					if(key == customerReservation || temp[key] == customerReservation)
+						selectCustomerList += "<option value='" + key + "' selected>" + temp[key] + "</option>";
+					else
+						selectCustomerList += "<option value='" + key + "'>" + temp[key] + "</option>";
+				}
 			} catch {
 				selectCustomerList = "<option value=''></option>"
 				if(typeof(rCalendar.opts.selectCustomer) === 'object') {
 					var temp = eval(rCalendar.opts.selectCustomer);
-					for(var i = 0; i < temp.length; i++)
-						selectCustomerList += "<option value='" + temp[i] + "'>" + temp[i] + "</option>";
+					for(var i = 0; i < temp.length; i++) {
+						if(temp[i] == customerReservation)
+							selectCustomerList += "<option value='" + temp[i] + "' selected>" + temp[i] + "</option>";
+						else
+							selectCustomerList += "<option value='" + temp[i] + "'>" + temp[i] + "</option>";
+					}
 				}
 			}
 			
