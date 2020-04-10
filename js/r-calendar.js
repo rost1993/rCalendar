@@ -366,7 +366,7 @@
 		// Метод навешивания событий
 		_bindEvents: function() {
 			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').unbind();
-			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', this.showModalWindow);
+			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', { mode : "add" }, this.showModalWindow);
 		},
 		
 		// Обновление HTML кода календаря
@@ -424,28 +424,57 @@
 				rCalendar.showModalWindowListEvents($(this).data('date'));
 				return;
 			}
+			
+			var selectedDate, selectTableList, selectCustomerList, selectedHour, selectedMinute;
+			
+			var startDate, startDateHour, startDateMinute, endDate, endDateHour, endDateMinute, nameReservation, numberTableReservation, customerReservation, commentReservation;
+			startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = numberTableReservation = customerReservation = commentReservation = '';
+			
+			var rCalendar;
+			
+			if(event.data.mode == "add") {
+				// Устанавливаем событие для закрытия окошка
+				//var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+				rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 
-			// Устанавливаем событие для закрытия окошка
-			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-			var selectTableList, selectCustomerList;
-			
-			// Получаем выбранную дату
-			var selectedDate = rCalendar.getDateToNormalFormat($(this).data('date'));
-			
-			var selectedHour, selectedMinute;
-			
-			if(rCalendar.opts.view == 'weeks') {
-				var temp = $(this).closest('.r-calendar-week').find('.r-calendar-week-grid-10').data('time');
-				var tempSplit = (temp === undefined) ? '00:00'.split(':') : temp.split(':');
-				selectedHour = (tempSplit.length > 1) ? tempSplit[0] : '00';
-				selectedMinute = (tempSplit.length > 1) ? tempSplit[1] : '00';
-			} else if(rCalendar.opts.view == 'days') {
-				var temp = $(this).closest('.r-calendar-daytime').find('.r-calendar-daytime-grid-10').data('time');
-				var tempSplit = (temp === undefined) ? '00:00'.split(':') : temp.split(':');
-				selectedHour = (tempSplit.length > 1) ? tempSplit[0] : '00';
-				selectedMinute = (tempSplit.length > 1) ? tempSplit[1] : '00';
+				// Получаем выбранную дату
+				var startDate = rCalendar.getDateToNormalFormat($(this).data('date'));
+				
+				if(rCalendar.opts.view == 'weeks') {
+					var temp = $(this).closest('.r-calendar-week').find('.r-calendar-week-grid-10').data('time');
+					var tempSplit = (temp === undefined) ? '00:00'.split(':') : temp.split(':');
+					startDateHour = (tempSplit.length > 1) ? tempSplit[0] : '00';
+					startDateMinute = (tempSplit.length > 1) ? tempSplit[1] : '00';
+					endDateHour = startDateHour;
+					endDateMinute = startDateMinute;
+				} else if(rCalendar.opts.view == 'days') {
+					var temp = $(this).closest('.r-calendar-daytime').find('.r-calendar-daytime-grid-10').data('time');
+					var tempSplit = (temp === undefined) ? '00:00'.split(':') : temp.split(':');
+					startDateHour = (tempSplit.length > 1) ? tempSplit[0] : '00';
+					startDateMinute = (tempSplit.length > 1) ? tempSplit[1] : '00';
+					endDateHour = startDateHour;
+					endDateMinute = startDateMinute;
+				} else {
+					startDateHour = startDateMinute = endDateHour = endDateMinute = '00';
+				}
+			} else if(event.data.mode == "update") {
+				
+				rCalendar = event.data.rCalendar;
+				
+				startDate = (event.data.arrayEvent['startDate'] === undefined) ? '' : event.data.arrayEvent['startDate'];
+				startDateHour = (event.data.arrayEvent['startDateHour'] === undefined) ? '' : event.data.arrayEvent['startDateHour'];
+				startDateMinute = (event.data.arrayEvent['startDateMinute'] === undefined) ? '' : event.data.arrayEvent['startDateMinute'];
+				
+				endDate = (event.data.arrayEvent['endDate'] === undefined) ? '' : event.data.arrayEvent['endDate'];
+				endDateHour = (event.data.arrayEvent['endDateHour'] === undefined) ? '' : event.data.arrayEvent['endDateHour'];
+				endDateMinute = (event.data.arrayEvent['endDateMinute'] === undefined) ? '' : event.data.arrayEvent['endDateMinute'];
+				
+				nameReservation = (event.data.arrayEvent['nameReservation'] === undefined) ? '' : event.data.arrayEvent['nameReservation'];
+				numberTableReservation = (event.data.arrayEvent['numberTableReservation'] === undefined) ? '' : event.data.arrayEvent['numberTableReservation'];
+				customerReservation = (event.data.arrayEvent['customerReservation'] === undefined) ? '' : event.data.arrayEvent['customerReservation'];
+				commentReservation = (event.data.arrayEvent['commentReservation'] === undefined) ? '' : event.data.arrayEvent['commentReservation'];
 			} else {
-				selectedHour = selectedMinute = '00';
+				return;
 			}
 
 			// Разбираем список столов
@@ -486,25 +515,25 @@
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Начало бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='startDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "' data-mandatory='true' data-datatype='date'>"
+							+ "<input type='text' class='r-calendar-form-control' id='startDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + startDate + "' data-mandatory='true' data-datatype='date'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "' data-mandatory='true' data-datatype='number'>"
+								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + startDateHour + "' data-mandatory='true' data-datatype='number'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + selectedMinute + "' data-mandatory='true' data-datatype='number'>"
+							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + startDateMinute + "' data-mandatory='true' data-datatype='number'>"
 						+ "</div>"
 						
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Окончание бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='endDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + selectedDate + "' data-mandatory='true' data-datatype='date'>"
+							+ "<input type='text' class='r-calendar-form-control' id='endDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + endDate + "' data-mandatory='true' data-datatype='date'>"
 								+ "<span class='r-calendar-input-group-text'>ч.</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + selectedHour + "' data-mandatory='true' data-datatype='number'>"
+								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + endDateHour + "' data-mandatory='true' data-datatype='number'>"
 								+ "<span class='r-calendar-input-group-text'>м.</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + selectedMinute + "' data-mandatory='true' data-datatype='number'>"
+							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + endDateMinute + "' data-mandatory='true' data-datatype='number'>"
 						+ "</div>"
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Название бронирования</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='nameReservation' data-mandatory='true' data-datatype='char'>"
+							+ "<input type='text' class='r-calendar-form-control' id='nameReservation' data-mandatory='true' data-datatype='char' value='" + nameReservation + "'>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Номер стола</label>"
@@ -516,7 +545,7 @@
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>Комментарий</label>"
-							+ "<textarea class='r-calendar-form-control' rows='3' id='commentReservation' data-datatype='char'></textarea>"
+							+ "<textarea class='r-calendar-form-control' rows='3' id='commentReservation' data-datatype='char'>" + commentReservation + "</textarea>"
 						+ "</div>"
 						
 						+ "<div class='r-calendar-form-row'>"
@@ -557,44 +586,56 @@
 				return;
 			
 			var selectedDate = this.getDateToNormalFormat(date);
-			var html = "";
+			//var html = "";
 
-			html = "<div class='r-calendar-form-row'><table class='table table-sm table-bordered text-center table-hover'>"
-				+ "<tr>"
+			var html_table_events = $("<div class='r-calendar-form-row'></div>");
+				
+			var table_events = $("<table class='table table-sm table-bordered text-center table-hover'></table>");
+			var thead = $("<thead><tr>"
 				+ "<th>№ п/п</th>"
 				+ "<th>Начало</th>"
 				+ "<th>Окончание</th>"
 				+ "<th>Название</th>"
 				+ "<th>№ стола</th>"
 				+ "<th>Клиент</th>"
-				+ "</tr>";
+				+ "</tr></thead>");
+			var tbody = $("<tbody></tbody>");
 
 			var arrayEvents = this.getEventsSelectedDate(selectedDate);
 			
 			for(var i = 0; i < arrayEvents.length; i++) {
-				html += "<tr class='r-calendar-tr-events' id='" + arrayEvents[i]['id'] + "'>"
+				var tr =  $("<tr class='r-calendar-tr-events' id='" + arrayEvents[i]['id'] + "'>"
 					  + "<td>" + (i + 1) + "</td>"
 					  + "<td>" + arrayEvents[i]['startDate'] + "&nbsp;" + arrayEvents[i]['startDateHour'] + ":" + arrayEvents[i]['startDateMinute'] + "</td>"
 					  + "<td>" + arrayEvents[i]['endDate'] + "&nbsp;" + arrayEvents[i]['endDateHour'] + ":" + arrayEvents[i]['endDateMinute'] + "</td>"
 					  + "<td>" + arrayEvents[i]['nameReservation'] + "</td>"
 					  + "<td>" + arrayEvents[i]['numberTableReservation'] + "</td>"
 					  + "<td>" + arrayEvents[i]['customerReservation'] + "</td>"
-					  + "</tr>";
+					  + "</tr>");
+				
+				$(tbody).append(tr);
+				$(tbody).find('#' + arrayEvents[i]['id']).unbind();
+				$(tbody).find('#' + arrayEvents[i]['id']).on('click', { "mode" : "update", arrayEvent : arrayEvents[i], rCalendar : this }, this.showModalWindow);
 			}
 			
-			html += "</table>";
+			$(table_events).append(thead);
+			$(table_events).append(tbody);
+			$(html_table_events).append(table_events);
+			
+			var modal_body = $("<div class='r-calendar-modal-body'></div>");
+			$(modal_body).append(html_table_events);
+			
+			var modal = $("<div class='r-calendar-modal r-calendar-modal-show'></div>");
+			var modal_dialog = $("<div class='r-calendar-modal-dialog-2 r-calendar-modal-dialog-centered'></div>");
+			var modal_content = $("<div class='r-calendar-modal-content'></div>");
+			var modal_header = $("<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Список бронирований на&nbsp;" + selectedDate + "</div><button class='r-calendar-close'>&times;</button></div>");
+			var modal_footer = $("<div class='r-calendar-modal-footer'><button class='btn btn-danger' id='btnCloseModalWindow'>Закрыть</button></div>");
 
-			var modal = $("<div class='r-calendar-modal r-calendar-modal-show'>"
-			+ "<div class='r-calendar-modal-dialog-2 r-calendar-modal-dialog-centered'>"
-				+ "<div class='r-calendar-modal-content'>"
-						+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Список бронирований на&nbsp;" + selectedDate + "</div><button class='r-calendar-close'>&times;</button></div>"
-						+ "<div class='r-calendar-modal-body'>" + html + "</div>"
-					+ "</div>"
-					+ "<div class='r-calendar-modal-footer'>"
-						+ "<button class='btn btn-danger' id='btnCloseModalWindow'>Закрыть</button>"
-					+ "</div>"
-			+ "</div>"
-			+ "</div>");
+			$(modal_content).append(modal_header);
+			$(modal_content).append(modal_body);
+			$(modal_content).append(modal_footer);
+			$(modal_dialog).append(modal_content);
+			$(modal).append(modal_dialog);
 			
 			var modal_backdrop = $("<div class='r-calendar-modal-backdrop'></div>");
 			
@@ -606,9 +647,6 @@
 			
 			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').unbind();
 			$('body').find('.r-calendar-modal').find('#btnCloseModalWindow').on('click', this.closeModalWindow);
-			
-			$('body').find('.r-calendar-modal').find('.r-calendar-tr-events').unbind();
-			$('body').find('.r-calendar-modal').find('.r-calendar-tr-events').on('click', this.showModalWindow);
 		},
 		
 		// Функция получения массива бронирований по выбранной дате
@@ -837,10 +875,13 @@
 		},
 		
 		// Закрытие всплывающего модального окна
-		closeModalWindow: function() {
-			$('body').find('.r-calendar-modal').remove();
-			$('body').find('.r-calendar-modal-backdrop').remove();
-			$('body').removeClass('r-calendar-modal-open');
+		closeModalWindow: function(event) {
+			$(event.target).closest('.r-calendar-modal').remove();
+
+			if($('body').find('.r-calendar-modal').length == 0) {
+				$('body').find('.r-calendar-modal-backdrop').remove();
+				$('body').removeClass('r-calendar-modal-open');
+			}
 		},
 		
 		// Функция отрисовывает предыдущий временной период
