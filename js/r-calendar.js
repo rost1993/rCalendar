@@ -583,7 +583,7 @@
 			$(modal).find('#btnCloseModalWindow').on('click', rCalendar.closeModalWindow);
 			
 			$(modal).find('#btnRemoveEvent').unbind();
-			$(modal).find('#btnRemoveEvent').on('click', rCalendar.remove);
+			$(modal).find('#btnRemoveEvent').on('click', { rCalendar : rCalendar }, rCalendar.remove);
 
 			$('body').append(modal);
 			if(!$('body').is('.r-calendar-modal-backdrop'))
@@ -802,8 +802,16 @@
 		},
 		
 		// Функция удаления бронирования
-		remove: function() {
-			alert(123);
+		remove: function(event) {
+			var rCalendar = event.data.rCalendar;
+			var modalWindow = $(this).closest('.r-calendar-modal');
+
+			if($(this).data('id') === undefined)
+				return;
+			
+			var idReservation = $(this).data('id');
+			var query = JSON.stringify({ "action" : "delete", "idReservation" : idReservation });
+			rCalendar.ajaxQuery(rCalendar, modalWindow, query, rCalendar.ajaxStatusSuccess, rCalendar.ajaxStatusError);
 		},
 		
 		/*
