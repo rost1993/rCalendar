@@ -172,7 +172,7 @@
 		_renderingWidgetMonths: function() {
 			// Текущая дата
 			var now = new Date();
-			
+
 			// Дата по которой надо строить календарь
 			var mainDate = this.opts.startDay;
 			if(mainDate === undefined)
@@ -250,13 +250,13 @@
 			for(var i = 0; i < 6; i++) {
 				tbody.append("<div class='r-calendar-week-" + i + "'>" + 
 				"<div class='r-calendar-day number-week' style='width: 5%;'>" + (firstWeek++) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span><span class='r-calendar-badge'>События: 2</span></div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][2]['value'] + "</span></div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][3]['value'] + "</span></div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][4]['value'] + "</span></div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][5]['class'] + "' data-date='" + daysRCalendar[i][5]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][5]['value'] + "</span></div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][6]['class'] + "' data-date='" + daysRCalendar[i][6]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][6]['value'] + "</span></div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][0]['class'] + "' data-date='" + daysRCalendar[i][0]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][0]['value'] + "</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][1]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][2]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][2]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][3]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][3]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][4]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][4]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][5]['class'] + "' data-date='" + daysRCalendar[i][5]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][5]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][5]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][6]['class'] + "' data-date='" + daysRCalendar[i][6]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][6]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][6]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][0]['class'] + "' data-date='" + daysRCalendar[i][0]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][0]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][0]['date']) + "</div>" +
 				"</div>");
 			}
 			tbody.append("</div>");		
@@ -351,6 +351,34 @@
 			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').unbind();
 			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', { mode : "add" }, this.showModalWindow);
 		},
+		
+		// Генерация событий на текущую дату
+		getEventsCurrentDate: function(date) {
+			if(date == '0000-00-00')
+				return "";
+			
+			var dd = this.getDateToNormalFormat(date);
+			dd = this.getObjectDate(dd);
+			var countEvents = 0;
+			var htmlBadgeEvents = "";
+			
+			try {
+				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
+				for(var item in arrayDataEvents) {
+					var startDate = this.getObjectDate(arrayDataEvents[item]['startDate']);
+					var endDate = this.getObjectDate(arrayDataEvents[item]['endDate']);
+
+					if((dd >= startDate) && (dd <= endDate))
+						countEvents += 1;
+				}
+				
+				if(Number(countEvents) > 0)
+					htmlBadgeEvents = "<span class='r-calendar-badge'>События:&nbsp;" + String(countEvents) + "</span>";
+			} catch {
+				htmlBadgeEvents = "";
+			}
+			return htmlBadgeEvents;
+		},			
 		
 		// Обновление HTML кода календаря
 		update: function() {
@@ -596,7 +624,7 @@
 		showModalWindowListEvents: function(date) {
 			if(date === undefined)
 				return;
-			
+
 			var selectedDate = this.getDateToNormalFormat(date);
 			//var html = "";
 
@@ -818,6 +846,7 @@
 		
 		// Функция возвращения JS объекта даты
 		// Принимает на вход данные в формате string даты и возвращает объект Data
+		// Флаг flgAddMount отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
 		getObjectDate: function(stringDate) {
 			var temp = this.getDateToNormalFormat(stringDate, false);
 			var objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
@@ -916,8 +945,8 @@
 		},
 
 		// Конвертация данных в человеческий вид
-		// Флаг addMonth отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
-		getDateToNormalFormat: function(date, addMonth) {
+		// Флаг flgAddMount отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
+		getDateToNormalFormat: function(date, flgAddMount) {
 			var year, month, day;
 			if(String(date).indexOf('-') != -1) {
 				var temp = String(date).split('-');
@@ -935,7 +964,7 @@
 					return "00.00.0000";
 			}
 
-			if(addMonth === undefined || addMonth === true)
+			if(flgAddMount === undefined || flgAddMount === true)
 				month = Number(month) + 1;
 			month = (String(month).length == 2) ? month : '0' + String(month);
 			day = (String(day).length == 2) ? day : '0' + String(day);
