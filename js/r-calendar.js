@@ -301,13 +301,13 @@
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-week'>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hours[i] + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[0] + "'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[1] + "'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[2] + "'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[3] + "'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[4] + "'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[5] + "'></div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[6] + "'></div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[0] + "'>" + this.getEventsCurrentDate(arrayDate[0], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[1] + "'>" + this.getEventsCurrentDate(arrayDate[1], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[2] + "'>" + this.getEventsCurrentDate(arrayDate[2], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[3] + "'>" + this.getEventsCurrentDate(arrayDate[3], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[4] + "'>" + this.getEventsCurrentDate(arrayDate[4], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[5] + "'>" + this.getEventsCurrentDate(arrayDate[5], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[6] + "'>" + this.getEventsCurrentDate(arrayDate[6], this.loc.hours[i]) + "</div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -336,9 +336,11 @@
 			
 			var tbody = $("<div class='r-calendar-body'>");
 			for(var i = 0; i < 24; i++) {
+				var currentTime = this.loc.hours[i];
+				var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
 				tbody.append("<div class='r-calendar-daytime'>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hours[i] + "</div>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate() + "'></div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10' data-time='" + currentTime + "'>" + currentTime + "</div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + currentDate + "'>" + this.getEventsCurrentDate(currentDate, currentTime) + "</div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -353,27 +355,37 @@
 		},
 		
 		// Генерация событий на текущую дату
-		getEventsCurrentDate: function(date) {
+		getEventsCurrentDate: function(date, time) {
 			if(date == '0000-00-00')
 				return "";
 			
 			var dd = this.getDateToNormalFormat(date);
-			dd = this.getObjectDate(dd);
+			dd = this.getObjectDate(dd, time);
 			var countEvents = 0;
 			var htmlBadgeEvents = "";
-			
+
 			try {
 				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
 				for(var item in arrayDataEvents) {
-					var startDate = this.getObjectDate(arrayDataEvents[item]['startDate']);
-					var endDate = this.getObjectDate(arrayDataEvents[item]['endDate']);
+					var startDate, endDate;
+					
+					if(this.opts.view == 'weeks' || this.opts.view == 'days') {
+						var time1 = arrayDataEvents[item]['startDateHour'] + ":" + arrayDataEvents[item]['startDateMinute'];
+						var time2 = arrayDataEvents[item]['endDateHour'] + ':' + arrayDataEvents[item]['endDateMinute'];
+					//	alert(time1 + " : " + time2);
+						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
+						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
+					} else {
+						startDate = this.getObjectDate(arrayDataEvents[item]['startDate']);
+						endDate = this.getObjectDate(arrayDataEvents[item]['endDate']);
+					}
 
 					if((dd >= startDate) && (dd <= endDate))
 						countEvents += 1;
 				}
 				
 				if(Number(countEvents) > 0)
-					htmlBadgeEvents = "<span class='r-calendar-badge'>События:&nbsp;" + String(countEvents) + "</span>";
+					htmlBadgeEvents = "<span class='r-calendar-badge' title='Нажмите чтобы отобразить события'>События:&nbsp;" + String(countEvents) + "</span>";
 			} catch {
 				htmlBadgeEvents = "";
 			}
@@ -847,9 +859,19 @@
 		// Функция возвращения JS объекта даты
 		// Принимает на вход данные в формате string даты и возвращает объект Data
 		// Флаг flgAddMount отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
-		getObjectDate: function(stringDate) {
+		getObjectDate: function(stringDate, timeString) {
 			var temp = this.getDateToNormalFormat(stringDate, false);
-			var objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
+			var objectDate;
+			
+			if((timeString !== undefined) && (String(timeString).length > 0)) {
+				var time_split = String(timeString).split(':');
+				if(time_split < 2)
+					objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
+				else
+					objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2), time_split[0], time_split[1]);
+			} else {
+				objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
+			}
 			return objectDate;
 		},
 		
@@ -1065,7 +1087,7 @@
 			months: ['ЯНВАРЬ', 'ФЕВРАЛЬ', 'МАРТ', 'АПРЕЛЬ', 'МАЙ', 'ИЮНЬ', 'ИЮЛЬ', 'АВГУСТ', 'СЕНТЯБРЬ', 'ОКТЯБРЬ', 'НОЯБРЬ', 'ДЕКАБРЬ'],
 			months2: ['ЯНВАРЯ', 'ФЕВРАЛЯ', 'МАРТА', 'АПРЕЛЯ', 'МАЯ', 'ИЮНЯ', 'ИЮЛЯ', 'АВГУСТА', 'СЕНТЯБРЯ', 'ОКТЯБРЯ', 'НОЯБРЯ', 'ДЕКАБРЯ'],
 			monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-			hours: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+			hours: ['00:00', '01:01', '02:01', '03:01', '04:01', '05:01', '06:01', '07:01', '08:01', '09:01', '10:01', '11:01', '12:01', '13:01', '14:01', '15:01', '16:01', '17:01', '18:01', '19:01', '20:01', '21:01', '22:01', '23:01'],
 			today: 'Сегодня',
 			time: 'Время',
 			month: 'Месяц',
