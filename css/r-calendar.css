@@ -245,9 +245,11 @@
 }
 
 .r-calendar-badge {
-	display: inline-block;
+	#display: inline-block;
+	display:block;
 	padding: 0.25em 0.4em;
-	width: 95%;
+	#width: 95%;
+	width: 80%;
 	font-size: 75%;
 	font-weight: 700;
 	line-height: 1;
@@ -260,7 +262,10 @@
 	padding-left: 0.6em;
 	border-radius: 10rem;
 	color: #fff;
-	background-color: #007bff;
+	background-color: #4682B4;
+	margin-left: auto;
+    margin-right: auto;
+	#background-color: #007bff;
 }
 
 @media (min-width: 576px) {

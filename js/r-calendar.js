@@ -250,7 +250,7 @@
 			for(var i = 0; i < 6; i++) {
 				tbody.append("<div class='r-calendar-week-" + i + "'>" + 
 				"<div class='r-calendar-day number-week' style='width: 5%;'>" + (firstWeek++) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span><span class='r-calendar-badge'>2 события</span></div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span><span class='r-calendar-badge'>События: 2</span></div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][2]['value'] + "</span></div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][3]['value'] + "</span></div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][4]['value'] + "</span></div>" +
@@ -444,6 +444,7 @@
 					startDateHour = startDateMinute = endDateHour = endDateMinute = '00';
 				}
 
+				endDate = startDate;
 				idReservation = -1;
 			} else if(event.data.mode == "update") {
 				
@@ -705,9 +706,29 @@
 				$(this).val((Number(x) > Number($(this).prop('max'))) ? $(this).prop('max'): (x == 0) ? '' : x);
 		},
 		
+		// Проверка даты на корректность
+		// Дата в формате dd.mm.yyyy
+		checkValueDate: function(date) {
+			if(String(date).length == 0)
+				return true;
+
+			if(String(date).length < 10)
+				return false;
+
+			var dd_split = String(date).split('.');
+			if(dd_split.length < 3)
+				return false;
+
+			dd_split[1] -= 1;
+			var dd = new Date(dd_split[2], dd_split[1], dd_split[0]);
+			if((dd.getFullYear() == dd_split[2]) && (dd.getMonth() == dd_split[1]) && (dd.getDate() == dd_split[0]))
+				return true;
+			else
+				return false;
+		},
+		
 		// Функция проверка вводимых данных пользователем
-		saveCheckData: function(modalWindow) {
-			
+		saveCheckData: function(modalWindow, rCalendar) {
 			var flgCheck = true;
 			var messageError = '';
 			var arrSaveItem = {};
@@ -738,26 +759,44 @@
 						}
 					}
 					
+					if($(this).data('datatype') == 'date') {
+						if(!rCalendar.checkValueDate($(this).val())) {
+							messageError = "Неверный формат даты";
+							$(this).addClass('r-calendar-field-error');
+							flgCheck = false;
+							return false;
+						}
+					}
+					
 					var nameItem = $(this).prop('id');
-					var arrayTemp = {};
+					var arrayTemp = '';
 					
 					if($(this).prop('type') == 'CHECKBOX')
-						arrayTemp['value'] = $(this).prop('checked');
+						arrayTemp = $(this).prop('checked');
 					else
-						arrayTemp['value'] = $(this).val().trim().toUpperCase();
+						arrayTemp = $(this).val().trim().toUpperCase();
 
 					arrSaveItem[nameItem] = arrayTemp;
 				} else {
 					var nameItem = $(this).prop('id');
-					var arrayTemp = {};
+					var arrayTemp = '';
 					
 					if($(this).prop('tagName').toUpperCase() == 'SELECT') {
 						arrayTemp['value'] = $(this).val();
 					} else {
 						if(($(this).prop('type').toUpperCase() == 'CHECKBOX') || ($(this).prop('type').toUpperCase() == 'RADIO'))
-							arrayTemp['value'] = $(this).prop('checked');
+							arrayTemp = $(this).prop('checked');
 						else
-							arrayTemp['value'] = $(this).val().trim().toUpperCase();
+							arrayTemp = $(this).val().trim().toUpperCase();
+					}
+					
+					if($(this).data('datatype') == 'date') {
+						if(!rCalendar.checkValueDate($(this).val())) {
+							messageError = "Неверный формат даты";
+							$(this).addClass('r-calendar-field-error');
+							flgCheck = false;
+							return false;
+						}
 					}
 
 					arrSaveItem[nameItem] = arrayTemp;
@@ -791,7 +830,7 @@
 			var modalWindow = $(this).closest('.r-calendar-modal');
 			
 			var arrSaveItem = {};
-			var resultCollectionsItems = rCalendar.saveCheckData($(this).closest('.r-calendar-modal'));
+			var resultCollectionsItems = rCalendar.saveCheckData($(this).closest('.r-calendar-modal'), rCalendar);
 			if(resultCollectionsItems[0]) {
 				arrSaveItem = resultCollectionsItems[1];
 			} else {
