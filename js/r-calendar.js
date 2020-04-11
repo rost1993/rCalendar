@@ -44,6 +44,7 @@
 			this._renderingToolBar();
 			this._renderingWidget();
 			this._bindEvents();
+			//this._renderingLoader();
 		},
 		
 		// Установка локали для языка
@@ -394,9 +395,11 @@
 		
 		// Обновление HTML кода календаря
 		update: function() {
+			this._renderingLoader();
 			this._renderingToolBar();
 			this._renderingWidget();
 			this._bindEvents();
+			//this._renderingLoader();
 		},
 		
 		// Переключение на режим отображения "месяц"
@@ -1064,6 +1067,33 @@
 			rCalendar.opts.startDay = new Date();
 			rCalendar.update();
 		},
+	
+		// Отрисовка загрузчика
+		_renderingLoader: function() {
+			
+			var loader_block = $("<div class='r-calendar-loader'></div>");
+			var loader = $("<div id='floatingCirclesG'>"
+					+ "<div class='f_circleG' id='frotateG_01'></div>"
+					+ "<div class='f_circleG' id='frotateG_02'></div>"
+					+ "<div class='f_circleG' id='frotateG_03'></div>"
+					+ "<div class='f_circleG' id='frotateG_04'></div>"
+					+ "<div class='f_circleG' id='frotateG_05'></div>"
+					+ "<div class='f_circleG' id='frotateG_06'></div>"
+					+ "<div class='f_circleG' id='frotateG_07'></div>"
+					+ "<div class='f_circleG' id='frotateG_08'></div>"
+					+ "</div>");
+			
+			$(loader_block).append(loader);
+
+			if(this.$el.is('r-calendar-loader')){
+				this.$el.removeClass('r-calendar-modal-open');
+				this.$el.find('.r-calendar-loader').remove();
+			} else {
+				this.$el.addClass('r-calendar-modal-open');
+				this.$el.append(loader_block);
+			}
+		},
+	
 	};
 	
 	$.fn.rCalendar = function(options) {
