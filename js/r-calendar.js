@@ -300,7 +300,7 @@
 			var tbody = $("<div class='r-calendar-body'>");
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-week'>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hours[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hoursWidget[i] + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[0] + "'>" + this.getEventsCurrentDate(arrayDate[0], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[1] + "'>" + this.getEventsCurrentDate(arrayDate[1], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[2] + "'>" + this.getEventsCurrentDate(arrayDate[2], this.loc.hours[i]) + "</div>"
@@ -339,7 +339,7 @@
 				var currentTime = this.loc.hours[i];
 				var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
 				tbody.append("<div class='r-calendar-daytime'>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10' data-time='" + currentTime + "'>" + currentTime + "</div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10' data-time='" + currentTime + "'>" + this.loc.hoursWidget[i] + "</div>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + currentDate + "'>" + this.getEventsCurrentDate(currentDate, currentTime) + "</div>"
 					+ "</div>");
 			}
@@ -385,7 +385,7 @@
 				}
 				
 				if(Number(countEvents) > 0)
-					htmlBadgeEvents = "<span class='r-calendar-badge' title='Нажмите чтобы отобразить события'>События:&nbsp;" + String(countEvents) + "</span>";
+					htmlBadgeEvents = "<span class='r-calendar-badge' title='" + this.loc.titleEvents + "'>" + this.loc.events + ":&nbsp;" + String(countEvents) + "</span>";
 			} catch {
 				htmlBadgeEvents = "";
 			}
@@ -505,7 +505,7 @@
 				
 				idReservation = (event.data.arrayEvent['id'] === undefined) ? -1 : event.data.arrayEvent['id'];
 				
-				btnRemoveEvent = "<button type='button' class='btn btn-warning' id='btnRemoveEvent' data-id='" + idReservation + "' style='margin-right: 10px;'>Удалить</button>";
+				btnRemoveEvent = "<button type='button' class='btn btn-warning' id='btnRemoveEvent' data-id='" + idReservation + "' style='margin-right: 10px;'>" + rCalendar.loc.textButtonDelete + "</button>";
 			} else {
 				return;
 			}
@@ -559,41 +559,41 @@
 			var modal = $("<div class='r-calendar-modal r-calendar-modal-show'>"
 			+ "<div class='r-calendar-modal-dialog r-calendar-modal-dialog-centered'>"
 				+ "<div class='r-calendar-modal-content'>"
-					+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Бронирование стола</div><button class='r-calendar-close'>&times;</button></div>"
+					+ "<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>" + rCalendar.loc.textBookingTable + "</div><button class='r-calendar-close'>&times;</button></div>"
 					+ "<div class='r-calendar-modal-body'>"
 					
 						+ "<div class='r-calendar-form-row'>"
-							+ "<label class='r-calendar-label-form'>Начало бронирования</label>"
+							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textStartDateBooking + "</label>"
 							+ "<input type='text' class='r-calendar-form-control' id='startDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + startDate + "' data-mandatory='true' data-datatype='date'>"
-								+ "<span class='r-calendar-input-group-text'>ч.</span>"
+								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortHour + "</span>"
 								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + startDateHour + "' data-mandatory='true' data-datatype='number'>"
-								+ "<span class='r-calendar-input-group-text'>м.</span>"
+								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortMinute + "</span>"
 							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + startDateMinute + "' data-mandatory='true' data-datatype='number'>"
 						+ "</div>"
 						
 						+ "<div class='r-calendar-form-row'>"
-							+ "<label class='r-calendar-label-form'>Окончание бронирования</label>"
+							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textEndDateBooking + "</label>"
 							+ "<input type='text' class='r-calendar-form-control' id='endDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + endDate + "' data-mandatory='true' data-datatype='date'>"
-								+ "<span class='r-calendar-input-group-text'>ч.</span>"
+								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortHour + "</span>"
 								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + endDateHour + "' data-mandatory='true' data-datatype='number'>"
-								+ "<span class='r-calendar-input-group-text'>м.</span>"
+								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortMinute + "</span>"
 							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + endDateMinute + "' data-mandatory='true' data-datatype='number'>"
 						+ "</div>"
 					
 						+ "<div class='r-calendar-form-row'>"
-							+ "<label class='r-calendar-label-form'>Название бронирования</label>"
+							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textNameBooking + "</label>"
 							+ "<input type='text' class='r-calendar-form-control' id='nameReservation' data-mandatory='true' data-datatype='char' value='" + nameReservation + "'>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
-							+ "<label class='r-calendar-label-form'>Номер стола</label>"
+							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textNumberTableBooking + "</label>"
 							+ "<select class='r-calendar-form-control' id='numberTableReservation' data-datatype='number'>" + selectTableList + "</select>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
-							+ "<label class='r-calendar-label-form'>Клиенты</label>"
+							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textCustomerBookig + "</label>"
 							+ "<select class='r-calendar-form-control' id='customerReservation' data-datatype='number'>" + selectCustomerList + "</select>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
-							+ "<label class='r-calendar-label-form'>Комментарий</label>"
+							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textCommentBookig + "</label>"
 							+ "<textarea class='r-calendar-form-control' rows='3' id='commentReservation' data-datatype='char'>" + commentReservation + "</textarea>"
 						+ "</div>"
 						
@@ -603,9 +603,9 @@
 						
 					+ "</div>"
 					+ "<div class='r-calendar-modal-footer'>"
-						+ "<button class='btn btn-success' id='btnSaveData' data-id='" + idReservation + "' style='margin-right: 10px;'>Сохранить</button>"
+						+ "<button class='btn btn-success' id='btnSaveData' data-id='" + idReservation + "' style='margin-right: 10px;'>" + rCalendar.loc.textButtonSave + "</button>"
 						+ btnRemoveEvent
-						+ "<button class='btn btn-danger' id='btnCloseModalWindow'>Закрыть</button>"
+						+ "<button class='btn btn-danger' id='btnCloseModalWindow'>" + rCalendar.loc.textButtonClose + "</button>"
 					+ "</div>"
 				+ "</div>"
 			+ "</div>"
@@ -644,12 +644,12 @@
 				
 			var table_events = $("<table class='table table-sm table-bordered text-center table-hover'></table>");
 			var thead = $("<thead><tr>"
-				+ "<th>№ п/п</th>"
-				+ "<th>Начало</th>"
-				+ "<th>Окончание</th>"
-				+ "<th>Название</th>"
-				+ "<th>№ стола</th>"
-				+ "<th>Клиент</th>"
+				+ "<th>" + this.loc.textTable1 + "</th>"
+				+ "<th>" + this.loc.textTable2 + "</th>"
+				+ "<th>" + this.loc.textTable3 + "</th>"
+				+ "<th>" + this.loc.textTable4 + "</th>"
+				+ "<th>" + this.loc.textTable5 + "</th>"
+				+ "<th>" + this.loc.textTable6 + "</th>"
 				+ "</tr></thead>");
 			var tbody = $("<tbody></tbody>");
 
@@ -680,8 +680,8 @@
 			var modal = $("<div class='r-calendar-modal r-calendar-modal-show'></div>");
 			var modal_dialog = $("<div class='r-calendar-modal-dialog-2 r-calendar-modal-dialog-centered'></div>");
 			var modal_content = $("<div class='r-calendar-modal-content'></div>");
-			var modal_header = $("<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>Список бронирований на&nbsp;" + selectedDate + "</div><button class='r-calendar-close'>&times;</button></div>");
-			var modal_footer = $("<div class='r-calendar-modal-footer'><button class='btn btn-danger' id='btnCloseModalWindow'>Закрыть</button></div>");
+			var modal_header = $("<div class='r-calendar-modal-header'><div class='r-calendar-modal-title'>" + this.loc.textBookingEventsList + "&nbsp;" + selectedDate + "</div><button class='r-calendar-close'>&times;</button></div>");
+			var modal_footer = $("<div class='r-calendar-modal-footer'><button class='btn btn-danger' id='btnCloseModalWindow'>" + this.loc.textButtonClose + "</button></div>");
 
 			$(modal_content).append(modal_header);
 			$(modal_content).append(modal_body);
@@ -1087,12 +1087,34 @@
 			months: ['ЯНВАРЬ', 'ФЕВРАЛЬ', 'МАРТ', 'АПРЕЛЬ', 'МАЙ', 'ИЮНЬ', 'ИЮЛЬ', 'АВГУСТ', 'СЕНТЯБРЬ', 'ОКТЯБРЬ', 'НОЯБРЬ', 'ДЕКАБРЬ'],
 			months2: ['ЯНВАРЯ', 'ФЕВРАЛЯ', 'МАРТА', 'АПРЕЛЯ', 'МАЯ', 'ИЮНЯ', 'ИЮЛЯ', 'АВГУСТА', 'СЕНТЯБРЯ', 'ОКТЯБРЯ', 'НОЯБРЯ', 'ДЕКАБРЯ'],
 			monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+			hoursWidget: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
 			hours: ['00:00', '01:01', '02:01', '03:01', '04:01', '05:01', '06:01', '07:01', '08:01', '09:01', '10:01', '11:01', '12:01', '13:01', '14:01', '15:01', '16:01', '17:01', '18:01', '19:01', '20:01', '21:01', '22:01', '23:01'],
 			today: 'Сегодня',
 			time: 'Время',
 			month: 'Месяц',
 			week: 'Неделя',
-			day: 'День'
+			day: 'День',
+			events: 'События',
+			titleEvents: 'Нажмите чтобы отобразить события',
+			textStartDateBooking: 'Начало бронирования',
+			textEndDateBooking: 'Окончание бронирования',
+			textNameBooking: 'Название бронирования',
+			textNumberTableBooking: 'Номер стола',
+			textCustomerBookig: 'Клиенты',
+			textCommentBookig: 'Комментарий',
+			textShortHour: 'ч.',
+			textShortMinute: 'м.',
+			textBookingTable: 'Бронирование стола',
+			textButtonSave: 'Сохранить',
+			textButtonDelete: 'Удалить',
+			textButtonClose: 'Закрыть',
+			textTable1: '№ п/п',
+			textTable2: 'Начало',
+			textTable3: 'Окончание',
+			textTable4: 'Название',
+			textTable5: '№ стола',
+			textTable6: 'Клиент',
+			textBookingEventsList: 'Список бронирований на'
 		},
 		
 		en: {
@@ -1101,12 +1123,34 @@
 			months: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'],
 			months2: ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'],
 			monthsShort: ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'],
+			hoursWidget: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
 			hours: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
 			today: 'Today',
 			time: 'Time',
 			month: 'Month',
 			week: 'Week',
-			day: 'Day'
+			day: 'Day',
+			events: 'Events',
+			titleEvents: 'Click to display events',
+			textStartDateBooking: 'Start date booking',
+			textEndDateBooking: 'End date booking',
+			textNameBooking: 'Name booking',
+			textNumberTableBooking: 'Table number',
+			textCustomerBookig: 'Customer',
+			textCommentBookig: 'Comment',
+			textShortHour: 'h.',
+			textShortMinute: 'm.',
+			textBookingTable: 'Booking a table',
+			textButtonSave: 'Save',
+			textButtonDelete: 'Delete',
+			textButtonClose: 'Close',
+			textTable1: '№',
+			textTable2: 'Start',
+			textTable3: 'End',
+			textTable4: 'Name',
+			textTable5: '№ table',
+			textTable6: 'Customer',
+			textBookingEventsList: 'List of booking on'
 		}
 	};
 	
