@@ -837,6 +837,12 @@
 				$(this).closest('.r-calendar-modal').find('.r-calendar-modal-text-error').html(resultCollectionsItems[1]);
 				return;
 			}
+			
+			// ID Reservation
+			arrSaveItem["idReservation"] = String($(this).data('id'));
+			
+			// Action 
+			arrSaveItem["action"] = (Number($(this).data('id')) == -1) ? "insert" : "update";
 			rCalendar.ajaxQuery(rCalendar, modalWindow, JSON.stringify(arrSaveItem), rCalendar.ajaxStatusSuccess, rCalendar.ajaxStatusError);
 		},
 		
