@@ -34,4 +34,5 @@
 					"customerReservation" => "3-й клиент",
 					"commentReservation" => "Комментарий"));
 	
+	sleep(1);
 	echo json_encode(array('OK', json_encode($array1)));

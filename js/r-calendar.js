@@ -146,6 +146,7 @@
 			rCalendarToolbar.append(rCalendarToolbarRightBlock);
 	
 			rCalendarToolbar.append("</div>");
+			this.$el.find('.r-calendar-toolbar').remove();
 			rCalendarToolbar.appendTo(this.$el);
 		},
 		
@@ -264,6 +265,7 @@
 			tbody.append("</div>");		
 			rCalendarWidget.append(tbody);
 			rCalendarWidget.append("</div>");
+			this.$el.find('.r-calendar-widget').remove();
 			rCalendarWidget.appendTo(this.$el);
 		},
 		
@@ -313,7 +315,7 @@
 			}
 			tbody.append("</div>");
 			rCalendarWidget.append(tbody);
-			
+			this.$el.find('.r-calendar-widget').remove();
 			rCalendarWidget.appendTo(this.$el);
 		},
 		
@@ -346,6 +348,7 @@
 			}
 			tbody.append("</div>");
 			rCalendarWidget.append(tbody);
+			this.$el.find('.r-calendar-widget').remove();
 			rCalendarWidget.appendTo(this.$el);
 		},
 		
@@ -359,19 +362,16 @@
 		// Осуществляется 
 		update: function() {
 			var rCalendar = this;
+			this._renderingLoader();
 			this.getEventsFromDatabase(this.ajaxGetEventsSuccess);
 		},
 		
 		// Обновление HTML кода календаря
 		renderingRCalendar: function() {
-			var rCalendar = this;
-			rCalendar.$el.empty();
-			this._renderingLoader(function() {
-				rCalendar._renderingToolBar();
-				rCalendar._renderingWidget();
-				rCalendar._bindEvents();
-				rCalendar._renderingLoader();
-			});
+			this._renderingToolBar();
+			this._renderingWidget();
+			this._bindEvents();
+			this._renderingLoader();
 		},
 		
 		// Переключение на режим отображения "месяц"
