@@ -371,9 +371,8 @@
 					var startDate, endDate;
 					
 					if(this.opts.view == 'weeks' || this.opts.view == 'days') {
-						var time1 = arrayDataEvents[item]['startDateHour'] + ":" + arrayDataEvents[item]['startDateMinute'];
-						var time2 = arrayDataEvents[item]['endDateHour'] + ':' + arrayDataEvents[item]['endDateMinute'];
-					//	alert(time1 + " : " + time2);
+						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute'] );
+						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
 						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
 						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
 					} else {
@@ -718,8 +717,8 @@
 					var dateStart, dateEnd;
 					
 					if(this.opts.view == 'weeks' || this.opts.view == 'days') {
-						var time1 = arrayDataEvents[item]['startDateHour'] + ':' + arrayDataEvents[item]['startDateMinute'];
-						var time2 = arrayDataEvents[item]['endDateHour'] + ':' + arrayDataEvents[item]['endDateMinute'];
+						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute']);
+						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
 						var dateStart = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
 						var dateEnd = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
 					} else {
