@@ -73,21 +73,25 @@
 			
 			var rCalendarToolbar = $("<div class='r-calendar-toolbar'>");
 			
-			var rCalendarToolbarLeftBlock = $("<div class='r-calendar-toolbar-right r-calendar-group-btn'>");
-			rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn' id='btnBeforeDate' data-period='' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'><</button>");
-			rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn' id='btnAfterDate' data-period='' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'>></button>");
-	
-			rCalendarToolbarLeftBlock.append("<button class='btn btn-sm r-calendar-btn r-calendar-btn-today' id='btnNowDate' data-period='' data-year='" + now.getFullYear() + "' data-month='" + now.getMonth() + "' data-day='" + now.getDate() + "' type='button'>" + this.loc.today + "</button>");
-			rCalendarToolbarLeftBlock.append("</div>");
+			var rCalendarToolbarLeftBlock = $("<div class='r-calendar-toolbar-left'></div>");
+			var btnLeftGroup = $("<div class='btn-group' role='group'></div>");
+			var btnPrev = $("<button class='btn btn-sm r-calendar-btn' id='btnBeforeDate' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'>&lt;</button>");
+			var btnNext = $("<button class='btn btn-sm r-calendar-btn' id='btnAfterDate' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'>&gt;</button>");
+			var btnToday = $("<button class='btn btn-sm r-calendar-btn r-calendar-btn-today' id='btnNowDate' data-year='" + now.getFullYear() + "' data-month='" + now.getMonth() + "' data-day='" + now.getDate() + "' type='button'>" + this.loc.today + "</button>");
 			
-			rCalendarToolbarLeftBlock.find('#btnBeforeDate').unbind();
-			rCalendarToolbarLeftBlock.find('#btnBeforeDate').on('click', this.prev);
-			rCalendarToolbarLeftBlock.find('#btnAfterDate').unbind();
-			rCalendarToolbarLeftBlock.find('#btnAfterDate').on('click', this.next);
-			
-			rCalendarToolbarLeftBlock.find('#btnNowDate').unbind();
-			rCalendarToolbarLeftBlock.find('#btnNowDate').on('click', this.today);
-			
+			$(btnPrev).unbind();
+			$(btnPrev).on('click', this.prev);
+
+			$(btnNext).unbind();
+			$(btnNext).on('click', this.next);
+
+			$(btnToday).unbind();
+			$(btnToday).on('click', this.today);
+
+			btnLeftGroup.append(btnPrev);
+			btnLeftGroup.append(btnToday);
+			btnLeftGroup.append(btnNext);
+			rCalendarToolbarLeftBlock.append(btnLeftGroup);
 			rCalendarToolbar.append(rCalendarToolbarLeftBlock);
 	
 			var rCalendarToolbarCenterBlock = $("<div class='r-calendar-toolbar-center'>");
@@ -129,20 +133,17 @@
 			var btnWeeks = $("<button class='btn btn-sm r-calendar-btn " + flgBtnGridWeek + "' type='button' id='btnGridWeek' data-period='week'>" + this.loc.week + "</button>");
 			var btnDays = $("<button class='btn btn-sm r-calendar-btn " + flgBtnGridDay + "' type='button' id='btnGridDay' data-period='day'>" + this.loc.day + "</button>");
 			
+			$(btnMonths).unbind();
+			$(btnMonths).on('click', this.selectMonth);
+			$(btnWeeks).unbind();
+			$(btnWeeks).on('click', this.selectWeek);
+			$(btnDays).unbind();
+			$(btnDays).on('click', this.selectDay);
+			
 			btnRightGroup.append(btnMonths);
 			btnRightGroup.append(btnWeeks);
 			btnRightGroup.append(btnDays);
 			rCalendarToolbarRightBlock.append(btnRightGroup);
-			
-			rCalendarToolbarRightBlock.find('#btnGridMonth').unbind();
-			rCalendarToolbarRightBlock.find('#btnGridMonth').on('click', this.selectMonth);
-			
-			rCalendarToolbarRightBlock.find('#btnGridWeek').unbind();
-			rCalendarToolbarRightBlock.find('#btnGridWeek').on('click', this.selectWeek);
-			
-			rCalendarToolbarRightBlock.find('#btnGridDay').unbind();
-			rCalendarToolbarRightBlock.find('#btnGridDay').on('click', this.selectDay);
-			
 			rCalendarToolbar.append(rCalendarToolbarRightBlock);
 	
 			rCalendarToolbar.append("</div>");
