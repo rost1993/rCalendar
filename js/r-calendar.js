@@ -41,10 +41,7 @@
 		// Инициализации начлаьного состояния календаря
 		init: function() {
 			this._defineLocale(this.opts.language);
-			this._renderingToolBar();
-			this._renderingWidget();
-			this._bindEvents();
-			//this._renderingLoader();
+			this.update();
 		},
 		
 		// Установка локали для языка
@@ -145,7 +142,7 @@
 			rCalendarToolbar.append(rCalendarToolbarRightBlock);
 	
 			rCalendarToolbar.append("</div>");
-			this.$el.html(rCalendarToolbar);
+			rCalendarToolbar.appendTo(this.$el);
 		},
 		
 		// Отрисовка основного содержимого календаря
@@ -263,7 +260,6 @@
 			tbody.append("</div>");		
 			rCalendarWidget.append(tbody);
 			rCalendarWidget.append("</div>");
-
 			rCalendarWidget.appendTo(this.$el);
 		},
 		
@@ -394,11 +390,14 @@
 		
 		// Обновление HTML кода календаря
 		update: function() {
-			//this._renderingLoader();
-			this._renderingToolBar();
-			this._renderingWidget();
-			this._bindEvents();
-			//this._renderingLoader();
+			this.$el.empty();
+			var rCalendar = this;			
+			this._renderingLoader(function() {
+				rCalendar._renderingToolBar();
+				rCalendar._renderingWidget();
+				rCalendar._bindEvents();
+				rCalendar._renderingLoader();
+			});
 		},
 		
 		// Переключение на режим отображения "месяц"
@@ -1079,9 +1078,9 @@
 		},
 	
 		// Отрисовка загрузчика
-		_renderingLoader: function() {
-			
-			var loader_block = $("<div class='r-calendar-loader'></div>");
+		// callback - функция обратного вызова
+		_renderingLoader: function(callback) {
+			var loaderBlock = $("<div class='r-calendar-loader'></div>");
 			var loader = $("<div id='floatingCirclesG'>"
 					+ "<div class='f_circleG' id='frotateG_01'></div>"
 					+ "<div class='f_circleG' id='frotateG_02'></div>"
@@ -1093,15 +1092,18 @@
 					+ "<div class='f_circleG' id='frotateG_08'></div>"
 					+ "</div>");
 			
-			$(loader_block).append(loader);
+			$(loaderBlock).append(loader);
 
-			if(this.$el.is('r-calendar-loader')){
+			if(this.$el.find('.r-calendar-loader').length > 0) {
 				this.$el.removeClass('r-calendar-modal-open');
 				this.$el.find('.r-calendar-loader').remove();
 			} else {
 				this.$el.addClass('r-calendar-modal-open');
-				this.$el.append(loader_block);
+				loaderBlock.appendTo(this.$el);
 			}
+			
+			if((callback != null) || (callback != undefined))
+				callback();
 		},
 	
 	};
