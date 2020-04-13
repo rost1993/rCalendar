@@ -181,19 +181,14 @@
 			if(mainDate === undefined)
 				mainDate = new Date();
 
-			var thead = $("<div class='r-calendar-thead'>");			
-
-			thead.append("<div class='r-calendar-thead-day' style='width:5%;'>#</div>");
-			
+			var thead = $("<div class='r-calendar-thead'></div>");			
+			thead.append($("<div class='r-calendar-thead-day' style='width:5%;'>#</div>"));
 			for(var i = 0; i < 7; i++)
-				thead.append("<div class='r-calendar-thead-day'>" + this.loc.daysShort[i] + "</div>");
-			thead.append("</div>");
-			
-			var rCalendarWidget = $("<div class='r-calendar-widget'>");
+				thead.append($("<div class='r-calendar-thead-day'>" + this.loc.daysShort[i] + "</div>"));
+
+			var rCalendarWidget = $("<div class='r-calendar-widget'></div>");
 			rCalendarWidget.append(thead);
-			
-			var tbody = $("<div class='r-calendar-body'>");
-			
+
 			// Проставляем номера недель
 			var firstMonthDay = new Date(mainDate.getFullYear(), mainDate.getMonth(), 1);
 			var lastMonthDay = new Date(mainDate.getFullYear(), mainDate.getMonth() + 1, 0);
@@ -250,8 +245,9 @@
 				} while(temp.getDay() != 0);
 			}
 
+			var tbody = $("<div class='r-calendar-body'></div>");
 			for(var i = 0; i < 6; i++) {
-				tbody.append("<div class='r-calendar-week-" + i + "'>" + 
+				tbody.append($("<div class='r-calendar-week-" + i + "'>" + 
 				"<div class='r-calendar-day number-week' style='width: 5%;'>" + (firstWeek++) + "</div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][1]['date']) + "</div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][2]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][2]['date']) + "</div>" +
@@ -260,11 +256,9 @@
 				"<div class='r-calendar-day " + daysRCalendar[i][5]['class'] + "' data-date='" + daysRCalendar[i][5]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][5]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][5]['date']) + "</div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][6]['class'] + "' data-date='" + daysRCalendar[i][6]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][6]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][6]['date']) + "</div>" +
 				"<div class='r-calendar-day " + daysRCalendar[i][0]['class'] + "' data-date='" + daysRCalendar[i][0]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][0]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][0]['date']) + "</div>" +
-				"</div>");
-			}
-			tbody.append("</div>");		
+				"</div>"));
+			}	
 			rCalendarWidget.append(tbody);
-			rCalendarWidget.append("</div>");
 			this.$el.find('.r-calendar-widget').remove();
 			rCalendarWidget.appendTo(this.$el);
 		},
@@ -286,23 +280,22 @@
 			} while(mainDate.getWeek() == tt.getWeek());
 			mainDate = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
 			
-			var rCalendarWidget = $("<div class='r-calendar-widget'>");
-			var thead = $("<div class='r-calendar-thead'>");
-			thead.append("<div class='r-calendar-week-grid-thead r-calendar-week-grid-10'>&nbsp;</div>");
+			var rCalendarWidget = $("<div class='r-calendar-widget'></div>");
+			var thead = $("<div class='r-calendar-thead'></div>");
+			thead.append($("<div class='r-calendar-week-grid-thead r-calendar-week-grid-10'>&nbsp;</div>"));
 			
 			var arrayDate = [];
 			
 			for(var i = 0; i < 7; i++) {
 				var tempDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), (mainDate.getDate() + i));
-				thead.append("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12'>" + this.loc.daysShort[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>");
+				thead.append($("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12'>" + this.loc.daysShort[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>"));
 				arrayDate[i] = tempDate.getFullYear() + "-" + tempDate.getMonth() + "-" + tempDate.getDate();
 			}
-			thead.append("</div>");
-			
+
 			rCalendarWidget.append(thead);
-			var tbody = $("<div class='r-calendar-body'>");
+			var tbody = $("<div class='r-calendar-body'></div>");
 			for(var i = 0; i < 24; i++) {
-				tbody.append("<div class='r-calendar-week'>"
+				var rCalendarWeek = $("<div class='r-calendar-week'>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hoursWidget[i] + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[0] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[0], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[1] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[1], this.loc.hours[i]) + "</div>"
@@ -312,8 +305,8 @@
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[5] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[5], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[6] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[6], this.loc.hours[i]) + "</div>"
 					+ "</div>");
+				tbody.append(rCalendarWeek);
 			}
-			tbody.append("</div>");
 			rCalendarWidget.append(tbody);
 			this.$el.find('.r-calendar-widget').remove();
 			rCalendarWidget.appendTo(this.$el);
@@ -329,7 +322,7 @@
 			if(mainDate === undefined)
 				mainDate = new Date();
 
-			var rCalendarWidget = $("<div class='r-calendar-widget'>");
+			var rCalendarWidget = $("<div class='r-calendar-widget'></div>");
 			var thead = $("<div class='r-calendar-thead'>"
 				+ "<div class='r-calendar-daytime-grid-thead r-calendar-daytime-grid-10'>" + this.loc.time + "</div>"
 				+ "<div class='r-calendar-daytime-grid-thead r-calendar-daytime-grid-90'>" + this.loc.days[mainDate.getDay()] + "</div>"
@@ -337,16 +330,15 @@
 			
 			rCalendarWidget.append(thead);
 			
-			var tbody = $("<div class='r-calendar-body'>");
+			var tbody = $("<div class='r-calendar-body'></div>");
 			for(var i = 0; i < 24; i++) {
 				var currentTime = this.loc.hours[i];
 				var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
-				tbody.append("<div class='r-calendar-daytime'>"
+				tbody.append($("<div class='r-calendar-daytime'>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10' data-time='" + currentTime + "'>" + this.loc.hoursWidget[i] + "</div>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + currentDate + "' data-time='" + currentTime + "'>" + this.getEventsCurrentDate(currentDate, currentTime) + "</div>"
-					+ "</div>");
+					+ "</div>"));
 			}
-			tbody.append("</div>");
 			rCalendarWidget.append(tbody);
 			this.$el.find('.r-calendar-widget').remove();
 			rCalendarWidget.appendTo(this.$el);
@@ -361,7 +353,6 @@
 		//Обновление данных (получение данных от сервера) и вызов перерисовки календаря
 		// Осуществляется 
 		update: function() {
-			var rCalendar = this;
 			this._renderingLoader();
 			this.getEventsFromDatabase(this.ajaxGetEventsSuccess);
 		},
