@@ -41,8 +41,7 @@
 		// Инициализации начлаьного состояния календаря
 		init: function() {
 			this._defineLocale(this.opts.language);
-			//this.update();
-			this.newUpdate();
+			this.update();
 		},
 		
 		// Установка локали для языка
@@ -356,15 +355,16 @@
 			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', { mode : "add" }, this.showModalWindow);
 		},
 		
-		newUpdate: function() {
+		//Обновление данных (получение данных от сервера) и вызов перерисовки календаря
+		// Осуществляется 
+		update: function() {
 			var rCalendar = this;
 			this.getEventsFromDatabase(this.ajaxGetEventsSuccess);
 		},
 		
 		// Обновление HTML кода календаря
-		update: function() {
+		renderingRCalendar: function() {
 			var rCalendar = this;
-//alert(this.opts.arrayDataEvents);
 			rCalendar.$el.empty();
 			this._renderingLoader(function() {
 				rCalendar._renderingToolBar();
@@ -852,18 +852,16 @@
 				callback();*/
 		},
 		
+		// Обработка результата выполнения запроса для получения списка бронирований с сервера
 		ajaxGetEventsSuccess: function(data, rCalendar) {
-			//alert();
-			var res = eval(data);
-			//alert(rCalendar.opts.arrayDataEvents);
-			var tt = JSON.parse(data);
-			//alert(Array.from(tt[1][0]));
-			if(res[0] == 'OK') {
-				//alert(res[1]);
-				rCalendar.opts.arrayDataEvents = res[1];
-				rCalendar.update();
-				//alert(rCalendar.opts.arrayDataEvents);
+			try {
+				var res = JSON.parse(data);
+				if(res[0] == 'OK')
+					rCalendar.opts.arrayDataEvents = res[1];
+			} catch {
+				rCalendar.opts.arrayDataEvents = [];
 			}
+			rCalendar.renderingRCalendar();
 		},
 		
 		ajaxGetEventsError: function(data) {
