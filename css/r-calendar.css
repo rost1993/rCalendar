@@ -14,17 +14,16 @@
 	filter: progid:DXImageTransform.Microsoft.shadow(direction=0, color=#808080, strength=10);
 }
 
+
 .r-calendar-toolbar {
 	display: flex;
 	display: -webkit-flex;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-
 	-webkit-align-items: center;
 	-webkit-flex-direction: row;
 	-webkit-justify-content: space-between;
-	
 	-ms-flex-direction: row;
 }
 
@@ -94,11 +93,9 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-
 	-webkit-align-items: center;
 	-webkit-flex-direction: row;
 	-webkit-justify-content: space-between;
-	
 	-ms-flex-direction: row;
 }
 
@@ -108,11 +105,9 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-
 	-webkit-align-items: center;
 	-webkit-flex-direction: row;
 	-webkit-justify-content: space-between;
-	
 	-ms-flex-direction: row;
 }
 
@@ -161,11 +156,9 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-
 	-webkit-align-items: center;
 	-webkit-flex-direction: row;
 	-webkit-justify-content: space-between;
-	
 	-ms-flex-direction: row;
 }
 
@@ -197,11 +190,9 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-
 	-webkit-align-items: center;
 	-webkit-flex-direction: row;
 	-webkit-justify-content: space-between;
-	
 	-ms-flex-direction: row;
 }
 
@@ -246,10 +237,8 @@
 }
 
 .r-calendar-badge {
-	#display: inline-block;
 	display:block;
 	padding: 0.25em 0.4em;
-	#width: 95%;
 	width: 80%;
 	font-size: 75%;
 	font-weight: 700;
@@ -266,7 +255,10 @@
 	background-color: #4682B4;
 	margin-left: auto;
     margin-right: auto;
-	#background-color: #007bff;
+}
+
+.r-calendar-toolbar-right {
+	margin-right: 10px;
 }
 
 @media (min-width: 576px) {
@@ -302,12 +294,15 @@
 	top: 0;
 	left: 0;
 	z-index: 1050;
-	#display: none;
 	display: block;
 	width: 100%;
 	height: 100%;
 	overflow: auto;
 	outline: 0;
+	font-family: sans-serif;
+	line-height: 1.15;
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 .r-calendar-modal-dialog {
@@ -439,17 +434,6 @@ button.r-calendar-close {
   overflow: hidden;
 }
 
-input,
-button,
-select,
-optgroup,
-textarea {
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-}
-
 textarea.r-calendar-form-control {
   height: auto;
 }
@@ -461,6 +445,9 @@ textarea.r-calendar-form-control {
   flex-wrap: wrap;
   margin-right: -5px;
   margin-left: -5px;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .r-calendar-label-form {
@@ -483,6 +470,7 @@ textarea.r-calendar-form-control {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  margin-bottom: 5px;
 }
 
 

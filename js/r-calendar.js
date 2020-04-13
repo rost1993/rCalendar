@@ -122,14 +122,17 @@
 		
 			rCalendarToolbarCenterBlock.append("</div>");
 			rCalendarToolbar.append(rCalendarToolbarCenterBlock);
-				
-			var rCalendarToolbarRightBlock = $("<div class='r-calendar-toolbar-left r-calendar-group-btn'>");
-			rCalendarToolbarRightBlock.append("<div class='btn-group' role='group'>");
-			rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridMonth + "' type='button' id='btnGridMonth' data-period='month'>" + this.loc.month + "</button>");
-			rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridWeek + "' type='button' id='btnGridWeek' data-period='week'>" + this.loc.week + "</button>");
-			rCalendarToolbarRightBlock.append("<button class='btn btn-sm r-calendar-btn " + flgBtnGridDay + "' type='button' id='btnGridDay' data-period='day'>" + this.loc.day + "</button>");
-			rCalendarToolbarRightBlock.append("</div>");
-			rCalendarToolbarRightBlock.append("</div>");
+			
+			var rCalendarToolbarRightBlock = $("<div class='r-calendar-toolbar-right'></div>");
+			var btnRightGroup = $("<div class='btn-group' role='group'></div>");
+			var btnMonths = $("<button class='btn btn-sm r-calendar-btn " + flgBtnGridMonth + "' type='button' id='btnGridMonth' data-period='month'>" + this.loc.month + "</button>");
+			var btnWeeks = $("<button class='btn btn-sm r-calendar-btn " + flgBtnGridWeek + "' type='button' id='btnGridWeek' data-period='week'>" + this.loc.week + "</button>");
+			var btnDays = $("<button class='btn btn-sm r-calendar-btn " + flgBtnGridDay + "' type='button' id='btnGridDay' data-period='day'>" + this.loc.day + "</button>");
+			
+			btnRightGroup.append(btnMonths);
+			btnRightGroup.append(btnWeeks);
+			btnRightGroup.append(btnDays);
+			rCalendarToolbarRightBlock.append(btnRightGroup);
 			
 			rCalendarToolbarRightBlock.find('#btnGridMonth').unbind();
 			rCalendarToolbarRightBlock.find('#btnGridMonth').on('click', this.selectMonth);
