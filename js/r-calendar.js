@@ -41,6 +41,7 @@
 		// Инициализации начлаьного состояния календаря
 		init: function() {
 			this._defineLocale(this.opts.language);
+			this.getEventsFromDatabase();
 			this.update();
 		},
 		
@@ -351,43 +352,6 @@
 			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', { mode : "add" }, this.showModalWindow);
 		},
 		
-		// Генерация событий на текущую дату
-		getEventsCurrentDate: function(date, time) {
-			if(date == '0000-00-00')
-				return "";
-			
-			var dd = this.getDateToNormalFormat(date);
-			dd = this.getObjectDate(dd, time);
-			var countEvents = 0;
-			var htmlBadgeEvents = "";
-
-			try {
-				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
-				for(var item in arrayDataEvents) {
-					var startDate, endDate;
-					
-					if(this.opts.view == 'weeks' || this.opts.view == 'days') {
-						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute'] );
-						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
-						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
-						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
-					} else {
-						startDate = this.getObjectDate(arrayDataEvents[item]['startDate']);
-						endDate = this.getObjectDate(arrayDataEvents[item]['endDate']);
-					}
-
-					if((dd >= startDate) && (dd <= endDate))
-						countEvents += 1;
-				}
-				
-				if(Number(countEvents) > 0)
-					htmlBadgeEvents = "<span class='r-calendar-badge' title='" + this.loc.titleEvents + "'>" + this.loc.events + ":&nbsp;" + String(countEvents) + "</span>";
-			} catch {
-				htmlBadgeEvents = "";
-			}
-			return htmlBadgeEvents;
-		},			
-		
 		// Обновление HTML кода календаря
 		update: function() {
 			this.$el.empty();
@@ -429,7 +393,72 @@
 			rCalendar.opts.view = 'days';
 			rCalendar.update();
 		},
-	
+
+
+
+
+		// Функция отрисовывает предыдущий временной период
+		prev: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			switch(rCalendar.opts.view) {
+				case 'months':
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() - 1), rCalendar.opts.startDay.getDate());
+					break;
+
+				case 'weeks':
+					var tt = rCalendar.opts.startDay;
+					do {
+						tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
+					} while(rCalendar.opts.startDay.getWeek() == tt.getWeek());
+					rCalendar.opts.startDay = tt;
+					break;
+				
+				case 'days':
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), rCalendar.opts.startDay.getMonth(), (rCalendar.opts.startDay.getDate() - 1));
+					break;
+				
+				default:
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() - 1), rCalendar.opts.startDay.getDate());
+					break;
+			}
+			rCalendar.update();
+		},
+		
+		// Функция отрисовывает следующий временной период
+		next: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			switch(rCalendar.opts.view) {
+				case 'months':
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() + 1), rCalendar.opts.startDay.getDate());
+					break;
+				
+				case 'weeks':
+					var tt = rCalendar.opts.startDay;
+					do {
+						tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
+					} while(rCalendar.opts.startDay.getWeek() == tt.getWeek());
+					rCalendar.opts.startDay = tt;
+					break;
+				
+				case 'days':
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), rCalendar.opts.startDay.getMonth(), (rCalendar.opts.startDay.getDate() + 1));
+					break;
+				
+				default:
+					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() + 1), rCalendar.opts.startDay.getDate());
+					break;
+			}
+			rCalendar.update();
+		},
+		
+		// Функция отрисовывает текущую дату
+		today: function() {
+			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+			rCalendar.opts.startDay = new Date();
+			rCalendar.update();
+		},
+		
+		
 		// Отрисовка модального окна
 		showModalWindow: function(event) {
 			
@@ -704,6 +733,55 @@
 				$('body').append($("<div class='r-calendar-modal-backdrop'></div>"));
 		},
 		
+		// Закрытие всплывающего модального окна
+		closeModalWindow: function(event) {
+			$(event.target).closest('.r-calendar-modal').remove();
+
+			if($('body').find('.r-calendar-modal').length == 0) {
+				$('body').find('.r-calendar-modal-backdrop').remove();
+				$('body').removeClass('r-calendar-modal-open');
+			}
+		},
+		
+		
+	
+		// Генерация событий на текущую дату
+		getEventsCurrentDate: function(date, time) {
+			if(date == '0000-00-00')
+				return "";
+			
+			var dd = this.getDateToNormalFormat(date);
+			dd = this.getObjectDate(dd, time);
+			var countEvents = 0;
+			var htmlBadgeEvents = "";
+
+			try {
+				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
+				for(var item in arrayDataEvents) {
+					var startDate, endDate;
+					
+					if(this.opts.view == 'weeks' || this.opts.view == 'days') {
+						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute'] );
+						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
+						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
+						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
+					} else {
+						startDate = this.getObjectDate(arrayDataEvents[item]['startDate']);
+						endDate = this.getObjectDate(arrayDataEvents[item]['endDate']);
+					}
+
+					if((dd >= startDate) && (dd <= endDate))
+						countEvents += 1;
+				}
+				
+				if(Number(countEvents) > 0)
+					htmlBadgeEvents = "<span class='r-calendar-badge' title='" + this.loc.titleEvents + "'>" + this.loc.events + ":&nbsp;" + String(countEvents) + "</span>";
+			} catch {
+				htmlBadgeEvents = "";
+			}
+			return htmlBadgeEvents;
+		},
+
 		// Функция получения массива бронирований по выбранной дате
 		getEventsSelectedDate: function(selectedDate, selectedTime) {
 			var arrayEvents = [];
@@ -748,6 +826,22 @@
 			
 			return arrayEvents;
 		},
+		
+		// Функция получения данных с сервера
+		getEventsFromDatabase: function() {
+			var mainDate = (this.opts.startDay === undefined) ? new Date() : this.opts.startDay;
+			
+			var startDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), 1);
+			var endDate = new Date(mainDate.getFullYear(), mainDate.getMonth() + 1, 0);
+			
+			var dd1 = this.getDateToNormalFormat(startDate.getDate() + '.' + startDate.getMonth() + '.' + startDate.getFullYear());
+			var dd2 = this.getDateToNormalFormat(endDate.getDate() + '.' + endDate.getMonth() + '.' + endDate.getFullYear());
+			
+			var query = JSON.stringify({ "action" : "select", "startDate" : dd1, "endDate" : dd2 });
+			//rCalendar.ajaxQuery(this, '', query, rCalendar.ajaxStatusSuccess, rCalendar.ajaxStatusError);
+			
+		},
+		
 		
 		// Функция проверки ввода времени на корректность
 		checkValueTime: function() {
@@ -868,24 +962,6 @@
 			return arrayResult;
 		},
 		
-		// Функция возвращения JS объекта даты
-		// Принимает на вход данные в формате string даты и возвращает объект Data
-		// Флаг flgAddMount отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
-		getObjectDate: function(stringDate, timeString) {
-			var temp = this.getDateToNormalFormat(stringDate, false);
-			var objectDate;
-			
-			if((timeString !== undefined) && (String(timeString).length > 0)) {
-				var time_split = String(timeString).split(':');
-				if(time_split < 2)
-					objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
-				else
-					objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2), time_split[0], time_split[1]);
-			} else {
-				objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
-			}
-			return objectDate;
-		},
 		
 		// Функция сохранения данных на сервере
 		save: function(event) {
@@ -978,6 +1054,7 @@
 			$(modalWindow).find('.r-calendar-modal-text-error').html('При обработке запроса произошла ошибка!');
 		},
 
+
 		// Конвертация данных в человеческий вид
 		// Флаг flgAddMount отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
 		getDateToNormalFormat: function(date, flgAddMount) {
@@ -1006,77 +1083,25 @@
 			return day + '.' + month + '.' + year;
 		},
 		
-		// Закрытие всплывающего модального окна
-		closeModalWindow: function(event) {
-			$(event.target).closest('.r-calendar-modal').remove();
+			// Функция возвращения JS объекта даты
+		// Принимает на вход данные в формате string даты и возвращает объект Data
+		// Флаг flgAddMount отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
+		getObjectDate: function(stringDate, timeString) {
+			var temp = this.getDateToNormalFormat(stringDate, false);
+			var objectDate;
+			
+			if((timeString !== undefined) && (String(timeString).length > 0)) {
+				var time_split = String(timeString).split(':');
+				if(time_split < 2)
+					objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
+				else
+					objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2), time_split[0], time_split[1]);
+			} else {
+				objectDate = new Date(temp.substr(6, 4), Number(temp.substr(3, 2)) - 1, temp.substr(0, 2));
+			}
+			return objectDate;
+		},
 
-			if($('body').find('.r-calendar-modal').length == 0) {
-				$('body').find('.r-calendar-modal-backdrop').remove();
-				$('body').removeClass('r-calendar-modal-open');
-			}
-		},
-		
-		// Функция отрисовывает предыдущий временной период
-		prev: function() {
-			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-			switch(rCalendar.opts.view) {
-				case 'months':
-					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() - 1), rCalendar.opts.startDay.getDate());
-					break;
-
-				case 'weeks':
-					var tt = rCalendar.opts.startDay;
-					do {
-						tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
-					} while(rCalendar.opts.startDay.getWeek() == tt.getWeek());
-					rCalendar.opts.startDay = tt;
-					break;
-				
-				case 'days':
-					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), rCalendar.opts.startDay.getMonth(), (rCalendar.opts.startDay.getDate() - 1));
-					break;
-				
-				default:
-					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() - 1), rCalendar.opts.startDay.getDate());
-					break;
-			}
-			rCalendar.update();
-		},
-		
-		// Функция отрисовывает следующий временной период
-		next: function() {
-			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-			switch(rCalendar.opts.view) {
-				case 'months':
-					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() + 1), rCalendar.opts.startDay.getDate());
-					break;
-				
-				case 'weeks':
-					var tt = rCalendar.opts.startDay;
-					do {
-						tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() + 1));
-					} while(rCalendar.opts.startDay.getWeek() == tt.getWeek());
-					rCalendar.opts.startDay = tt;
-					break;
-				
-				case 'days':
-					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), rCalendar.opts.startDay.getMonth(), (rCalendar.opts.startDay.getDate() + 1));
-					break;
-				
-				default:
-					rCalendar.opts.startDay = new Date(rCalendar.opts.startDay.getFullYear(), (rCalendar.opts.startDay.getMonth() + 1), rCalendar.opts.startDay.getDate());
-					break;
-			}
-			rCalendar.update();
-		},
-		
-		// Функция отрисовывает текущую дату
-		today: function() {
-			var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-			rCalendar.opts.startDay = new Date();
-			rCalendar.update();
-		},
-	
 		// Отрисовка загрузчика
 		// callback - функция обратного вызова
 		_renderingLoader: function(callback) {
