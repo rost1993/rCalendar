@@ -1010,7 +1010,7 @@
 			$.ajax({
 				type: 'POST',
 				url: url,
-				data: data,
+				data: 'JSON=' + data,
 				cache: true,
 				processData: true,
 				contentType: 'application/x-www-form-urlencoded',
@@ -1030,7 +1030,7 @@
 		// Обработка ответа от сервера в случае успеха
 		ajaxStatusSuccess: function(data, modalWindow) {
 			try {
-				var result = eval(data);
+				var res = eval(data);
 				if(res[0] == 'OK') {
 					$(modalWindow).remove();
 					$('body').find('.r-calendar-modal-backdrop').remove();
@@ -1044,7 +1044,7 @@
 					$('body').find('.r-calendar-modal-backdrop').remove();
 					$('body').removeClass('r-calendar-modal-open');
 				} else {
-					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
+					$(modalWindow).find('.r-calendar-modal-text-error').html(data);
 				}
 			}
 		},
