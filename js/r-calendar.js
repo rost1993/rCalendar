@@ -302,13 +302,13 @@
 			for(var i = 0; i < 24; i++) {
 				tbody.append("<div class='r-calendar-week'>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hoursWidget[i] + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[0] + "'>" + this.getEventsCurrentDate(arrayDate[0], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[1] + "'>" + this.getEventsCurrentDate(arrayDate[1], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[2] + "'>" + this.getEventsCurrentDate(arrayDate[2], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[3] + "'>" + this.getEventsCurrentDate(arrayDate[3], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[4] + "'>" + this.getEventsCurrentDate(arrayDate[4], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[5] + "'>" + this.getEventsCurrentDate(arrayDate[5], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[6] + "'>" + this.getEventsCurrentDate(arrayDate[6], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[0] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[0], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[1] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[1], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[2] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[2], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[3] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[3], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[4] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[4], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[5] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[5], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active' data-date='" + arrayDate[6] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[6], this.loc.hours[i]) + "</div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -341,7 +341,7 @@
 				var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
 				tbody.append("<div class='r-calendar-daytime'>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10' data-time='" + currentTime + "'>" + this.loc.hoursWidget[i] + "</div>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + currentDate + "'>" + this.getEventsCurrentDate(currentDate, currentTime) + "</div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + currentDate + "' data-time='" + currentTime + "'>" + this.getEventsCurrentDate(currentDate, currentTime) + "</div>"
 					+ "</div>");
 			}
 			tbody.append("</div>");
@@ -395,7 +395,7 @@
 		
 		// Обновление HTML кода календаря
 		update: function() {
-			this._renderingLoader();
+			//this._renderingLoader();
 			this._renderingToolBar();
 			this._renderingWidget();
 			this._bindEvents();
@@ -447,7 +447,11 @@
 			
 			if(event.target.tagName.toUpperCase() == 'SPAN' && event.target.className == 'r-calendar-badge') {
 				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-				rCalendar.showModalWindowListEvents($(this).data('date'));
+				
+				if((rCalendar.opts.view == 'weeks') || (rCalendar.opts.view == 'days'))
+					rCalendar.showModalWindowListEvents($(this).data('date'), $(this).data('time'));
+				else
+					rCalendar.showModalWindowListEvents($(this).data('date'));
 				return;
 			}
 			
@@ -636,13 +640,11 @@
 		},
 		
 		// Отрисовка модального окна с мероприятими
-		showModalWindowListEvents: function(date) {
+		showModalWindowListEvents: function(date, time) {
 			if(date === undefined)
 				return;
 
 			var selectedDate = this.getDateToNormalFormat(date);
-			//var html = "";
-
 			var html_table_events = $("<div class='r-calendar-form-row'></div>");
 				
 			var table_events = $("<table class='table table-sm table-bordered text-center table-hover'></table>");
@@ -656,7 +658,7 @@
 				+ "</tr></thead>");
 			var tbody = $("<tbody></tbody>");
 
-			var arrayEvents = this.getEventsSelectedDate(selectedDate);
+			var arrayEvents = this.getEventsSelectedDate(selectedDate, time);
 			
 			for(var i = 0; i < arrayEvents.length; i++) {
 				var tr =  $("<tr class='r-calendar-tr-events' id='" + arrayEvents[i]['id'] + "'>"
@@ -705,16 +707,25 @@
 		},
 		
 		// Функция получения массива бронирований по выбранной дате
-		getEventsSelectedDate: function(selectedDate) {
+		getEventsSelectedDate: function(selectedDate, selectedTime) {
 			var arrayEvents = [];
-			var date = this.getObjectDate(selectedDate);
+			var date = this.getObjectDate(selectedDate, selectedTime);
 			
 			try {
 				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
 
 				for(var item in arrayDataEvents) {
-					var dateStart = this.getObjectDate(arrayDataEvents[item]['startDate']);
-					var dateEnd = this.getObjectDate(arrayDataEvents[item]['endDate']);
+					var dateStart, dateEnd;
+					
+					if(this.opts.view == 'weeks' || this.opts.view == 'days') {
+						var time1 = arrayDataEvents[item]['startDateHour'] + ':' + arrayDataEvents[item]['startDateMinute'];
+						var time2 = arrayDataEvents[item]['endDateHour'] + ':' + arrayDataEvents[item]['endDateMinute'];
+						var dateStart = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
+						var dateEnd = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
+					} else {
+						dateStart = this.getObjectDate(arrayDataEvents[item]['startDate']);
+						dateEnd = this.getObjectDate(arrayDataEvents[item]['endDate']);
+					}
 
 					if(date >= dateStart && date <= dateEnd) {
 						var temp = [];
