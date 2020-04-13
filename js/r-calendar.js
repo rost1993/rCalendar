@@ -41,8 +41,8 @@
 		// Инициализации начлаьного состояния календаря
 		init: function() {
 			this._defineLocale(this.opts.language);
-			this.getEventsFromDatabase();
-			this.update();
+			//this.update();
+			this.newUpdate();
 		},
 		
 		// Установка локали для языка
@@ -356,10 +356,16 @@
 			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', { mode : "add" }, this.showModalWindow);
 		},
 		
+		newUpdate: function() {
+			var rCalendar = this;
+			this.getEventsFromDatabase(this.ajaxGetEventsSuccess);
+		},
+		
 		// Обновление HTML кода календаря
 		update: function() {
-			this.$el.empty();
-			var rCalendar = this;			
+			var rCalendar = this;
+//alert(this.opts.arrayDataEvents);
+			rCalendar.$el.empty();
 			this._renderingLoader(function() {
 				rCalendar._renderingToolBar();
 				rCalendar._renderingWidget();
@@ -397,8 +403,6 @@
 			rCalendar.opts.view = 'days';
 			rCalendar.update();
 		},
-
-
 
 
 		// Функция отрисовывает предыдущий временной период
@@ -832,7 +836,7 @@
 		},
 		
 		// Функция получения данных с сервера
-		getEventsFromDatabase: function() {
+		getEventsFromDatabase: function(callback) {
 			var mainDate = (this.opts.startDay === undefined) ? new Date() : this.opts.startDay;
 			
 			var startDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), 1);
@@ -842,8 +846,28 @@
 			var dd2 = this.getDateToNormalFormat(endDate.getDate() + '.' + endDate.getMonth() + '.' + endDate.getFullYear());
 			
 			var query = JSON.stringify({ "action" : "select", "startDate" : dd1, "endDate" : dd2 });
-			//rCalendar.ajaxQuery(this, '', query, rCalendar.ajaxStatusSuccess, rCalendar.ajaxStatusError);
+			this.ajaxQuery(this, this, query, callback, this.ajaxGetEventsError);
 			
+			/*if((callback != null) || (callback !== undefined))
+				callback();*/
+		},
+		
+		ajaxGetEventsSuccess: function(data, rCalendar) {
+			//alert();
+			var res = eval(data);
+			//alert(rCalendar.opts.arrayDataEvents);
+			var tt = JSON.parse(data);
+			//alert(Array.from(tt[1][0]));
+			if(res[0] == 'OK') {
+				//alert(res[1]);
+				rCalendar.opts.arrayDataEvents = res[1];
+				rCalendar.update();
+				//alert(rCalendar.opts.arrayDataEvents);
+			}
+		},
+		
+		ajaxGetEventsError: function(data) {
+			//alert(data);
 		},
 		
 		

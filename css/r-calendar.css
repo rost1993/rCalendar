@@ -262,13 +262,13 @@
 	margin-top: 10px;
 }
 
-.r-calendar-border {
-	border: 1px solid white;
-}
-
 .r-calendar-toolbar-left {
 	margin-left: 10px;
 	margin-top: 10px;
+}
+
+.r-calendar-tr-events {
+	cursor: pointer;
 }
 
 @media (min-width: 576px) {
