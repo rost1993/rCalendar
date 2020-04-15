@@ -26,9 +26,9 @@
 			var selectCustomer = ["1-й клиент", "2-й клиент", "3-й клиент"];
 			
 			var data = '[{ "id" : "1", "startDate" : "13.04.2020", "startDateHour" : "2", "startDateMinute" : "00", "endDate" : "13.04.2020", "endDateHour" : "4", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "numberTableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
-					  + '{ "id" : "1", "startDate" : "13.04.2020", "startDateHour" : "13", "startDateMinute" : "00", "endDate" : "13.04.2020", "endDateHour" : "16", "endDateMinute" : "00", "nameReservation" : "Дружеская встреча", "numberTableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
-					  + '{ "id" : "1", "startDate" : "13.04.2020", "startDateHour" : "2", "startDateMinute" : "55", "endDate" : "13.04.2020", "endDateHour" : "4", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "numberTableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
-					  + '{ "id" : "2", "startDate" : "15.04.2020", "startDateHour" : "2", "startDateMinute" : "00", "endDate" : "15.04.2020", "endDateHour" : "3", "endDateMinute" : "00", "nameReservation" : "1", "numberTableReservation" : "1", "customerReservation" : "123", "commentReservation" : "123"} ]';
+					  + '{ "id" : "2", "startDate" : "13.04.2020", "startDateHour" : "13", "startDateMinute" : "00", "endDate" : "13.04.2020", "endDateHour" : "16", "endDateMinute" : "00", "nameReservation" : "Дружеская встреча", "numberTableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
+					  + '{ "id" : "3", "startDate" : "13.04.2020", "startDateHour" : "2", "startDateMinute" : "55", "endDate" : "13.04.2020", "endDateHour" : "4", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "numberTableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
+					  + '{ "id" : "4", "startDate" : "15.04.2020", "startDateHour" : "2", "startDateMinute" : "00", "endDate" : "15.04.2020", "endDateHour" : "3", "endDateMinute" : "00", "nameReservation" : "1", "numberTableReservation" : "1", "customerReservation" : "123", "commentReservation" : "123"} ]';
 			
 			//var selectCustomer = '{"1-й клиент", "2-й клиент", "3-й клиент"}';
 			

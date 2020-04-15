@@ -43,7 +43,6 @@
 		// Инициализации начлаьного состояния календаря
 		init: function() {
 			this._defineLocale(this.opts.language);
-			//this.maxEventsDay = this.minEventsDay = this.opts.startDay;
 			this.getMaxMinEventsDate();
 			this.update();
 		},
@@ -874,9 +873,9 @@
 		},
 		
 		// Обработка результата выполнения запроса для получения списка бронирований с сервера
-		ajaxGetEventsSuccess: function(data, rCalendar) {
+		ajaxGetEventsSuccess: function(answer, data, rCalendar) {
 			try {
-				var res = JSON.parse(data);
+				var res = JSON.parse(answer);
 				if(res[0] == 'OK')
 					rCalendar.opts.arrayDataEvents = res[1];
 			} catch {
@@ -886,7 +885,7 @@
 		},
 		
 		ajaxGetEventsError: function(data) {
-			//alert(data);
+			alert();
 		},
 		
 		
@@ -1025,11 +1024,12 @@
 			}
 			
 			// ID Reservation
-			arrSaveItem["idReservation"] = String($(this).data('id'));
+			arrSaveItem["id"] = String($(this).data('id'));
 			
 			// Action 
 			arrSaveItem["action"] = (Number($(this).data('id')) == -1) ? "insert" : "update";
-			rCalendar.ajaxQuery(rCalendar, modalWindow, JSON.stringify(arrSaveItem), rCalendar.ajaxStatusSuccess, rCalendar.ajaxStatusError);
+			var func = (Number($(this).data('id')) == -1) ? rCalendar.ajaxStatusSuccessInsert : rCalendar.ajaxStatusSuccessUpdate;
+			rCalendar.ajaxQuery(rCalendar, modalWindow, JSON.stringify(arrSaveItem), func, rCalendar.ajaxStatusError);
 		},
 		
 		// Функция удаления бронирования
@@ -1062,43 +1062,84 @@
 				processData: true,
 				contentType: 'application/x-www-form-urlencoded',
 				
-				success: function(data) {
+				success: function(answer) {
 					if(callbackSuccess != null)
-						callbackSuccess(data, modalWindow);
+						callbackSuccess(answer, data, rCalendar, modalWindow);
 				},
 				
-				error: function(data, status, xhr) {
+				error: function(answer, status, xhr) {
 					if(callbackError != null)
-						callbackError(data, modalWindow);
+						callbackError(answer, modalWindow);
 				}
 			});
 		},
 		
-		// Обработка ответа от сервера в случае успеха
-		ajaxStatusSuccess: function(data, modalWindow) {
+		ajaxStatusSuccessInsert: function(answer, data, rCalendar, modalWindow) {
 			try {
-				var res = eval(data);
+				var res = eval(answer);
 				if(res[0] == 'OK') {
 					$(modalWindow).remove();
 					$('body').find('.r-calendar-modal-backdrop').remove();
 					$('body').removeClass('r-calendar-modal-open');
+					
+					var tempData = JSON.parse(data);
+					tempData['id'] = res[1];
+					
+					var arrayDataEvents = JSON.parse(rCalendar.opts.arrayDataEvents);
+					arrayDataEvents.push(tempData);
+					rCalendar.opts.arrayDataEvents = JSON.stringify(arrayDataEvents);
+					rCalendar.update();
 				} else {
 					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
 				}
 			} catch {
-				if(data == 'OK') {
+				if(answer == 'OK') {
 					$(modalWindow).remove();
 					$('body').find('.r-calendar-modal-backdrop').remove();
 					$('body').removeClass('r-calendar-modal-open');
 				} else {
-					$(modalWindow).find('.r-calendar-modal-text-error').html(data);
+					$(modalWindow).find('.r-calendar-modal-text-error').html(answer);
+				}
+			}
+		},
+		
+		ajaxStatusSuccessUpdate: function(answer, data, rCalendar, modalWindow) {
+			try {
+				var res = eval(answer);
+				if(res[0] == 'OK') {
+					var arrayDataEvents = JSON.parse(rCalendar.opts.arrayDataEvents);
+					var tempData = JSON.parse(data);
+					var arrayDataEventsTemp = [];
+					for(var item in arrayDataEvents) {
+						if(arrayDataEvents[item]['id'] != tempData['id'])
+							arrayDataEventsTemp.push(arrayDataEvents[item]);
+					}
+					arrayDataEventsTemp.push(tempData);
+					rCalendar.opts.arrayDataEvents = JSON.stringify(arrayDataEventsTemp);
+					
+					$(modalWindow).remove();
+					$('.r-calendar-modal').remove();
+					$('body').find('.r-calendar-modal-backdrop').remove();
+					$('body').removeClass('r-calendar-modal-open');
+					rCalendar.update();
+				} else {
+					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
+				}
+			} catch {
+				if(answer == 'OK') {
+					$(modalWindow).remove();
+					$('.r-calendar-modal-dialog-2').remove();
+					$('body').find('.r-calendar-modal-backdrop').remove();
+					$('body').removeClass('r-calendar-modal-open');
+				} else {
+					$(modalWindow).find('.r-calendar-modal-text-error').html(answer);
 				}
 			}
 		},
 		
 		// Обработка ответа от сервера в случае ошибки
 		ajaxStatusError: function(data, modalWindow) {
-			$(modalWindow).find('.r-calendar-modal-text-error').html('При обработке запроса произошла ошибка!');
+				$(modalWindow).find('.r-calendar-modal-text-error').html('');
 		},
 
 
@@ -1205,7 +1246,7 @@
 				var _this = $.data(this, pluginName);
 				
 				_this.opts = $.extend(true, _this.opts, options);
-				//_this.update();
+				_this.update();
 			}
 		});
 	};
