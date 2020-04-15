@@ -285,10 +285,14 @@
 			thead.append($("<div class='r-calendar-week-grid-thead r-calendar-week-grid-10'>&nbsp;</div>"));
 			
 			var arrayDate = [];
+			var now = new Date();
 			
 			for(var i = 0; i < 7; i++) {
 				var tempDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), (mainDate.getDate() + i));
-				thead.append($("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12'>" + this.loc.daysShort[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>"));
+				if((now.getDate() == tempDate.getDate()) && (now.getFullYear() == tempDate.getFullYear()) && (now.getMonth() == tempDate.getMonth()))
+					thead.append($("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12 r-calendar-current-day'>" + this.loc.daysShort[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>"));
+				else
+					thead.append($("<div class='r-calendar-week-grid-thead r-calendar-week-grid-12'>" + this.loc.daysShort[i] + "&nbsp;" + tempDate.getDate() + "/" + (tempDate.getMonth() + 1) + "</div>"));
 				arrayDate[i] = tempDate.getFullYear() + "-" + tempDate.getMonth() + "-" + tempDate.getDate();
 			}
 
@@ -603,7 +607,7 @@
 								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortMinute + "</span>"
 							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + startDateMinute + "' data-mandatory='true' data-datatype='number'>"
 						+ "</div>"
-						
+
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textEndDateBooking + "</label>"
 							+ "<input type='text' class='r-calendar-form-control' id='endDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + endDate + "' data-mandatory='true' data-datatype='date'>"
