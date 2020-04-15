@@ -493,8 +493,8 @@
 			
 			var selectedDate, selectTableList, selectCustomerList, selectedHour, selectedMinute;
 			
-			var startDate, startDateHour, startDateMinute, endDate, endDateHour, endDateMinute, nameReservation, numberTableReservation, customerReservation, commentReservation, idReservation;
-			startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = numberTableReservation = customerReservation = commentReservation = '';
+			var startDate, startDateHour, startDateMinute, endDate, endDateHour, endDateMinute, nameReservation, tableReservation, customerReservation, commentReservation, idReservation;
+			startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = tableReservation = customerReservation = commentReservation = '';
 			
 			// Указатель на класс rCalendar, будем получать взависимости от режима работы
 			var rCalendar;
@@ -542,7 +542,7 @@
 				endDateMinute = (event.data.arrayEvent['endDateMinute'] === undefined) ? '' : event.data.arrayEvent['endDateMinute'];
 				
 				nameReservation = (event.data.arrayEvent['nameReservation'] === undefined) ? '' : event.data.arrayEvent['nameReservation'];
-				numberTableReservation = (event.data.arrayEvent['numberTableReservation'] === undefined) ? '' : event.data.arrayEvent['numberTableReservation'];
+				tableReservation = (event.data.arrayEvent['tableReservation'] === undefined) ? '' : event.data.arrayEvent['tableReservation'];
 				customerReservation = (event.data.arrayEvent['customerReservation'] === undefined) ? '' : event.data.arrayEvent['customerReservation'];
 				commentReservation = (event.data.arrayEvent['commentReservation'] === undefined) ? '' : event.data.arrayEvent['commentReservation'];
 				
@@ -558,7 +558,7 @@
 				var temp = JSON.parse(rCalendar.opts.selectTable);
 				selectTableList = "<option value='0'></option>";
 				for(var key in temp) {
-					if(key == numberTableReservation || temp[key] == numberTableReservation)
+					if(key == tableReservation || temp[key] == tableReservation)
 						selectTableList += "<option value='" + key + "' selected>" + temp[key] + "</option>";
 					else
 						selectTableList += "<option value='" + key + "'>" + temp[key] + "</option>";
@@ -568,7 +568,7 @@
 				if(typeof(rCalendar.opts.selectTable) === 'object') {
 					var temp = eval(rCalendar.opts.selectTable);
 					for(var i = 0; i < temp.length; i++) {
-						if(temp[i] == numberTableReservation)
+						if(temp[i] == tableReservation)
 							selectTableList += "<option value='" + temp[i] + "' selected>" + temp[i] + "</option>";
 						else
 							selectTableList += "<option value='" + temp[i] + "'>" + temp[i] + "</option>";
@@ -629,7 +629,7 @@
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textNumberTableBooking + "</label>"
-							+ "<select class='r-calendar-form-control' id='numberTableReservation' data-datatype='number'>" + selectTableList + "</select>"
+							+ "<select class='r-calendar-form-control' id='tableReservation' data-datatype='number'>" + selectTableList + "</select>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textCustomerBookig + "</label>"
@@ -702,7 +702,7 @@
 					  + "<td>" + arrayEvents[i]['startDate'] + "&nbsp;" + arrayEvents[i]['startDateHour'] + ":" + arrayEvents[i]['startDateMinute'] + "</td>"
 					  + "<td>" + arrayEvents[i]['endDate'] + "&nbsp;" + arrayEvents[i]['endDateHour'] + ":" + arrayEvents[i]['endDateMinute'] + "</td>"
 					  + "<td>" + arrayEvents[i]['nameReservation'] + "</td>"
-					  + "<td>" + arrayEvents[i]['numberTableReservation'] + "</td>"
+					  + "<td>" + arrayEvents[i]['tableReservation'] + "</td>"
 					  + "<td>" + arrayEvents[i]['customerReservation'] + "</td>"
 					  + "</tr>");
 				
@@ -827,7 +827,7 @@
 						temp['endDateHour'] = (arrayDataEvents[item]['endDateHour'] === undefined) ? '' : arrayDataEvents[item]['endDateHour'];
 						temp['endDateMinute'] = (arrayDataEvents[item]['endDateMinute'] === undefined) ? '' : arrayDataEvents[item]['endDateMinute'];
 						temp['nameReservation'] = (arrayDataEvents[item]['nameReservation'] === undefined) ? '' : arrayDataEvents[item]['nameReservation'];
-						temp['numberTableReservation'] = (arrayDataEvents[item]['numberTableReservation'] === undefined) ? '' : arrayDataEvents[item]['numberTableReservation'];
+						temp['tableReservation'] = (arrayDataEvents[item]['tableReservation'] === undefined) ? '' : arrayDataEvents[item]['tableReservation'];
 						temp['customerReservation'] = (arrayDataEvents[item]['customerReservation'] === undefined) ? '' : arrayDataEvents[item]['customerReservation'];
 						temp['id'] = (arrayDataEvents[item]['id'] === undefined) ? '0' : arrayDataEvents[item]['id'];
 
@@ -1028,6 +1028,8 @@
 			
 			// Action 
 			arrSaveItem["action"] = (Number($(this).data('id')) == -1) ? "insert" : "update";
+			
+			alert( JSON.stringify(arrSaveItem));
 			var func = (Number($(this).data('id')) == -1) ? rCalendar.ajaxStatusSuccessInsert : rCalendar.ajaxStatusSuccessUpdate;
 			rCalendar.ajaxQuery(rCalendar, modalWindow, JSON.stringify(arrSaveItem), func, rCalendar.ajaxStatusError);
 		},
@@ -1103,43 +1105,44 @@
 			}
 		},
 		
+		// Обработчик успешного завершения Update
 		ajaxStatusSuccessUpdate: function(answer, data, rCalendar, modalWindow) {
 			try {
 				var res = eval(answer);
-				if(res[0] == 'OK') {
-					var arrayDataEvents = JSON.parse(rCalendar.opts.arrayDataEvents);
-					var tempData = JSON.parse(data);
-					var arrayDataEventsTemp = [];
-					for(var item in arrayDataEvents) {
-						if(arrayDataEvents[item]['id'] != tempData['id'])
-							arrayDataEventsTemp.push(arrayDataEvents[item]);
-					}
-					arrayDataEventsTemp.push(tempData);
-					rCalendar.opts.arrayDataEvents = JSON.stringify(arrayDataEventsTemp);
-					
-					$(modalWindow).remove();
-					$('.r-calendar-modal').remove();
-					$('body').find('.r-calendar-modal-backdrop').remove();
-					$('body').removeClass('r-calendar-modal-open');
-					rCalendar.update();
-				} else {
+				if(res[0] == 'OK')
+					rCalendar.updateEventAfterCommit(data);
+				else
 					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
-				}
 			} catch {
-				if(answer == 'OK') {
-					$(modalWindow).remove();
-					$('.r-calendar-modal-dialog-2').remove();
-					$('body').find('.r-calendar-modal-backdrop').remove();
-					$('body').removeClass('r-calendar-modal-open');
-				} else {
+				if(answer == 'OK')
+					rCalendar.updateEventAfterCommit(data);
+				else
 					$(modalWindow).find('.r-calendar-modal-text-error').html(answer);
-				}
 			}
+		},
+		
+		//
+		updateEventAfterCommit: function(data) {
+			var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
+			var tempData = JSON.parse(data);
+			var arrayDataEventsTemp = [];
+			for(var item in arrayDataEvents) {
+				if(arrayDataEvents[item]['id'] != tempData['id'])
+					arrayDataEventsTemp.push(arrayDataEvents[item]);
+			}
+			arrayDataEventsTemp.push(tempData);
+			this.opts.arrayDataEvents = JSON.stringify(arrayDataEventsTemp);
+			alert(data);
+
+			$('.r-calendar-modal').remove();
+			$('body').find('.r-calendar-modal-backdrop').remove();
+			$('body').removeClass('r-calendar-modal-open');
+			this.update();
 		},
 		
 		// Обработка ответа от сервера в случае ошибки
 		ajaxStatusError: function(data, modalWindow) {
-				$(modalWindow).find('.r-calendar-modal-text-error').html('');
+			$(modalWindow).find('.r-calendar-modal-text-error').html('');
 		},
 
 
