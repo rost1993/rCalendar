@@ -884,8 +884,10 @@
 			rCalendar.renderingRCalendar();
 		},
 		
+		// Обработчик при возникновении ошибок со стороны сервера
+		// На данном этапе выдает просто окошко с ошибкой
 		ajaxGetEventsError: function(data) {
-			alert();
+			alert('Error! Bad request!');
 		},
 		
 		
@@ -1042,8 +1044,8 @@
 				return;
 			
 			var idReservation = $(this).data('id');
-			var query = JSON.stringify({ "action" : "delete", "idReservation" : idReservation });
-			rCalendar.ajaxQuery(rCalendar, modalWindow, query, rCalendar.ajaxStatusSuccess, rCalendar.ajaxStatusError);
+			var query = JSON.stringify({ "action" : "delete", "id" : idReservation });
+			rCalendar.ajaxQuery(rCalendar, modalWindow, query, rCalendar.ajaxStatusSuccessRemove, rCalendar.ajaxStatusError);
 		},
 		
 		/*
@@ -1082,11 +1084,9 @@
 				if(res[0] == 'OK') {
 					var tempData = JSON.parse(data);
 					tempData['id'] = (res[1] === undefined) ? 0 : res[1];
-					alert(rCalendar.opts.arrayDataEvents);
 					var arrayDataEvents = JSON.parse(rCalendar.opts.arrayDataEvents);
 					arrayDataEvents.push(tempData);
 					rCalendar.opts.arrayDataEvents = JSON.stringify(arrayDataEvents);
-					alert(rCalendar.opts.arrayDataEvents);
 					$(modalWindow).remove();
 					$('body').find('.r-calendar-modal-backdrop').remove();
 					$('body').removeClass('r-calendar-modal-open');
@@ -1122,6 +1122,22 @@
 			}
 		},
 		
+		// Обработчик успешного удаления бронирования
+		ajaxStatusSuccessRemove: function(answer, data, rCalendar, modalWindow) {
+			try {
+				var res = eval(answer);
+				if(res[0] == 'OK')
+					rCalendar.removeEventAfterCommit(data);
+				else
+					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
+			} catch {
+				if(answer == 'OK')
+					rCalendar.removeEventAfterCommit(data);
+				else
+					$(modalWindow).find('.r-calendar-modal-text-error').html(answer);
+			}
+		},
+		
 		// Общий обработчик после процедуры Update. Закрывает модальные окна и обновляет данные в массиве
 		updateEventAfterCommit: function(data) {
 			var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
@@ -1132,6 +1148,23 @@
 					arrayDataEventsTemp.push(arrayDataEvents[item]);
 			}
 			arrayDataEventsTemp.push(tempData);
+			this.opts.arrayDataEvents = JSON.stringify(arrayDataEventsTemp);
+
+			$('.r-calendar-modal').remove();
+			$('body').find('.r-calendar-modal-backdrop').remove();
+			$('body').removeClass('r-calendar-modal-open');
+			this.update();
+		},
+		
+		// Удаление бронирования после процедуры REMOVE. Закрывает модальные окна и обновляет данные в массиве
+		removeEventAfterCommit: function(data) {
+			var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
+			var tempData = JSON.parse(data);
+			var arrayDataEventsTemp = [];
+			for(var item in arrayDataEvents) {
+				if(arrayDataEvents[item]['id'] != tempData['id'])
+					arrayDataEventsTemp.push(arrayDataEvents[item]);
+			}
 			this.opts.arrayDataEvents = JSON.stringify(arrayDataEventsTemp);
 
 			$('.r-calendar-modal').remove();
