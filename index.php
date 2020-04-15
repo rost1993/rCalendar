@@ -36,6 +36,7 @@
 			
 			//var startDay = new Date(2020, 03, 15);
 			$('.r-calendar-test-1').rCalendar({"language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer, "arrayDataEvents" : data });
+			//$('.r-calendar-test-1').rCalendar({"language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer});
 			
 			//$('.r-calendar-test-2').rCalendar({ "language" : "en", "handlersScript" : "123.php" });
 		});

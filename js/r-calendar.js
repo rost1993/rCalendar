@@ -29,6 +29,8 @@
 	var rCalendar = function(el, options) {
 		this.el = el;
         this.$el = $(el);
+		this.maxEventsDay = new Date();	// Максимальная дата для событий
+		this.minEventsDay = new Date();	// Минимальная дата для событий
 		this.opts = $.extend(true, {}, defaults, options, this.$el.data());
 		this.init();
 	};
@@ -41,6 +43,8 @@
 		// Инициализации начлаьного состояния календаря
 		init: function() {
 			this._defineLocale(this.opts.language);
+			//this.maxEventsDay = this.minEventsDay = this.opts.startDay;
+			this.getMaxMinEventsDate();
 			this.update();
 		},
 		
@@ -273,7 +277,7 @@
 			if(mainDate === undefined)
 				mainDate = new Date();
 
-			// Определяем деня начала недели
+			// Определяем день начала недели
 			var tt = mainDate;
 			do {
 				tt = new Date(tt.getFullYear(), tt.getMonth(), (tt.getDate() - 1));
@@ -358,7 +362,10 @@
 		// Осуществляется 
 		update: function() {
 			this._renderingLoader();
-			this.getEventsFromDatabase(this.ajaxGetEventsSuccess);
+			if((this.opts.arrayDataEvents.length == 0) || (this.opts.startDay < this.minEventsDay) || (this.opts.startDay > this.maxEventsDay))
+				this.getEventsFromDatabase(this.ajaxGetEventsSuccess);
+			else
+				this.renderingRCalendar();
 		},
 		
 		// Обновление HTML кода календаря
@@ -775,6 +782,11 @@
 
 					if((dd >= startDate) && (dd <= endDate))
 						countEvents += 1;
+					
+					/*if(startDate > this.maxEventsDay)
+						this.maxEventsDay = startDate;
+					if(startDate < this.minEventsDay)
+						this.minEventsDay = startDate;*/
 				}
 				
 				if(Number(countEvents) > 0)
@@ -834,17 +846,31 @@
 		getEventsFromDatabase: function(callback) {
 			var mainDate = (this.opts.startDay === undefined) ? new Date() : this.opts.startDay;
 			
-			var startDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), 1);
-			var endDate = new Date(mainDate.getFullYear(), mainDate.getMonth() + 1, 0);
+			var startDate, endDate;
 			
+			// Если мы находимся в режиме работы "неделя". То кэшируем текущий месяц +-1
+			if(this.opts.view == 'weeks') {
+				startDate = new Date(mainDate.getFullYear(), mainDate.getMonth() - 1, 1);
+				endDate = new Date(mainDate.getFullYear(), mainDate.getMonth() + 2, 0);
+			} else {
+				startDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), 1);
+				endDate = new Date(mainDate.getFullYear(), mainDate.getMonth() + 1, 0);
+			}
+
 			var dd1 = this.getDateToNormalFormat(startDate.getDate() + '.' + startDate.getMonth() + '.' + startDate.getFullYear());
 			var dd2 = this.getDateToNormalFormat(endDate.getDate() + '.' + endDate.getMonth() + '.' + endDate.getFullYear());
-			
+
 			var query = JSON.stringify({ "action" : "select", "startDate" : dd1, "endDate" : dd2 });
-			this.ajaxQuery(this, this, query, callback, this.ajaxGetEventsError);
 			
-			/*if((callback != null) || (callback !== undefined))
-				callback();*/
+			// После формирования запроса к БД если в режиме "неделя" то вычитаем 6 дней для того чтобы не пропустить стык месяцев
+			if(this.opts.view == 'weeks') {
+				this.minEventsDay = new Date(startDate.getFullYear(), startDate.getMonth(), (startDate.getDate() + 6));
+				this.maxEventsDay = new Date(endDate.getFullYear(), endDate.getMonth(), (endDate.getDate() - 6));
+			} else {
+				this.minEventsDay = startDate;
+				this.maxEventsDay = endDate;
+			}
+			this.ajaxQuery(this, this, query, callback, this.ajaxGetEventsError);
 		},
 		
 		// Обработка результата выполнения запроса для получения списка бронирований с сервера
@@ -1152,6 +1178,23 @@
 				callback();
 		},
 	
+		// Функция для поиска максимального и минимального значения дат в переданном в массиве событий.
+		// Если массив пустой то начальными датами считаются дата инициализации
+		getMaxMinEventsDate: function() {
+			this.maxEventsDay = this.minEventsDay = this.opts.startDay;
+			try {
+				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
+				for(var item in arrayDataEvents) {
+					var startDate = this.getObjectDate(arrayDataEvents[item]['startDate']);
+					if(startDate >= this.maxEventsDay)
+						this.maxEventsDay = startDate;
+					if(startDate <= this.minEventsDay)
+						this.minEventsDay = startDate;
+				}
+			} catch {
+				this.maxEventsDay = this.minEventsDay = this.opts.startDay;
+			}
+		},
 	};
 	
 	$.fn.rCalendar = function(options) {
