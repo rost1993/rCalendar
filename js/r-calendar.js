@@ -972,9 +972,9 @@
 				} else {
 					var nameItem = $(this).prop('id');
 					var arrayTemp = '';
-					
+
 					if($(this).prop('tagName').toUpperCase() == 'SELECT') {
-						arrayTemp['value'] = $(this).val();
+						arrayTemp = $(this).val();
 					} else {
 						if(($(this).prop('type').toUpperCase() == 'CHECKBOX') || ($(this).prop('type').toUpperCase() == 'RADIO'))
 							arrayTemp = $(this).prop('checked');
