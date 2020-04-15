@@ -571,7 +571,7 @@
 					else
 						selectTableList += "<option value='" + key + "'>" + temp[key] + "</option>";
 				}
-			} catch{
+			} catch(e) {
 				selectTableList = "<option value=''></option>";
 				if(typeof(rCalendar.opts.selectTable) === 'object') {
 					var temp = eval(rCalendar.opts.selectTable);
@@ -594,7 +594,7 @@
 					else
 						selectCustomerList += "<option value='" + key + "'>" + temp[key] + "</option>";
 				}
-			} catch {
+			} catch(e) {
 				selectCustomerList = "<option value=''></option>"
 				if(typeof(rCalendar.opts.selectCustomer) === 'object') {
 					var temp = eval(rCalendar.opts.selectCustomer);
@@ -797,7 +797,7 @@
 				
 				if(Number(countEvents) > 0)
 					htmlBadgeEvents = "<span class='r-calendar-badge' title='" + this.loc.titleEvents + "'>" + this.loc.events + ":&nbsp;" + String(countEvents) + "</span>";
-			} catch {
+			} catch(e) {
 				htmlBadgeEvents = "";
 			}
 			return htmlBadgeEvents;
@@ -842,7 +842,7 @@
 						arrayEvents.push(temp);
 					}
 				}
-			} catch {
+			} catch(e) {
 				arrayEvents = [];
 			}
 			
@@ -886,7 +886,7 @@
 				var res = JSON.parse(answer);
 				if(res[0] == 'OK')
 					rCalendar.opts.arrayDataEvents = res[1];
-			} catch {
+			} catch(e) {
 				rCalendar.opts.arrayDataEvents = [];
 			}
 			rCalendar.renderingRCalendar();
@@ -1035,7 +1035,7 @@
 
 			var startDate = rCalendar.getObjectDate(arrSaveItem['startDate'], arrSaveItem['startDateHour'] + ':' + arrSaveItem['startDateMinute']);
 			var endDate = rCalendar.getObjectDate(arrSaveItem['endDate'], arrSaveItem['endDateHour'] + ':' + arrSaveItem['endDateMinute']);
-			if(startDate >= endDate) {
+			if(startDate > endDate) {
 				$(this).closest('.r-calendar-modal').find('.r-calendar-modal-text-error').html('Дата окончания бронирования больше, чем дата начала бронирования');
 				return;
 			}
@@ -1110,7 +1110,7 @@
 				} else {
 					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
 				}
-			} catch {
+			} catch(e) {
 				if(answer == 'OK') {
 					$(modalWindow).remove();
 					$('body').find('.r-calendar-modal-backdrop').remove();
@@ -1129,7 +1129,7 @@
 					rCalendar.updateEventAfterCommit(data);
 				else
 					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
-			} catch {
+			} catch(e) {
 				if(answer == 'OK')
 					rCalendar.updateEventAfterCommit(data);
 				else
@@ -1145,7 +1145,7 @@
 					rCalendar.removeEventAfterCommit(data);
 				else
 					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
-			} catch {
+			} catch(e) {
 				if(answer == 'OK')
 					rCalendar.removeEventAfterCommit(data);
 				else
@@ -1222,7 +1222,7 @@
 			return day + '.' + month + '.' + year;
 		},
 		
-			// Функция возвращения JS объекта даты
+		// Функция возвращения JS объекта даты
 		// Принимает на вход данные в формате string даты и возвращает объект Data
 		// Флаг flgAddMount отвечает надо ли добавлять 1 к месяцу.Так как в JS нумерация месяцев начинается с 0
 		getObjectDate: function(stringDate, timeString) {
@@ -1283,7 +1283,7 @@
 					if(startDate <= this.minEventsDay)
 						this.minEventsDay = startDate;
 				}
-			} catch {
+			} catch(e) {
 				this.maxEventsDay = this.minEventsDay = this.opts.startDay;
 			}
 		},
