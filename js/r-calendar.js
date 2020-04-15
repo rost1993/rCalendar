@@ -745,7 +745,6 @@
 		// Закрытие всплывающего модального окна
 		closeModalWindow: function(event) {
 			$(event.target).closest('.r-calendar-modal').remove();
-
 			if($('body').find('.r-calendar-modal').length == 0) {
 				$('body').find('.r-calendar-modal-backdrop').remove();
 				$('body').removeClass('r-calendar-modal-open');
@@ -1076,20 +1075,22 @@
 			});
 		},
 		
+		// Обработчик успешного завершения Insert
 		ajaxStatusSuccessInsert: function(answer, data, rCalendar, modalWindow) {
 			try {
 				var res = eval(answer);
 				if(res[0] == 'OK') {
+					var tempData = JSON.parse(data);
+					tempData['id'] = (res[1] === undefined) ? 0 : res[1];
+					alert(rCalendar.opts.arrayDataEvents);
+					var arrayDataEvents = JSON.parse(rCalendar.opts.arrayDataEvents);
+					arrayDataEvents.push(tempData);
+					rCalendar.opts.arrayDataEvents = JSON.stringify(arrayDataEvents);
+					alert(rCalendar.opts.arrayDataEvents);
 					$(modalWindow).remove();
 					$('body').find('.r-calendar-modal-backdrop').remove();
 					$('body').removeClass('r-calendar-modal-open');
 					
-					var tempData = JSON.parse(data);
-					tempData['id'] = res[1];
-					
-					var arrayDataEvents = JSON.parse(rCalendar.opts.arrayDataEvents);
-					arrayDataEvents.push(tempData);
-					rCalendar.opts.arrayDataEvents = JSON.stringify(arrayDataEvents);
 					rCalendar.update();
 				} else {
 					$(modalWindow).find('.r-calendar-modal-text-error').html(res[0]);
@@ -1121,7 +1122,7 @@
 			}
 		},
 		
-		//
+		// Общий обработчик после процедуры Update. Закрывает модальные окна и обновляет данные в массиве
 		updateEventAfterCommit: function(data) {
 			var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
 			var tempData = JSON.parse(data);
