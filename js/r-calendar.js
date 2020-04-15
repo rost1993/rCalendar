@@ -1,3 +1,11 @@
+/*
+ 	rCalendar v1.0 - event booking plugin
+ 	Used libraries:
+		- jQuery v3.4.1 and higher
+		- twitter bootstrap v3.3.0 and higher
+ 	GitHub: https://github.com/rost1993/rCalendar
+	Copyright: Rostislav Gashin (rost1993), Russian Federation, Komi Republic, Syktyvkar city, 2020
+*/
 (function($){
 	
 	Date.prototype.getWeek = function() {
