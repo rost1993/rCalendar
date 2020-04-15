@@ -976,7 +976,7 @@
 					if($(this).prop('type') == 'CHECKBOX')
 						arrayTemp = $(this).prop('checked');
 					else
-						arrayTemp = $(this).val().trim().toUpperCase();
+						arrayTemp = $(this).val().trim();
 
 					arrSaveItem[nameItem] = arrayTemp;
 				} else {
@@ -989,7 +989,7 @@
 						if(($(this).prop('type').toUpperCase() == 'CHECKBOX') || ($(this).prop('type').toUpperCase() == 'RADIO'))
 							arrayTemp = $(this).prop('checked');
 						else
-							arrayTemp = $(this).val().trim().toUpperCase();
+							arrayTemp = $(this).val().trim();
 					}
 					
 					if($(this).data('datatype') == 'date') {
@@ -1030,6 +1030,13 @@
 				arrSaveItem = resultCollectionsItems[1];
 			} else {
 				$(this).closest('.r-calendar-modal').find('.r-calendar-modal-text-error').html(resultCollectionsItems[1]);
+				return;
+			}
+
+			var startDate = rCalendar.getObjectDate(arrSaveItem['startDate'], arrSaveItem['startDateHour'] + ':' + arrSaveItem['startDateMinute']);
+			var endDate = rCalendar.getObjectDate(arrSaveItem['endDate'], arrSaveItem['endDateHour'] + ':' + arrSaveItem['endDateMinute']);
+			if(startDate >= endDate) {
+				$(this).closest('.r-calendar-modal').find('.r-calendar-modal-text-error').html('Дата окончания бронирования больше, чем дата начала бронирования');
 				return;
 			}
 			
