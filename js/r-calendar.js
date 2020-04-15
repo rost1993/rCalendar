@@ -829,6 +829,7 @@
 						temp['nameReservation'] = (arrayDataEvents[item]['nameReservation'] === undefined) ? '' : arrayDataEvents[item]['nameReservation'];
 						temp['tableReservation'] = (arrayDataEvents[item]['tableReservation'] === undefined) ? '' : arrayDataEvents[item]['tableReservation'];
 						temp['customerReservation'] = (arrayDataEvents[item]['customerReservation'] === undefined) ? '' : arrayDataEvents[item]['customerReservation'];
+						temp['commentReservation'] = (arrayDataEvents[item]['commentReservation'] === undefined) ? '' : arrayDataEvents[item]['commentReservation'];
 						temp['id'] = (arrayDataEvents[item]['id'] === undefined) ? '0' : arrayDataEvents[item]['id'];
 
 						arrayEvents.push(temp);
@@ -1028,8 +1029,7 @@
 			
 			// Action 
 			arrSaveItem["action"] = (Number($(this).data('id')) == -1) ? "insert" : "update";
-			
-			alert( JSON.stringify(arrSaveItem));
+
 			var func = (Number($(this).data('id')) == -1) ? rCalendar.ajaxStatusSuccessInsert : rCalendar.ajaxStatusSuccessUpdate;
 			rCalendar.ajaxQuery(rCalendar, modalWindow, JSON.stringify(arrSaveItem), func, rCalendar.ajaxStatusError);
 		},
@@ -1132,7 +1132,6 @@
 			}
 			arrayDataEventsTemp.push(tempData);
 			this.opts.arrayDataEvents = JSON.stringify(arrayDataEventsTemp);
-			alert(data);
 
 			$('.r-calendar-modal').remove();
 			$('body').find('.r-calendar-modal-backdrop').remove();
