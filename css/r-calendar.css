@@ -80,7 +80,7 @@
 }
 
 .r-calendar-current-day {
-	color: #04B404;
+	background-color: #DEFAE1;
 }
 
 .r-calendar-btn-today {
@@ -129,6 +129,16 @@
 
 .r-calendar-day-active:hover {
 	background-color: #F2F2F2;
+	cursor: pointer;
+	transform: scale(1.1);
+	-moz-transform: scale(1.1);
+	-ms-transform: scale(1.1);
+	-webkit-transform: scale(1.1);
+	-o-transform: scale(1.1);
+}
+
+.r-calendar-day-active+.r-calendar-current-day:hover {
+	background-color: #DEFAE1;
 	cursor: pointer;
 	transform: scale(1.1);
 	-moz-transform: scale(1.1);
