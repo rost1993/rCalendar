@@ -501,9 +501,8 @@
 					rCalendar.showModalWindowListEvents($(this).data('date'));
 				return;
 			}
-			
+
 			var selectedDate, selectTableList, selectCustomerList, selectedHour, selectedMinute;
-			
 			var startDate, startDateHour, startDateMinute, endDate, endDateHour, endDateMinute, nameReservation, tableReservation, customerReservation, commentReservation, idReservation;
 			startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = tableReservation = customerReservation = commentReservation = '';
 			
@@ -563,6 +562,13 @@
 			} else {
 				return;
 			}
+			
+			// Если дата меньше текущей даты. То тогда запрещаем отображения окна добавления мероприятия
+			var now = new Date();
+			now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+			var tempDate = rCalendar.getObjectDate(startDate);
+			if(tempDate < now)
+				return;
 
 			// Разбираем список столов
 			try {
