@@ -19,7 +19,7 @@
 					"endDateHour" => "4",
 					"endDateMinute" => "55",
 					"nameReservation" => "Дружеская встреча 1",
-					"numberTableReservation" => "2-й стол",
+					"tableReservation" => "2-й стол",
 					"customerReservation" => "3-й клиент",
 					"commentReservation" => "Комментарий"),
 					array("id" => "200",
@@ -30,7 +30,7 @@
 					"endDateHour" => "3",
 					"endDateMinute" => "00",
 					"nameReservation" => "Дружеская встреча 2",
-					"numberTableReservation" => "2-й стол",
+					"tableReservation" => "2-й стол",
 					"customerReservation" => "3-й клиент",
 					"commentReservation" => "Комментарий"));
 	

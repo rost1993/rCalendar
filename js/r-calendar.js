@@ -20,7 +20,6 @@
 								- 3 + (week1.getDay() + 6) % 7) / 7);
 	}
 
-
 	var VERSION = '1.0',
 		pluginName = 'rCalendar',
 		defaults = {
@@ -651,7 +650,7 @@
 							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textCommentBookig + "</label>"
 							+ "<textarea class='r-calendar-form-control' rows='3' id='commentReservation' data-datatype='char'>" + commentReservation + "</textarea>"
 						+ "</div>"
-						
+
 						+ "<div class='r-calendar-form-row'>"
 							+ "<div class='r-calendar-modal-text-error'></div>"
 						+ "</div>"
@@ -665,6 +664,10 @@
 				+ "</div>"
 			+ "</div>"
 			+ "</div>");
+
+			// Инициализируем календари и настриваем z-index
+			$(modal).find('#startDate,#endDate').datepicker({ "format" : "dd.mm.yyyy", onRender : rCalendar.renderDatepicker });
+			$('body').find('.datepicker').css({ "z-index" : "1051" });
 
 			$(modal).find('.r-calendar-close').unbind();
 			$(modal).find('.r-calendar-close').on('click', rCalendar.closeModalWindow);
@@ -686,7 +689,7 @@
 				$('body').append($("<div class='r-calendar-modal-backdrop'></div>"));
 			$('body').addClass('r-calendar-modal-open');
 		},
-		
+	
 		// Отрисовка модального окна с мероприятими
 		showModalWindowListEvents: function(date, time) {
 			if(date === undefined)
@@ -702,7 +705,6 @@
 				+ "<th>" + this.loc.textTable3 + "</th>"
 				+ "<th>" + this.loc.textTable4 + "</th>"
 				+ "<th>" + this.loc.textTable5 + "</th>"
-				+ "<th>" + this.loc.textTable6 + "</th>"
 				+ "</tr></thead>");
 			var tbody = $("<tbody></tbody>");
 
@@ -710,7 +712,6 @@
 			
 			for(var i = 0; i < arrayEvents.length; i++) {
 				var tr =  $("<tr class='r-calendar-tr-events' id='" + arrayEvents[i]['id'] + "'>"
-					  + "<td>" + (i + 1) + "</td>"
 					  + "<td>" + arrayEvents[i]['startDate'] + "&nbsp;" + arrayEvents[i]['startDateHour'] + ":" + arrayEvents[i]['startDateMinute'] + "</td>"
 					  + "<td>" + arrayEvents[i]['endDate'] + "&nbsp;" + arrayEvents[i]['endDateHour'] + ":" + arrayEvents[i]['endDateMinute'] + "</td>"
 					  + "<td>" + arrayEvents[i]['nameReservation'] + "</td>"
@@ -1291,6 +1292,12 @@
 				this.maxEventsDay = this.minEventsDay = this.opts.startDay;
 			}
 		},
+	
+		// Функция блокировки возможности выбора даты меньшей текущей
+		renderDatepicker: function(date) {
+			var now = new Date();
+			return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		},
 	};
 	
 	$.fn.rCalendar = function(options) {
@@ -1335,12 +1342,11 @@
 			textButtonSave: 'Сохранить',
 			textButtonDelete: 'Удалить',
 			textButtonClose: 'Закрыть',
-			textTable1: '№ п/п',
-			textTable2: 'Начало',
-			textTable3: 'Окончание',
-			textTable4: 'Название',
-			textTable5: '№ стола',
-			textTable6: 'Клиент',
+			textTable1: 'Начало',
+			textTable2: 'Окончание',
+			textTable3: 'Название',
+			textTable4: '№ стола',
+			textTable5: 'Клиент',
 			textBookingEventsList: 'Список бронирований на'
 		},
 		
@@ -1371,12 +1377,11 @@
 			textButtonSave: 'Save',
 			textButtonDelete: 'Delete',
 			textButtonClose: 'Close',
-			textTable1: '№',
-			textTable2: 'Start',
-			textTable3: 'End',
-			textTable4: 'Name',
-			textTable5: '№ table',
-			textTable6: 'Customer',
+			textTable1: 'Start',
+			textTable2: 'End',
+			textTable3: 'Name',
+			textTable4: '№ table',
+			textTable5: 'Customer',
 			textBookingEventsList: 'List of booking on'
 		}
 	};
