@@ -35,5 +35,5 @@
 					"commentReservation" => "Комментарий"));
 	
 	sleep(1);
-	echo json_encode(array('OK', 500));
-	//echo json_encode(array('OK', json_encode($array1)));
+	//echo json_encode(array('OK', 500));
+	echo json_encode(array('OK', json_encode($array1)));
