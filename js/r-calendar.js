@@ -716,6 +716,9 @@
 
 			var arrayEvents = this.getEventsSelectedDate(selectedDate, time);
 			
+			// Сортируем полученный массив с данными
+			arrayEvents = this.sortingArray(arrayEvents);
+
 			for(var i = 0; i < arrayEvents.length; i++) {
 				var tr =  $("<tr class='r-calendar-tr-events' id='" + arrayEvents[i]['id'] + "'>"
 					  + "<td>" + arrayEvents[i]['startDate'] + "&nbsp;" + arrayEvents[i]['startDateHour'] + ":" + arrayEvents[i]['startDateMinute'] + "</td>"
@@ -837,7 +840,7 @@
 
 					if(date >= dateStart && date <= dateEnd) {
 						var temp = [];
-						
+
 						temp['startDate'] = (arrayDataEvents[item]['startDate'] === undefined) ? '' : arrayDataEvents[item]['startDate'];
 						temp['startDateHour'] = (arrayDataEvents[item]['startDateHour'] === undefined) ? '' : arrayDataEvents[item]['startDateHour'];
 						temp['startDateMinute'] = (arrayDataEvents[item]['startDateMinute'] === undefined) ? '' : arrayDataEvents[item]['startDateMinute'];
@@ -856,7 +859,7 @@
 			} catch(e) {
 				arrayEvents = [];
 			}
-			
+
 			return arrayEvents;
 		},
 		
@@ -1303,6 +1306,22 @@
 		renderDatepicker: function(date) {
 			var now = new Date();
 			return date.valueOf() < now.valueOf() ? 'disabled' : '';
+		},
+		
+		// Функция сортировки массива по дате начала бронирования
+		sortingArray: function(arrayEvents) {
+			for(var i = 0; i < arrayEvents.length; i++) {
+				for(var j = (arrayEvents.length - 1); j > i; j--) {
+					var dd1 = this.getObjectDate(arrayEvents[j-1]['startDate'], (arrayEvents[j-1]['startDateHour'] + ':' + arrayEvents[j-1]['startDateMinute']));
+					var dd2 = this.getObjectDate(arrayEvents[j]['startDate'], (arrayEvents[j]['startDateHour'] + ':' + arrayEvents[j]['startDateMinute']));
+					if(dd1 > dd2) {
+						var temp = arrayEvents[j-1];
+						arrayEvents[j-1] = arrayEvents[j];
+						arrayEvents[j] = temp;
+					}
+				}
+			}
+			return arrayEvents;
 		},
 	};
 	
