@@ -20,7 +20,7 @@
 								- 3 + (week1.getDay() + 6) % 7) / 7);
 	}
 
-	var VERSION = '1.0',
+	var VERSION = '1.1',
 		pluginName = 'rCalendar',
 		defaults = {
 			language: 'ru',
@@ -87,6 +87,7 @@
 			var btnPrev = $("<button class='btn btn-sm r-calendar-btn' id='btnBeforeDate' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'>&lt;</button>");
 			var btnNext = $("<button class='btn btn-sm r-calendar-btn' id='btnAfterDate' data-year='" + mainDate.getFullYear() + "' data-month='" + mainDate.getMonth() + "' data-day='" + mainDate.getDate() + "' type='button'>&gt;</button>");
 			var btnToday = $("<button class='btn btn-sm r-calendar-btn r-calendar-btn-today' id='btnNowDate' data-year='" + now.getFullYear() + "' data-month='" + now.getMonth() + "' data-day='" + now.getDate() + "' type='button'>" + this.loc.today + "</button>");
+			var btnAddBooking = $("<button class='btn btn-sm r-calendar-btn' style='margin-left: 10px;'>" + this.loc.booking + "</button>");
 			
 			$(btnPrev).unbind();
 			$(btnPrev).on('click', this.prev);
@@ -96,11 +97,15 @@
 
 			$(btnToday).unbind();
 			$(btnToday).on('click', this.today);
+			
+			$(btnAddBooking).unbind();
+			$(btnAddBooking).on('click', { mode : "new", rCalendar : this }, this.showModalWindow);
 
 			btnLeftGroup.append(btnPrev);
 			btnLeftGroup.append(btnToday);
 			btnLeftGroup.append(btnNext);
 			rCalendarToolbarLeftBlock.append(btnLeftGroup);
+			rCalendarToolbarLeftBlock.append(btnAddBooking);
 			rCalendarToolbar.append(rCalendarToolbarLeftBlock);
 	
 			var rCalendarToolbarCenterBlock = $("<div class='r-calendar-toolbar-center'>");
@@ -513,7 +518,6 @@
 			var btnRemoveEvent = "";
 			
 			if(event.data.mode == "add") {
-				// Устанавливаем событие для закрытия окошка
 				rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 
 				// Получаем выбранную дату
@@ -540,7 +544,6 @@
 				endDate = startDate;
 				idReservation = -1;
 			} else if(event.data.mode == "update") {
-				
 				rCalendar = event.data.rCalendar;
 				
 				startDate = (event.data.arrayEvent['startDate'] === undefined) ? '' : event.data.arrayEvent['startDate'];
@@ -559,6 +562,10 @@
 				idReservation = (event.data.arrayEvent['id'] === undefined) ? -1 : event.data.arrayEvent['id'];
 				
 				btnRemoveEvent = "<button type='button' class='btn btn-warning' id='btnRemoveEvent' data-id='" + idReservation + "' style='margin-right: 10px;'>" + rCalendar.loc.textButtonDelete + "</button>";
+			} else if(event.data.mode == "new") {
+				rCalendar = event.data.rCalendar;
+				startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = tableReservation = customerReservation = commentReservation = '';
+				idReservation = -1;
 			} else {
 				return;
 			}
@@ -624,25 +631,25 @@
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textStartDateBooking + "</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='startDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + startDate + "' data-mandatory='true' data-datatype='date'>"
+							+ "<input type='text' class='r-calendar-form-control' id='startDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + startDate + "' data-mandatory='true' data-datatype='date' autocomplete='off'>"
 								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortHour + "</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + startDateHour + "' data-mandatory='true' data-datatype='number'>"
+								+ "<input type='number' class='r-calendar-form-control' id='startDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + startDateHour + "' data-mandatory='true' data-datatype='number' autocomplete='off'>"
 								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortMinute + "</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + startDateMinute + "' data-mandatory='true' data-datatype='number'>"
+							+ "<input type='number' class='r-calendar-form-control' id='startDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + startDateMinute + "' data-mandatory='true' data-datatype='number' autocomplete='off'>"
 						+ "</div>"
 
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textEndDateBooking + "</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='endDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + endDate + "' data-mandatory='true' data-datatype='date'>"
+							+ "<input type='text' class='r-calendar-form-control' id='endDate' maxlength='10' style='width: 20%;' placeholder='ДД.ММ.ГГГГ' value='" + endDate + "' data-mandatory='true' data-datatype='date' autocomplete='off'>"
 								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortHour + "</span>"
-								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + endDateHour + "' data-mandatory='true' data-datatype='number'>"
+								+ "<input type='number' class='r-calendar-form-control' id='endDateHour' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='23' step='1' value='" + endDateHour + "' data-mandatory='true' data-datatype='number' autocomplete='off'>"
 								+ "<span class='r-calendar-input-group-text'>" + rCalendar.loc.textShortMinute + "</span>"
-							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + endDateMinute + "' data-mandatory='true' data-datatype='number'>"
+							+ "<input type='number' class='r-calendar-form-control' id='endDateMinute' maxlength='2' placeholder='00' style='width: 10%;' min='0' max='59' step='1' value='" + endDateMinute + "' data-mandatory='true' data-datatype='number' autocomplete='off'>"
 						+ "</div>"
 					
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textNameBooking + "</label>"
-							+ "<input type='text' class='r-calendar-form-control' id='nameReservation' data-mandatory='true' data-datatype='char' value='" + nameReservation + "'>"
+							+ "<input type='text' class='r-calendar-form-control' id='nameReservation' data-mandatory='true' data-datatype='char' value='" + nameReservation + "' autocomplete='off'>"
 						+ "</div>"
 						+ "<div class='r-calendar-form-row'>"
 							+ "<label class='r-calendar-label-form'>" + rCalendar.loc.textNumberTableBooking + "</label>"
@@ -1372,7 +1379,8 @@
 			textTable3: 'Название',
 			textTable4: '№ стола',
 			textTable5: 'Клиент',
-			textBookingEventsList: 'Список бронирований на'
+			textBookingEventsList: 'Список бронирований на',
+			booking: "Забронировать",
 		},
 		
 		en: {
@@ -1407,7 +1415,8 @@
 			textTable3: 'Name',
 			textTable4: '№ table',
 			textTable5: 'Customer',
-			textBookingEventsList: 'List of booking on'
+			textBookingEventsList: 'List of booking on',
+			booking: "Booking",
 		}
 	};
 	
