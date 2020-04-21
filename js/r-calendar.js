@@ -370,7 +370,7 @@
 		// Метод навешивания событий
 		_bindEvents: function() {
 			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').unbind();
-			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', { mode : "add" }, this.showModalWindow);
+			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', { mode : "add", rCalendar : this }, this.showModalWindow);
 		},
 		
 		//Обновление данных (получение данных от сервера) и вызов перерисовки календаря
@@ -518,7 +518,7 @@
 			var btnRemoveEvent = "";
 			
 			if(event.data.mode == "add") {
-				rCalendar = $(this).closest('.r-calendar').data('rCalendar');
+				rCalendar = event.data.rCalendar;
 
 				// Получаем выбранную дату
 				var startDate = rCalendar.getDateToNormalFormat($(this).data('date'));
