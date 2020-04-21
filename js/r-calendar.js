@@ -1309,19 +1309,19 @@
 		},
 		
 		// Функция сортировки массива по дате начала бронирования
-		sortingArray: function(arrayEvents) {
-			for(var i = 0; i < arrayEvents.length; i++) {
-				for(var j = (arrayEvents.length - 1); j > i; j--) {
-					var dd1 = this.getObjectDate(arrayEvents[j-1]['startDate'], (arrayEvents[j-1]['startDateHour'] + ':' + arrayEvents[j-1]['startDateMinute']));
-					var dd2 = this.getObjectDate(arrayEvents[j]['startDate'], (arrayEvents[j]['startDateHour'] + ':' + arrayEvents[j]['startDateMinute']));
+		sortingArray: function(arr) {
+			for(var i = 0; i < arr.length; i++) {
+				for(var j = (arr.length - 1); j > i; j--) {
+					var dd1 = this.getObjectDate(arr[j-1]['startDate'], (arr[j-1]['startDateHour'] + ':' + arr[j-1]['startDateMinute']));
+					var dd2 = this.getObjectDate(arr[j]['startDate'], (arr[j]['startDateHour'] + ':' + arr[j]['startDateMinute']));
 					if(dd1 > dd2) {
-						var temp = arrayEvents[j-1];
-						arrayEvents[j-1] = arrayEvents[j];
-						arrayEvents[j] = temp;
+						var temp = arr[j-1];
+						arr[j-1] = arr[j];
+						arr[j] = temp;
 					}
 				}
 			}
-			return arrayEvents;
+			return arr;
 		},
 	};
 	
