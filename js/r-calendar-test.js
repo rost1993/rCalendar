@@ -792,54 +792,19 @@
 		
 		
 		diffDate: function(date1, date2) {
-			
-			var days = date2.getUTCDate() - date1.getUTCDate();
-			var hours = date2.getUTCHours() - date1.getUTCHours();
-			var minutes = date2.getUTCMinutes() - date1.getUTCMinutes();
-			
+			var days = date2.getDate() - date1.getDate();
+			var hours = date2.getHours() - date1.getHours();
+			var minutes = date2.getMinutes() - date1.getMinutes();
+
 			if(days > 0) {
 				hours -= 24;
 			} else {
 				if(minutes < 0)
 					hours--;
-				else
+				else if(minutes > 0)
 					hours++;
 			}
 			return hours;
-			
-			
-			/*var years, months, days, hours, minutes, seconds;
-			var y1, m1, d1, d2, dd;
-			years = date2.getUTCFullYear()-(y1 = date1.getUTCFullYear());
-			months = date2.getUTCMonth()-(m1 = date1.getUTCMonth());
-			days = (d2 = date2.getUTCDate())-(d1 = date1.getUTCDate());
-			hours = date2.getUTCHours()-date1.getUTCHours();
-			minutes = date2.getUTCMinutes()-date1.getUTCMinutes();
-			seconds = date2.getUTCSeconds()-date1.getUTCSeconds();
-			dd = 0;
-			if (seconds < 0) {
-				seconds += 60;
-				minutes--;
-			}
-			if (minutes < 0) {
-				minutes += 60;
-				hours--;
-			}
-			if (hours < 0) {
-				hours += 24;
-				days--;
-				dd = 1;
-			}
-			if (days < 0) {
-				days = this.monthDays(y1, m1)-d1+d2-dd;
-				months--;
-			}
-			if (months < 0) {
-				months += 12;
-				years--;
-			}
-			return {years: years, months: months, days: days,
-					hours: hours, minutes: minutes, seconds: seconds};*/
 		},
 		
 		getBooking: function(arr, hours) {
@@ -876,8 +841,7 @@
 //alert(startDate + " " + endDate + " " + dd);
 					//alert(startDate + "- " + endDate + " - " + diff.days + "." + diff.months + "." + diff.years + " " + diff.hours + ":" + diff.minutes + ":" + diff.seconds);
 					
-					if((dd >= startDate)) {
-						alert(dd + " : " + startDate);
+					if((dd.getFullYear() == startDate.getFullYear()) && (dd.getMonth() == startDate.getMonth()) && (dd.getDate() == startDate.getDate())) {
 						//alert(dd + " " + startDate + " " + endDate);
 						var diff = this.diffDate(startDate, endDate);
 						//alert(startDate + " " + endDate);
