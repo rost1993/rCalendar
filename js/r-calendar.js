@@ -39,6 +39,12 @@
 		this.maxEventsDay = new Date();	// Максимальная дата для событий
 		this.minEventsDay = new Date();	// Минимальная дата для событий
 		this.opts = $.extend(true, {}, defaults, options, this.$el.data());
+		
+	//	alert(this.opts.arrayDataEvents);
+		this.opts.arrayDataEvents = this.getObjectOfArray(this.sortingArray(this.getArrayOfObject(this.opts.arrayDataEvents)));
+	//	alert(this.opts.arrayDataEvents);
+		//temp = this.getObjectOfArray(temp);
+		//alert(temp);
 		this.init();
 	};
 	
@@ -353,13 +359,16 @@
 			
 			rCalendarWidget.append(thead);
 			
+			var x = "<span class='r-calendar-badge-test' style='height: 159px;'>123</span>";
+			
+			var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
+			var arrayBooking = this.getEventsCurrentDateX(currentDate);
 			var tbody = $("<div class='r-calendar-body'></div>");
 			for(var i = 0; i < 24; i++) {
 				var currentTime = this.loc.hours[i];
-				var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
 				tbody.append($("<div class='r-calendar-daytime'>"
 					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-10' data-time='" + currentTime + "'>" + this.loc.hoursWidget[i] + "</div>"
-					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + currentDate + "' data-time='" + currentTime + "'>" + this.getEventsCurrentDate(currentDate, currentTime) + "</div>"
+					+ "<div class='r-calendar-daytime-grid r-calendar-daytime-grid-90 r-calendar-daytime-active' data-date='" + currentDate + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
 					+ "</div>"));
 			}
 			rCalendarWidget.append(tbody);
@@ -497,7 +506,7 @@
 				return;
 			}
 			
-			if(event.target.tagName.toUpperCase() == 'SPAN' && event.target.className == 'r-calendar-badge') {
+			if(event.target.tagName.toUpperCase() == 'SPAN' && (event.target.className == 'r-calendar-badge' || event.target.className == 'r-calendar-badge-test')) {
 				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 				
 				if((rCalendar.opts.view == 'weeks') || (rCalendar.opts.view == 'days'))
@@ -781,6 +790,74 @@
 		},
 		
 		
+		diffDate: function(date1, date2) {
+			var days = date2.getDate() - date1.getDate();
+			var hours = ((date2.getHours() - date1.getHours()) > 0) ? (date2.getHours() - date1.getHours()) : 1 ;
+			var minutes = date2.getMinutes() - date1.getMinutes();
+
+			if(days > 0) {
+				hours -= 24;
+			} else {
+				if(minutes > 0)
+					hours++;
+			}
+			return hours;
+		},
+		
+		getBooking: function(arr, hours) {
+			var html = '';
+			for(var item in arr) {
+				if(arr[item]['hours'] == hours)
+					html += arr[item]['html'];
+			}
+			
+			return html;
+		},
+		
+		getEventsCurrentDateX: function(date) {
+			if(date == '0000-00-00')
+				return "";
+			
+			var dd = this.getDateToNormalFormat(date);
+			dd = this.getObjectDate(dd, "23:59");
+			var htmlBadgeEvents = "";
+			var arrX = [];
+
+			var z_index = 10;
+			var margin_left = 0;
+			var i = 1;
+
+			try {
+				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
+				for(var item in arrayDataEvents) {
+					var startDate, endDate;
+					
+					if(this.opts.view == 'days') {
+						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute'] );
+						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
+						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
+						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
+					}
+
+					if((dd.getFullYear() == startDate.getFullYear()) && (dd.getMonth() == startDate.getMonth()) && (dd.getDate() == startDate.getDate())) {
+						var diff = this.diffDate(startDate, endDate);
+
+						margin_left = 105 * Number(this.searchHoursInArray(arrX, startDate.getHours()));
+						z_index++;
+						
+						htmlBadgeEvents = "<span class='r-calendar-badge-test' id='"+ (i++) + "' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
+						
+
+						var xx = { "hours" : startDate.getHours(), "html" : htmlBadgeEvents }
+						arrX.push(xx);
+					}
+				}
+			} catch(e) {
+				htmlBadgeEvents = "";
+			}
+			return arrX;
+		},
+		
 	
 		// Генерация событий на текущую дату
 		getEventsCurrentDate: function(date, time) {
@@ -809,11 +886,6 @@
 
 					if((dd >= startDate) && (dd <= endDate))
 						countEvents += 1;
-					
-					/*if(startDate > this.maxEventsDay)
-						this.maxEventsDay = startDate;
-					if(startDate < this.minEventsDay)
-						this.minEventsDay = startDate;*/
 				}
 				
 				if(Number(countEvents) > 0)
@@ -836,8 +908,12 @@
 					var dateStart, dateEnd;
 					
 					if(this.opts.view == 'weeks' || this.opts.view == 'days') {
-						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute']);
-						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
+						//var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute']);
+						//var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
+						
+						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + '00';
+						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + '00';
+						
 						var dateStart = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
 						var dateEnd = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
 					} else {
@@ -1329,6 +1405,55 @@
 				}
 			}
 			return arr;
+		},
+	
+	
+		searchHoursInArray: function(arr, hours) {
+			var count = 0;
+			for(var key in arr)
+				if(arr[key]['hours'] == hours)
+					count++;
+			return count;
+		},
+		
+		getArrayOfObject: function(obj) {
+			var temp = JSON.parse(obj);
+			var arr = [];
+			for(var key in temp)
+				arr.push(temp[key]);
+			return arr;
+		},
+		
+		getObjectOfArray: function(arr) {
+			var obj = [];
+			for(var i = 0; i < arr.length; i++) {
+				obj.push({ 'startDate' : arr[i]['startDate'],
+						   'startDateHour' : arr[i]['startDateHour'],
+						   'startDateMinute' : arr[i]['startDateMinute'],
+						   'endDate' : arr[i]['endDate'],
+						   'endDateHour' : arr[i]['endDateHour'],
+						   'endDateMinute' : arr[i]['endDateMinute'],
+						   'nameReservation' : arr[i]['nameReservation'],
+						   'tableReservation' : arr[i]['tableReservation'],
+						   'customerReservation' : arr[i]['customerReservation'],
+						   'commentReservation' : arr[i]['commentReservation'],
+						   'id' : arr[i]['id']});
+				
+				/*obj['startDate'] = arr[i]['startDate'];
+				obj['startDateHour'] = arr[i]['startDateHour'];
+				obj['startDateMinute'] = arr[i]['startDateMinute'];
+				
+				obj['endDate'] = arr[i]['endDate'];
+				obj['endDateHour'] = arr[i]['endDateHour'];
+				obj['endDateMinute'] = arr[i]['endDateMinute'];
+				
+				obj['nameReservation'] = arr[i]['nameReservation'];
+				obj['tableReservation'] = arr[i]['tableReservation'];
+				obj['customerReservation'] = arr[i]['customerReservation'];
+				obj['commentReservation'] = arr[i]['commentReservation'];
+				obj['id'] = arr[i]['id'];*/
+			}
+			return JSON.stringify(obj);
 		},
 	};
 	
