@@ -39,12 +39,8 @@
 		this.maxEventsDay = new Date();	// Максимальная дата для событий
 		this.minEventsDay = new Date();	// Минимальная дата для событий
 		this.opts = $.extend(true, {}, defaults, options, this.$el.data());
-		
-	//	alert(this.opts.arrayDataEvents);
+		// Сортируем массив
 		this.opts.arrayDataEvents = this.getObjectOfArray(this.sortingArray(this.getArrayOfObject(this.opts.arrayDataEvents)));
-	//	alert(this.opts.arrayDataEvents);
-		//temp = this.getObjectOfArray(temp);
-		//alert(temp);
 		this.init();
 	};
 	
@@ -308,7 +304,10 @@
 			var arrayDate = [];
 			var now = new Date();
 			var arrayClassCurrentDay = []; // Массив в котором хранится класс для текущего дня
+			var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
+			var arrayBooking = this.getEventsCurrentDateX(currentDate);
 			
+
 			for(var i = 0; i < 7; i++) {
 				var tempDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), (mainDate.getDate() + i));
 				if((now.getDate() == tempDate.getDate()) && (now.getFullYear() == tempDate.getFullYear()) && (now.getMonth() == tempDate.getMonth())) {
@@ -324,7 +323,7 @@
 			rCalendarWidget.append(thead);
 			var tbody = $("<div class='r-calendar-body'></div>");
 			for(var i = 0; i < 24; i++) {
-				var rCalendarWeek = $("<div class='r-calendar-week'>"
+				/*var rCalendarWeek = $("<div class='r-calendar-week'>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hoursWidget[i] + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[0] + "' data-date='" + arrayDate[0] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[0], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[1] + "' data-date='" + arrayDate[1] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[1], this.loc.hours[i]) + "</div>"
@@ -333,7 +332,21 @@
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[4] + "' data-date='" + arrayDate[4] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[4], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[5] + "' data-date='" + arrayDate[5] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[5], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[6] + "' data-date='" + arrayDate[6] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[6], this.loc.hours[i]) + "</div>"
+					+ "</div>");*/
+					
+				
+				var currentTime = this.loc.hours[i];
+				var rCalendarWeek = $("<div class='r-calendar-week'>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + currentTime + "'>" + this.loc.hoursWidget[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[0] + "' data-date='" + arrayDate[0] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[1] + "' data-date='" + arrayDate[1] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[2] + "' data-date='" + arrayDate[2] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[3] + "' data-date='" + arrayDate[3] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[4] + "' data-date='" + arrayDate[4] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[5] + "' data-date='" + arrayDate[5] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[6] + "' data-date='" + arrayDate[6] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
 					+ "</div>");
+					
 				tbody.append(rCalendarWeek);
 			}
 			rCalendarWidget.append(tbody);
@@ -362,7 +375,7 @@
 			var x = "<span class='r-calendar-badge-test' style='height: 159px;'>123</span>";
 			
 			var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
-			var arrayBooking = this.getEventsCurrentDateX(currentDate);
+			var arrayBooking = this.getEventsCurrentDay(currentDate);
 			var tbody = $("<div class='r-calendar-body'></div>");
 			for(var i = 0; i < 24; i++) {
 				var currentTime = this.loc.hours[i];
@@ -789,7 +802,7 @@
 			}
 		},
 		
-		
+		// Функция вычитания одной даты из другой для вычисления разницы в часах
 		diffDate: function(date1, date2) {
 			var days = date2.getDate() - date1.getDate();
 			var hours = ((date2.getHours() - date1.getHours()) > 0) ? (date2.getHours() - date1.getHours()) : 1 ;
@@ -804,6 +817,7 @@
 			return hours;
 		},
 		
+		// Функция получения отрисованного элемента для выбранного часа
 		getBooking: function(arr, hours) {
 			var html = '';
 			for(var item in arr) {
@@ -814,18 +828,18 @@
 			return html;
 		},
 		
-		getEventsCurrentDateX: function(date) {
+		// Формирование массива отрисованных объектов бронирований для режима "дни"
+		getEventsCurrentDay: function(date) {
 			if(date == '0000-00-00')
 				return "";
 			
 			var dd = this.getDateToNormalFormat(date);
 			dd = this.getObjectDate(dd, "23:59");
 			var htmlBadgeEvents = "";
-			var arrX = [];
+			var arrEventsBadge = [];
 
 			var z_index = 10;
 			var margin_left = 0;
-			var i = 1;
 
 			try {
 				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
@@ -842,20 +856,18 @@
 					if((dd.getFullYear() == startDate.getFullYear()) && (dd.getMonth() == startDate.getMonth()) && (dd.getDate() == startDate.getDate())) {
 						var diff = this.diffDate(startDate, endDate);
 
-						margin_left = 105 * Number(this.searchHoursInArray(arrX, startDate.getHours()));
+						margin_left = 105 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
 						z_index++;
 						
-						htmlBadgeEvents = "<span class='r-calendar-badge-test' id='"+ (i++) + "' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
-						
+						htmlBadgeEvents = "<span class='r-calendar-badge-test' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
 
-						var xx = { "hours" : startDate.getHours(), "html" : htmlBadgeEvents }
-						arrX.push(xx);
+						arrEventsBadge.push({ "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
 					}
 				}
 			} catch(e) {
 				htmlBadgeEvents = "";
 			}
-			return arrX;
+			return arrEventsBadge;
 		},
 		
 	
@@ -982,7 +994,7 @@
 			try {
 				var res = JSON.parse(answer);
 				if(res[0] == 'OK')
-					rCalendar.opts.arrayDataEvents = res[1];
+					rCalendar.opts.arrayDataEvents = rCalendar.getObjectOfArray(rCalendar.sortingArray(rCalendar.getArrayOfObject(res[1])));
 			} catch(e) {
 				rCalendar.opts.arrayDataEvents = [];
 			}
@@ -1407,7 +1419,7 @@
 			return arr;
 		},
 	
-	
+		// Поиск количества схожих элементов для сдвига на определенное количество пикселей
 		searchHoursInArray: function(arr, hours) {
 			var count = 0;
 			for(var key in arr)
@@ -1416,6 +1428,7 @@
 			return count;
 		},
 		
+		// Конвертируем массив из объекта
 		getArrayOfObject: function(obj) {
 			var temp = JSON.parse(obj);
 			var arr = [];
@@ -1424,6 +1437,7 @@
 			return arr;
 		},
 		
+		// Конвертируем обхект из массива
 		getObjectOfArray: function(arr) {
 			var obj = [];
 			for(var i = 0; i < arr.length; i++) {
