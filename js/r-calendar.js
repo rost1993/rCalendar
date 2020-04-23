@@ -304,8 +304,8 @@
 			var arrayDate = [];
 			var now = new Date();
 			var arrayClassCurrentDay = []; // Массив в котором хранится класс для текущего дня
-			var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
-			var arrayBooking = this.getEventsCurrentDateX(currentDate);
+			/*var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
+			var arrayBooking = this.getEventsCurrentDateX(currentDate);*/
 			
 
 			for(var i = 0; i < 7; i++) {
@@ -323,7 +323,7 @@
 			rCalendarWidget.append(thead);
 			var tbody = $("<div class='r-calendar-body'></div>");
 			for(var i = 0; i < 24; i++) {
-				/*var rCalendarWeek = $("<div class='r-calendar-week'>"
+				var rCalendarWeek = $("<div class='r-calendar-week'>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hoursWidget[i] + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[0] + "' data-date='" + arrayDate[0] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[0], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[1] + "' data-date='" + arrayDate[1] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[1], this.loc.hours[i]) + "</div>"
@@ -332,19 +332,6 @@
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[4] + "' data-date='" + arrayDate[4] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[4], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[5] + "' data-date='" + arrayDate[5] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[5], this.loc.hours[i]) + "</div>"
 					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[6] + "' data-date='" + arrayDate[6] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[6], this.loc.hours[i]) + "</div>"
-					+ "</div>");*/
-					
-				
-				var currentTime = this.loc.hours[i];
-				var rCalendarWeek = $("<div class='r-calendar-week'>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + currentTime + "'>" + this.loc.hoursWidget[i] + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[0] + "' data-date='" + arrayDate[0] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[1] + "' data-date='" + arrayDate[1] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[2] + "' data-date='" + arrayDate[2] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[3] + "' data-date='" + arrayDate[3] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[4] + "' data-date='" + arrayDate[4] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[5] + "' data-date='" + arrayDate[5] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[6] + "' data-date='" + arrayDate[6] + "' data-time='" + currentTime + "'>" + this.getBooking(arrayBooking, currentTime.substr(0,2)) + "</div>"
 					+ "</div>");
 					
 				tbody.append(rCalendarWeek);
