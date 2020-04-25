@@ -304,9 +304,6 @@
 			var arrayDate = [];
 			var now = new Date();
 			var arrayClassCurrentDay = []; // Массив в котором хранится класс для текущего дня
-			/*var currentDate = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
-			var arrayBooking = this.getEventsCurrentDateX(currentDate);*/
-			
 
 			for(var i = 0; i < 7; i++) {
 				var tempDate = new Date(mainDate.getFullYear(), mainDate.getMonth(), (mainDate.getDate() + i));
@@ -320,22 +317,28 @@
 				arrayDate[i] = tempDate.getFullYear() + "-" + tempDate.getMonth() + "-" + tempDate.getDate();
 			}
 
+			var dd1 = mainDate.getFullYear() + "-" + mainDate.getMonth() + "-" + mainDate.getDate();
+			var dd2 = tempDate.getFullYear() + "-" + tempDate.getMonth() + "-" + tempDate.getDate();
+			var arrayBooking = this.getEventsCurrentWeek(dd1, dd2);
+
 			rCalendarWidget.append(thead);
 			var tbody = $("<div class='r-calendar-body'></div>");
 			for(var i = 0; i < 24; i++) {
+				var currentTime = this.loc.hours[i];
 				var rCalendarWeek = $("<div class='r-calendar-week'>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + this.loc.hours[i] + "'>" + this.loc.hoursWidget[i] + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[0] + "' data-date='" + arrayDate[0] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[0], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[1] + "' data-date='" + arrayDate[1] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[1], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[2] + "' data-date='" + arrayDate[2] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[2], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[3] + "' data-date='" + arrayDate[3] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[3], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[4] + "' data-date='" + arrayDate[4] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[4], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[5] + "' data-date='" + arrayDate[5] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[5], this.loc.hours[i]) + "</div>"
-					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-day-active " + arrayClassCurrentDay[6] + "' data-date='" + arrayDate[6] + "' data-time='" + this.loc.hours[i] + "'>" + this.getEventsCurrentDate(arrayDate[6], this.loc.hours[i]) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-10' data-time='" + currentTime + "'>" + this.loc.hoursWidget[i] + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-week-grid-12-active" + arrayClassCurrentDay[0] + "' data-date='" + arrayDate[0] + "' data-time='" + currentTime + "'>" + this.getBooking2(arrayBooking, arrayDate[0], currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-week-grid-12-active" + arrayClassCurrentDay[1] + "' data-date='" + arrayDate[1] + "' data-time='" + currentTime + "'>" + this.getBooking2(arrayBooking, arrayDate[1], currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-week-grid-12-active" + arrayClassCurrentDay[2] + "' data-date='" + arrayDate[2] + "' data-time='" + currentTime + "'>" + this.getBooking2(arrayBooking, arrayDate[2], currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-week-grid-12-active" + arrayClassCurrentDay[3] + "' data-date='" + arrayDate[3] + "' data-time='" + currentTime + "'>" + this.getBooking2(arrayBooking, arrayDate[3], currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-week-grid-12-active" + arrayClassCurrentDay[4] + "' data-date='" + arrayDate[4] + "' data-time='" + currentTime + "'>" + this.getBooking2(arrayBooking, arrayDate[4], currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-week-grid-12-active" + arrayClassCurrentDay[5] + "' data-date='" + arrayDate[5] + "' data-time='" + currentTime + "'>" + this.getBooking2(arrayBooking, arrayDate[5], currentTime.substr(0,2)) + "</div>"
+					+ "<div class='r-calendar-week-grid r-calendar-week-grid-12 r-calendar-week-grid-12-active" + arrayClassCurrentDay[6] + "' data-date='" + arrayDate[6] + "' data-time='" + currentTime + "'>" + this.getBooking2(arrayBooking, arrayDate[6], currentTime.substr(0,2)) + "</div>"
 					+ "</div>");
 					
 				tbody.append(rCalendarWeek);
 			}
+
 			rCalendarWidget.append(tbody);
 			this.$el.find('.r-calendar-widget').remove();
 			rCalendarWidget.appendTo(this.$el);
@@ -378,8 +381,8 @@
 		
 		// Метод навешивания событий
 		_bindEvents: function() {
-			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').unbind();
-			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active').on('click', { mode : "add", rCalendar : this }, this.showModalWindow);
+			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active,.r-calendar-week-grid-12-active').unbind();
+			this.$el.find('.r-calendar-day-active,.r-calendar-daytime-active,.r-calendar-week-grid-12-active').on('click', { mode : "add", rCalendar : this }, this.showModalWindow);
 		},
 		
 		//Обновление данных (получение данных от сервера) и вызов перерисовки календаря
@@ -506,7 +509,7 @@
 				return;
 			}
 			
-			if(event.target.tagName.toUpperCase() == 'SPAN' && (event.target.className == 'r-calendar-badge' || event.target.className == 'r-calendar-badge-test')) {
+			if(event.target.tagName.toUpperCase() == 'SPAN' && (event.target.className == 'r-calendar-badge' || event.target.className == 'r-calendar-badge-week' || event.target.className == 'r-calendar-badge-day')) {
 				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 
 				if((rCalendar.opts.view == 'weeks') || (rCalendar.opts.view == 'days'))
@@ -811,7 +814,16 @@
 				if(arr[item]['hours'] == hours)
 					html += arr[item]['html'];
 			}
-			
+			return html;
+		},
+		
+		// Функция получения отрисованного элемента для выбранного часа
+		getBooking2: function(arr, date, hours) {
+			var html = '';
+			for(var item in arr) {
+				if((date == arr[item]['date']) && (hours == arr[item]['hours']))
+					html += arr[item]['html'];
+			}
 			return html;
 		},
 		
@@ -846,9 +858,52 @@
 						margin_left = 105 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
 						z_index++;
 						
-						htmlBadgeEvents = "<span class='r-calendar-badge-test' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
-
+						htmlBadgeEvents = "<span class='r-calendar-badge-day' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
 						arrEventsBadge.push({ "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
+					}
+				}
+			} catch(e) {
+				htmlBadgeEvents = "";
+			}
+			return arrEventsBadge;
+		},
+		
+		// Формирование массива отрисованных объектов бронирований для режима "дни"
+		getEventsCurrentWeek: function(date1, date2) {
+			if((date1 == '0000-00-00') || (date2 == '0000-00-00'))
+				return "";
+			
+			var dd1 = this.getDateToNormalFormat(date1);
+			var dd2 = this.getDateToNormalFormat(date2);
+			
+			dd1 = this.getObjectDate(dd1, "00:00");
+			dd2 = this.getObjectDate(dd2, "23:59");
+			var htmlBadgeEvents = "";
+			var arrEventsBadge = [];
+
+			var z_index = 10;
+			var margin_left = 0;
+
+			try {
+				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
+				for(var item in arrayDataEvents) {
+					var startDate, endDate;
+					
+					if(this.opts.view == 'weeks') {
+						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute'] );
+						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
+						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
+						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
+					}
+
+					if(startDate >= dd1 && endDate <= dd2) {
+						var diff = this.diffDate(startDate, endDate);
+
+						margin_left = 35 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
+						z_index++;
+						
+						htmlBadgeEvents = "<span class='r-calendar-badge-week' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "<br>" + time2 +"</span>";
+						arrEventsBadge.push({ "date" : startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate(), "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
 					}
 				}
 			} catch(e) {
@@ -909,11 +964,8 @@
 					if(this.opts.view == 'weeks' || this.opts.view == 'days') {
 						//var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute']);
 						//var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
-						
 						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + '00';
 						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
-
-						//var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + '00';
 
 						var dateStart = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
 						var dateEnd = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
@@ -1426,7 +1478,7 @@
 			return arr;
 		},
 		
-		// Конвертируем обхект из массива
+		// Конвертируем объект из массива
 		getObjectOfArray: function(arr) {
 			var obj = [];
 			for(var i = 0; i < arr.length; i++) {

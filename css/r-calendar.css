@@ -228,6 +228,16 @@
 	width: 13%;
 }
 
+.r-calendar-week-grid-12-active:hover {
+	cursor: pointer;
+	background-color: #F2F2F2;
+}
+
+.r-calendar-week-grid-12-active+.r-calendar-current-day:hover {
+	cursor: pointer;
+	background-color: #DEFAE1;
+}
+
 .r-calendar-daytime-active {
 	top: 0;
 	transition: 0.3s;
@@ -236,15 +246,10 @@
 	-o-transition: 0.3s;
 }
 
-#.r-calendar-daytime-active:hover {
-#	background-color: #F2F2F2;
-#	cursor: pointer;
-#	transform: scale(1.01);
-#	-moz-transform: scale(1.01);
-#	-ms-transform: scale(1.01);
-#	-webkit-transform: scale(1.01);
-#	-o-transform: scale(1.01);
-#}
+.r-calendar-daytime-active:hover {
+	background-color: #F2F2F2;
+	cursor: pointer;
+}
 
 .r-calendar-badge {
 	display:block;
@@ -266,7 +271,7 @@
     margin-right: auto;
 }
 
-.r-calendar-badge-test {
+.r-calendar-badge-day {
 	position: absolute;
 	display: block;
 	padding: 0.25em 0.4em;
@@ -284,7 +289,28 @@
 	color: #fff;
 	background-color: #4682B4;
 	z-index: 100;
-	border: 2px solid black;
+	border: 1px solid white;
+}
+
+.r-calendar-badge-week {
+	position: absolute;
+	display: block;
+	padding: 0.25em 0.4em;
+	width: 30px;
+	font-size: 9px;
+	font-weight: 700;
+	line-height: 1;
+	text-align: left;
+	white-space: nowrap;
+	vertical-align: baseline;
+	border-radius: 0.25rem;
+	transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	padding-right: 0.2em;
+	padding-left: 0.2em;
+	color: #fff;
+	background-color: #4682B4;
+	z-index: 100;
+	border: 1px solid white;
 }
 
 .r-calendar-toolbar-right {
