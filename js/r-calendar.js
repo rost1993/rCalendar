@@ -526,7 +526,7 @@
 			
 			// Кнопка удаления мероприятия
 			var btnRemoveEvent = "";
-			
+
 			if(event.data.mode == "add") {
 				rCalendar = event.data.rCalendar;
 
@@ -556,7 +556,7 @@
 				idReservation = -1;
 			} else if(event.data.mode == "update") {
 				rCalendar = event.data.rCalendar;
-				
+
 				startDate = (event.data.arrayEvent['startDate'] === undefined) ? '' : event.data.arrayEvent['startDate'];
 				startDateHour = (event.data.arrayEvent['startDateHour'] === undefined) ? '' : event.data.arrayEvent['startDateHour'];
 				startDateMinute = (event.data.arrayEvent['startDateMinute'] === undefined) ? '' : event.data.arrayEvent['startDateMinute'];
@@ -571,22 +571,22 @@
 				commentReservation = (event.data.arrayEvent['commentReservation'] === undefined) ? '' : event.data.arrayEvent['commentReservation'];
 				
 				idReservation = (event.data.arrayEvent['id'] === undefined) ? -1 : event.data.arrayEvent['id'];
-				
+
 				btnRemoveEvent = "<button type='button' class='btn btn-warning' id='btnRemoveEvent' data-id='" + idReservation + "' style='margin-right: 10px;'>" + rCalendar.loc.textButtonDelete + "</button>";
 			} else if(event.data.mode == "new") {
 				rCalendar = event.data.rCalendar;
 				startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = tableReservation = customerReservation = commentReservation = '';
 				idReservation = -1;
+				
+				// Если дата меньше текущей даты. То тогда запрещаем отображения окна добавления мероприятия
+				var now = new Date();
+				now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+				var tempDate = rCalendar.getObjectDate(startDate);
+				if(tempDate < now)
+					return;
 			} else {
 				return;
 			}
-			
-			// Если дата меньше текущей даты. То тогда запрещаем отображения окна добавления мероприятия
-			var now = new Date();
-			now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-			var tempDate = rCalendar.getObjectDate(startDate);
-			if(tempDate < now)
-				return;
 
 			// Разбираем список столов
 			try {
