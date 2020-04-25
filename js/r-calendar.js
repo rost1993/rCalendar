@@ -495,7 +495,7 @@
 		
 		// Отрисовка модального окна
 		showModalWindow: function(event) {
-			
+
 			// Если обработчик сработал на тэге SPAN то переключаем в режим дня
 			if(event.target.tagName.toUpperCase() == 'SPAN' && event.target.className == 'r-calendar-text-day'){
 				var split_date = $(this).closest('.r-calendar-day').data('date').split('-');
@@ -508,7 +508,7 @@
 			
 			if(event.target.tagName.toUpperCase() == 'SPAN' && (event.target.className == 'r-calendar-badge' || event.target.className == 'r-calendar-badge-test')) {
 				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
-				
+
 				if((rCalendar.opts.view == 'weeks') || (rCalendar.opts.view == 'days'))
 					rCalendar.showModalWindowListEvents($(this).data('date'), $(this).data('time'));
 				else
@@ -899,7 +899,7 @@
 		getEventsSelectedDate: function(selectedDate, selectedTime) {
 			var arrayEvents = [];
 			var date = this.getObjectDate(selectedDate, selectedTime);
-			
+
 			try {
 				var arrayDataEvents = JSON.parse(this.opts.arrayDataEvents);
 
@@ -911,8 +911,10 @@
 						//var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
 						
 						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + '00';
-						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + '00';
-						
+						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
+
+						//var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + '00';
+
 						var dateStart = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
 						var dateEnd = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
 					} else {

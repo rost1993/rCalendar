@@ -35,8 +35,8 @@
 					  + '{ "id" : "4", "startDate" : "15.04.2020", "startDateHour" : "2", "startDateMinute" : "00", "endDate" : "15.04.2020", "endDateHour" : "3", "endDateMinute" : "00", "nameReservation" : "1", "tableReservation" : "1", "customerReservation" : "123", "commentReservation" : "123"},'
 					  + '{ "id" : "3", "startDate" : "13.04.2020", "startDateHour" : "20", "startDateMinute" : "35", "endDate" : "13.04.2020", "endDateHour" : "21", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"}]';
 
-			//var startDay = new Date(2020, 03, 15);
-			$('.r-calendar-test-1').rCalendar({"view" : "weeks", "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer, "arrayDataEvents" : data });
+			var startDay = new Date(2020, 03, 23);
+			$('.r-calendar-test-1').rCalendar({ "startDay" : startDay, "view" : "weeks", "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer, "arrayDataEvents" : data });
 		});
 	</script>
 
