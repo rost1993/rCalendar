@@ -36,11 +36,10 @@
 	var rCalendar = function(el, options) {
 		this.el = el;
         this.$el = $(el);
+		this.maxWidthBlockWeek = 0		// Максимальная ширина блока в режиме "Неделя"
 		this.maxEventsDay = new Date();	// Максимальная дата для событий
 		this.minEventsDay = new Date();	// Минимальная дата для событий
 		this.opts = $.extend(true, {}, defaults, options, this.$el.data());
-		// Сортируем массив
-		this.opts.arrayDataEvents = this.getObjectOfArray(this.sortingArray(this.getArrayOfObject(this.opts.arrayDataEvents)));
 		this.init();
 	};
 	
@@ -52,6 +51,9 @@
 		// Инициализации начлаьного состояния календаря
 		init: function() {
 			this._defineLocale(this.opts.language);
+			this.getMaxWidthBlockWeek();
+			// Сортируем массив
+			this.opts.arrayDataEvents = this.getObjectOfArray(this.sortingArray(this.getArrayOfObject(this.opts.arrayDataEvents)));
 			this.getMaxMinEventsDate();
 			this.update();
 		},
@@ -897,9 +899,14 @@
 
 					if(startDate >= dd1 && endDate <= dd2) {
 						var diff = this.diffDate(startDate, endDate);
+						var coefficient = Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
 
-						margin_left = 35 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
+						margin_left = 35 * coefficient;
 						z_index++;
+
+						// Если элементов много и они выходят за границы отрисовки, то просто рисуем их первым элементом
+						if((margin_left + 35) > this.maxWidthBlockWeek)
+							margin_left = 0;
 						
 						htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-week' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "<br>" + time2 +"</span>";
 						arrEventsBadge.push({ "date" : startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate(), "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
@@ -1508,6 +1515,16 @@
 			}
 			return JSON.stringify(obj);
 		},
+	
+		// Вычисляем максимальную ширину блока для режима недели.
+		// Она используется для отрисовки элементов бронирований. Если ширина блоков бронирования будет превышать размер ширины блока,
+		// то они будут накладываться друг на друга
+		getMaxWidthBlockWeek: function() {
+			if($('*').is('.r-calendar'))
+				this.maxWidthBlockWeek = Number($('body').find('.r-calendar')[0].offsetWidth * 0.125);
+			else
+				this.maxWidthBlockWeek = 0;
+		},
 	};
 	
 	$.fn.rCalendar = function(options) {
@@ -1597,6 +1614,4 @@
 			booking: "Booking",
 		}
 	};
-	
-//});
 })(jQuery);
