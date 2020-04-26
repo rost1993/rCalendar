@@ -138,7 +138,7 @@
 }
 
 .r-calendar-day-active+.r-calendar-current-day:hover {
-	background-color: #DEFAE1;
+	background-color: #D0F9D4;
 	cursor: pointer;
 	transform: scale(1.1);
 	-moz-transform: scale(1.1);
@@ -243,7 +243,7 @@
 
 .r-calendar-week-grid-12-active+.r-calendar-current-day:hover {
 	cursor: pointer;
-	background-color: #DEFAE1;
+	background-color: #D0F9D4;
 }
 
 .r-calendar-daytime-active {
@@ -262,11 +262,8 @@
 .r-calendar-badge {
 	display:block;
 	padding: 0.25em 0.4em;
-	width: 80%;
-	font-size: 75%;
 	font-weight: 700;
 	line-height: 1;
-	text-align: center;
 	white-space: nowrap;
 	vertical-align: baseline;
 	border-radius: 0.25rem;
@@ -275,33 +272,36 @@
 	padding-left: 0.6em;
 	color: #fff;
 	background-color: #4682B4;
-	margin-left: auto;
-    margin-right: auto;
-}
-
-.r-calendar-badge-day {
-	position: absolute;
-	display: block;
-	padding: 0.25em 0.4em;
-	width: 100px;
-	font-size: 75%;
-	font-weight: 700;
-	line-height: 1;
-	text-align: left;
-	white-space: nowrap;
-	vertical-align: baseline;
-	border-radius: 0.25rem;
-	transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-	padding-right: 0.6em;
-	padding-left: 0.6em;
-	color: #fff;
-	background-color: #4682B4;
-	z-index: 100;
-	border: 1px solid white;
 	transition: 0.3s;
 	-webkit-transition: 0.3s;
 	-moz-transition: 0.3s;
 	-o-transition: 0.3s;
+}
+
+.r-calendar-badge-month {
+	width: 80%;
+	font-size: 75%;
+	margin-left: auto;
+    margin-right: auto;
+	text-align: center;
+}
+
+.r-calendar-badge-day {
+	position: absolute;
+	width: 100px;
+	font-size: 75%;
+	border: 1px solid white;
+	text-align: center;
+}
+
+.r-calendar-badge-week {
+	position: absolute;
+	width: 30px;
+	font-size: 9px;
+	border: 1px solid white;
+	text-align: left;
+	padding-right: 0.2em;
+	padding-left: 0.2em;
 }
 
 .r-calendar-badge-day:hover,.r-calendar-badge-week:hover {
@@ -312,31 +312,6 @@
 	-ms-transform: scale(1.1);
 	-webkit-transform: scale(1.1);
 	-o-transform: scale(1.1);
-}
-
-.r-calendar-badge-week {
-	position: absolute;
-	display: block;
-	padding: 0.25em 0.4em;
-	width: 30px;
-	font-size: 9px;
-	font-weight: 700;
-	line-height: 1;
-	text-align: left;
-	white-space: nowrap;
-	vertical-align: baseline;
-	border-radius: 0.25rem;
-	transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-	padding-right: 0.2em;
-	padding-left: 0.2em;
-	color: #fff;
-	background-color: #4682B4;
-	z-index: 100;
-	border: 1px solid white;
-	transition: 0.3s;
-	-webkit-transition: 0.3s;
-	-moz-transition: 0.3s;
-	-o-transition: 0.3s;
 }
 
 .r-calendar-toolbar-right {

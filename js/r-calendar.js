@@ -20,7 +20,7 @@
 								- 3 + (week1.getDay() + 6) % 7) / 7);
 	}
 
-	var VERSION = '1.1',
+	var VERSION = '1.2',
 		pluginName = 'rCalendar',
 		defaults = {
 			language: 'ru',
@@ -266,13 +266,13 @@
 			for(var i = 0; i < 6; i++) {
 				tbody.append($("<div class='r-calendar-week-" + i + "'>" + 
 				"<div class='r-calendar-day number-week' style='width: 5%;'>" + (firstWeek++) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][1]['date']) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][2]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][2]['date']) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][3]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][3]['date']) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][4]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][4]['date']) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][5]['class'] + "' data-date='" + daysRCalendar[i][5]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][5]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][5]['date']) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][6]['class'] + "' data-date='" + daysRCalendar[i][6]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][6]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][6]['date']) + "</div>" +
-				"<div class='r-calendar-day " + daysRCalendar[i][0]['class'] + "' data-date='" + daysRCalendar[i][0]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][0]['value'] + "</span> " + this.getEventsCurrentDate(daysRCalendar[i][0]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][1]['class'] + "' data-date='" + daysRCalendar[i][1]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][1]['value'] + "</span> " + this.getEventsCurrentMounth(daysRCalendar[i][1]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][2]['class'] + "' data-date='" + daysRCalendar[i][2]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][2]['value'] + "</span> " + this.getEventsCurrentMounth(daysRCalendar[i][2]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][3]['class'] + "' data-date='" + daysRCalendar[i][3]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][3]['value'] + "</span> " + this.getEventsCurrentMounth(daysRCalendar[i][3]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][4]['class'] + "' data-date='" + daysRCalendar[i][4]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][4]['value'] + "</span> " + this.getEventsCurrentMounth(daysRCalendar[i][4]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][5]['class'] + "' data-date='" + daysRCalendar[i][5]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][5]['value'] + "</span> " + this.getEventsCurrentMounth(daysRCalendar[i][5]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][6]['class'] + "' data-date='" + daysRCalendar[i][6]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][6]['value'] + "</span> " + this.getEventsCurrentMounth(daysRCalendar[i][6]['date']) + "</div>" +
+				"<div class='r-calendar-day " + daysRCalendar[i][0]['class'] + "' data-date='" + daysRCalendar[i][0]['date'] + "'><span class='r-calendar-text-day'>" + daysRCalendar[i][0]['value'] + "</span> " + this.getEventsCurrentMounth(daysRCalendar[i][0]['date']) + "</div>" +
 				"</div>"));
 			}	
 			rCalendarWidget.append(tbody);
@@ -506,8 +506,8 @@
 				rCalendar.update();
 				return;
 			}
-			
-			if(event.target.tagName.toUpperCase() == 'SPAN' && (event.target.className == 'r-calendar-badge' || event.target.className == 'r-calendar-badge-week' || event.target.className == 'r-calendar-badge-day')) {
+
+			if(event.target.tagName.toUpperCase() == 'SPAN' && $(event.target).hasClass('r-calendar-badge')) {
 				var rCalendar = $(this).closest('.r-calendar').data('rCalendar');
 
 				if((rCalendar.opts.view == 'weeks') || (rCalendar.opts.view == 'days'))
@@ -554,6 +554,13 @@
 
 				endDate = startDate;
 				idReservation = -1;
+				
+				// Если дата меньше текущей даты. То тогда запрещаем отображения окна добавления мероприятия
+				var now = new Date();
+				now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+				var tempDate = rCalendar.getObjectDate(startDate);
+				if(tempDate < now)
+					return;
 			} else if(event.data.mode == "update") {
 				rCalendar = event.data.rCalendar;
 
@@ -577,13 +584,6 @@
 				rCalendar = event.data.rCalendar;
 				startDate = startDateHour = startDateMinute = endDate = endDateHour = endDateMinute = nameReservation = tableReservation = customerReservation = commentReservation = '';
 				idReservation = -1;
-				
-				// Если дата меньше текущей даты. То тогда запрещаем отображения окна добавления мероприятия
-				var now = new Date();
-				now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-				var tempDate = rCalendar.getObjectDate(startDate);
-				if(tempDate < now)
-					return;
 			} else {
 				return;
 			}
@@ -857,7 +857,7 @@
 						margin_left = 105 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
 						z_index++;
 						
-						htmlBadgeEvents = "<span class='r-calendar-badge-day' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
+						htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-day' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
 						arrEventsBadge.push({ "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
 					}
 				}
@@ -867,7 +867,7 @@
 			return arrEventsBadge;
 		},
 		
-		// Формирование массива отрисованных объектов бронирований для режима "дни"
+		// Формирование массива бронирований для режима "неделя"
 		getEventsCurrentWeek: function(date1, date2) {
 			if((date1 == '0000-00-00') || (date2 == '0000-00-00'))
 				return "";
@@ -901,7 +901,7 @@
 						margin_left = 35 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
 						z_index++;
 						
-						htmlBadgeEvents = "<span class='r-calendar-badge-week' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "<br>" + time2 +"</span>";
+						htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-week' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "<br>" + time2 +"</span>";
 						arrEventsBadge.push({ "date" : startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate(), "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
 					}
 				}
@@ -910,10 +910,9 @@
 			}
 			return arrEventsBadge;
 		},
-		
-	
-		// Генерация событий на текущую дату
-		getEventsCurrentDate: function(date, time) {
+
+		// Формирование массива бронирований для режима "месяц"
+		getEventsCurrentMounth: function(date, time) {
 			if(date == '0000-00-00')
 				return "";
 			
@@ -942,7 +941,7 @@
 				}
 				
 				if(Number(countEvents) > 0)
-					htmlBadgeEvents = "<span class='r-calendar-badge' title='" + this.loc.titleEvents + "'>" + this.loc.events + ":&nbsp;" + String(countEvents) + "</span>";
+					htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-month' title='" + this.loc.titleEvents + "'>" + this.loc.events + ":&nbsp;" + String(countEvents) + "</span>";
 			} catch(e) {
 				htmlBadgeEvents = "";
 			}
