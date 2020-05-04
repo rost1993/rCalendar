@@ -795,13 +795,15 @@
 		
 		// Функция вычитания одной даты из другой для вычисления разницы в часах
 		diffDate: function(date1, date2) {
+			var months = date2.getMonth() - date1.getMonth();
 			var days = date2.getDate() - date1.getDate();
 			var hours = ((date2.getHours() - date1.getHours()) > 0) ? (date2.getHours() - date1.getHours()) : 1 ;
 			var minutes = date2.getMinutes() - date1.getMinutes();
-//alert(days + " - " + hours + " - " + minutes);
-			if(days > 0) {
+
+			if(months > 0) {
 				hours = 24 - date1.getHours();
-				//hours -= 24;
+			} else if(days > 0) {
+				hours = 24 - date1.getHours();
 			} else {
 				if(minutes > 0)
 					hours++;
@@ -835,7 +837,7 @@
 				return "";
 			
 			var dd = this.getDateToNormalFormat(date);
-			dd = this.getObjectDate(dd, "23:59");
+			dd = this.getObjectDate(dd, "00:00");
 			var htmlBadgeEvents = "";
 			var arrEventsBadge = [];
 
@@ -847,21 +849,56 @@
 				for(var item in arrayDataEvents) {
 					var startDate, endDate;
 					
+					var time1 = time2 = 0;
 					if(this.opts.view == 'days') {
-						var time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute'] );
-						var time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
-						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
-						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
+						time1 = ((arrayDataEvents[item]['startDateHour'] === undefined) ? '00' : arrayDataEvents[item]['startDateHour']) + ':' + ((arrayDataEvents[item]['startDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['startDateMinute'] );
+						time2 = ((arrayDataEvents[item]['endDateHour'] === undefined) ? '00' : arrayDataEvents[item]['endDateHour']) + ':' + ((arrayDataEvents[item]['endDateMinute'] === undefined) ? '00' : arrayDataEvents[item]['endDateMinute']);
+						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], '00:00');
+						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], '23:59');
 					}
 
-					if((dd.getFullYear() == startDate.getFullYear()) && (dd.getMonth() == startDate.getMonth()) && (dd.getDate() == startDate.getDate())) {
-						var diff = this.diffDate(startDate, endDate);
-
-						margin_left = 105 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
-						z_index++;
+					// Проверяем попадает ли проверяемая дата в диапазон "Начало брони 00:00 - дата - конец брони 23:59"
+					if(dd >= startDate && dd <= endDate) {
+						// Теперь получаем реальные даты начала и окончания брони 
+						startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
+						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
 						
-						htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-day' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
-						arrEventsBadge.push({ "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
+						// Если дата начала и окончания равны то просто вычисляем на сколько надо отрисовать блок
+						if((startDate.getFullYear() == endDate.getFullYear()) && (startDate.getMonth() == endDate.getMonth()) && (startDate.getDate() == endDate.getDate())) {
+							startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
+							endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
+
+							var diff = this.diffDate(startDate, endDate);
+							margin_left = 105 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
+							z_index++;
+
+							htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-day' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
+							arrEventsBadge.push({ "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
+						} else {
+							// Если даты начала и конца не совпадают, то используем три режима отрисовки блока
+							if((dd.getFullYear() == startDate.getFullYear()) && (dd.getMonth() == startDate.getMonth()) && (dd.getDate() == startDate.getDate())) {
+								startDate = this.getObjectDate(arrayDataEvents[item]['startDate'], time1);
+								endDate = this.getObjectDate(arrayDataEvents[item]['startDate'], '23:59');
+								time2 = '24:00';
+							
+							} else if((dd.getFullYear() == endDate.getFullYear()) && (dd.getMonth() == endDate.getMonth()) && (dd.getDate() == endDate.getDate())) {
+								startDate = this.getObjectDate(arrayDataEvents[item]['endDate'], '00:00');
+								endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
+								time1 = '0:00';
+							} else {
+								startDate = this.getObjectDate(arrayDataEvents[item]['endDate'], '00:00');
+								endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], '23:59');
+								time1 = '0:00';
+								time2 = '24:00';
+							}
+
+							var diff = this.diffDate(startDate, endDate);
+							margin_left = 105 * Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
+							z_index++;
+
+							htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-day' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "-" + time2 +"</span>";
+							arrEventsBadge.push({ "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
+						}
 					}
 				}
 			} catch(e) {
