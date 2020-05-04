@@ -723,7 +723,7 @@
 
 			var selectedDate = this.getDateToNormalFormat(date);
 			var html_table_events = $("<div class='r-calendar-form-row'></div>");
-				
+
 			var table_events = $("<table class='table table-sm table-bordered text-center table-hover'></table>");
 			var thead = $("<thead><tr>"
 				+ "<th>" + this.loc.textTable1 + "</th>"
@@ -735,7 +735,7 @@
 			var tbody = $("<tbody></tbody>");
 
 			var arrayEvents = this.getEventsSelectedDate(selectedDate, time);
-			
+
 			// Сортируем полученный массив с данными
 			arrayEvents = this.sortingArray(arrayEvents);
 
@@ -798,9 +798,10 @@
 			var days = date2.getDate() - date1.getDate();
 			var hours = ((date2.getHours() - date1.getHours()) > 0) ? (date2.getHours() - date1.getHours()) : 1 ;
 			var minutes = date2.getMinutes() - date1.getMinutes();
-
+//alert(days + " - " + hours + " - " + minutes);
 			if(days > 0) {
-				hours -= 24;
+				hours = 24 - date1.getHours();
+				//hours -= 24;
 			} else {
 				if(minutes > 0)
 					hours++;
@@ -897,19 +898,57 @@
 						endDate = this.getObjectDate(arrayDataEvents[item]['endDate'], time2);
 					}
 
-					if(startDate >= dd1 && endDate <= dd2) {
-						var diff = this.diffDate(startDate, endDate);
-						var coefficient = Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours()));
+					//if(startDate >= dd1 && endDate <= dd2) {
+					if(startDate >= dd1 || endDate <= dd2) {
+						// Если мероприятие длинной в 1 день, то просто вычисляем одну метку
+						// если мероприятие длинной более чем 1 день, то тогда вычисляем для каждого дня мероприятия метки
+						if(startDate.getDate() == endDate.getDate()) {
+							
+							var diff = this.diffDate(startDate, endDate);
+							var coefficient = Number(this.searchHoursInArray(arrEventsBadge, startDate.getHours(), startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate()));
+							
+							margin_left = 35 * coefficient;
+							z_index++;
+							
+							// Если элементов много и они выходят за границы отрисовки, то просто рисуем их первым элементом
+							if((margin_left + 35) > this.maxWidthBlockWeek)
+								margin_left = 0;
+							
+							htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-week' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "<br>" + time2 +"</span>";
 
-						margin_left = 35 * coefficient;
-						z_index++;
+							arrEventsBadge.push({ "date" : startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate(), "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
+						} else {
+							// Формируем временные переменные для подсчета времени
+							var temp = startDate;
+							var t1 = time1;
+							var t2 = time2;
+							var j = 0;
+							// Бежим увеличивая дату на 1
+							while(temp.getDate() != endDate.getDate()) {
+								if(j != 0) {
+									temp = new Date(temp.getFullYear(), temp.getMonth(), (temp.getDate() + 1));
+									t1 = '0:00';
+									t2 = (temp.getDate() == endDate.getDate()) ? time2 : '24:00';
+								} else {
+									t2 = '24:00';
+								}
+								var diff = this.diffDate(temp, endDate);
+								var coefficient = Number(this.searchHoursInArray(arrEventsBadge, temp.getHours(), temp.getFullYear() + "-" + temp.getMonth() + "-" + temp.getDate()));
 
-						// Если элементов много и они выходят за границы отрисовки, то просто рисуем их первым элементом
-						if((margin_left + 35) > this.maxWidthBlockWeek)
-							margin_left = 0;
-						
-						htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-week' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + time1 + "<br>" + time2 +"</span>";
-						arrEventsBadge.push({ "date" : startDate.getFullYear() + "-" + startDate.getMonth() + "-" + startDate.getDate(), "hours" : startDate.getHours(), "html" : htmlBadgeEvents });
+								margin_left = 35 * coefficient;
+								z_index++;
+
+								// Если элементов много и они выходят за границы отрисовки, то просто рисуем их первым элементом
+								if((margin_left + 35) > this.maxWidthBlockWeek)
+									margin_left = 0;
+
+								htmlBadgeEvents = "<span class='r-calendar-badge r-calendar-badge-week' title='" + this.loc.titleEvents + "' style='z-index:" + z_index + "; margin-left:" + margin_left + "px; height:" + (50*diff) + "px;'>" + t1 + "<br>" + t2 +"</span>";
+								arrEventsBadge.push({ "date" : temp.getFullYear() + "-" + temp.getMonth() + "-" + temp.getDate(), "hours" : temp.getHours(), "html" : htmlBadgeEvents });
+								j++;
+							}
+						}
+
+
 					}
 				}
 			} catch(e) {
@@ -1466,10 +1505,10 @@
 		},
 	
 		// Поиск количества схожих элементов для сдвига на определенное количество пикселей
-		searchHoursInArray: function(arr, hours) {
+		searchHoursInArray: function(arr, hours, date) {
 			var count = 0;
 			for(var key in arr)
-				if(arr[key]['hours'] == hours)
+				if(arr[key]['hours'] == hours && arr[key]['date'] == date)
 					count++;
 			return count;
 		},

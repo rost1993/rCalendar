@@ -26,9 +26,9 @@
 			var selectTable = '{"1" : "1-й стол", "2" : "2-й стол", "3" : "3-й стол", "4" : "4-й стол"}';
 			var selectCustomer = ["1-й клиент", "2-й клиент", "3-й клиент"];
 			
-			var data = '[{ "id" : "1", "startDate" : "23.04.2020", "startDateHour" : "2", "startDateMinute" : "00", "endDate" : "23.04.2020", "endDateHour" : "4", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
-					  + '{ "id" : "2", "startDate" : "23.04.2020", "startDateHour" : "13", "startDateMinute" : "00", "endDate" : "23.04.2020", "endDateHour" : "16", "endDateMinute" : "10", "nameReservation" : "Дружеская встреча", "numberTableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
-					  + '{ "id" : "3", "startDate" : "23.04.2020", "startDateHour" : "16", "startDateMinute" : "30", "endDate" : "23.04.2020", "endDateHour" : "17", "endDateMinute" : "00", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
+		var data = '[{ "id" : "1", "startDate" : "04.05.2020", "startDateHour" : "2", "startDateMinute" : "00", "endDate" : "09.05.2020", "endDateHour" : "4", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
+					  + '{ "id" : "2", "startDate" : "13.05.2020", "startDateHour" : "13", "startDateMinute" : "00", "endDate" : "13.05.2020", "endDateHour" : "16", "endDateMinute" : "10", "nameReservation" : "Дружеская встреча", "numberTableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"}]';
+					  /*+ '{ "id" : "3", "startDate" : "23.04.2020", "startDateHour" : "16", "startDateMinute" : "30", "endDate" : "23.04.2020", "endDateHour" : "17", "endDateMinute" : "00", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
 					  + '{ "id" : "4", "startDate" : "23.04.2020", "startDateHour" : "12", "startDateMinute" : "30", "endDate" : "23.04.2020", "endDateHour" : "17", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
 					  + '{ "id" : "5", "startDate" : "23.04.2020", "startDateHour" : "12", "startDateMinute" : "21", "endDate" : "23.04.2020", "endDateHour" : "16", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
 					  + '{ "id" : "6", "startDate" : "23.04.2020", "startDateHour" : "13", "startDateMinute" : "30", "endDate" : "23.04.2020", "endDateHour" : "15", "endDateMinute" : "00", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
@@ -38,10 +38,10 @@
 					  + '{ "id" : "10", "startDate" : "23.04.2020", "startDateHour" : "13", "startDateMinute" : "30", "endDate" : "23.04.2020", "endDateHour" : "15", "endDateMinute" : "00", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
 					  + '{ "id" : "11", "startDate" : "23.04.2020", "startDateHour" : "13", "startDateMinute" : "30", "endDate" : "23.04.2020", "endDateHour" : "15", "endDateMinute" : "00", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
 					  + '{ "id" : "12", "startDate" : "23.04.2020", "startDateHour" : "13", "startDateMinute" : "30", "endDate" : "23.04.2020", "endDateHour" : "15", "endDateMinute" : "00", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"},'
-					  + '{ "id" : "13", "startDate" : "13.04.2020", "startDateHour" : "20", "startDateMinute" : "35", "endDate" : "13.04.2020", "endDateHour" : "21", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"}]';
+					  + '{ "id" : "13", "startDate" : "13.04.2020", "startDateHour" : "20", "startDateMinute" : "35", "endDate" : "13.04.2020", "endDateHour" : "21", "endDateMinute" : "55", "nameReservation" : "Дружеская встреча", "tableReservation" : "2-й стол", "customerReservation" : "3-й клиент", "commentReservation" : "Комментарий"}]';*/
 
-			var startDay = new Date(2020, 03, 23);
-			$('.r-calendar-test-1').rCalendar({ "startDay" : startDay, "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer, "arrayDataEvents" : data });
+			//var startDay = new Date(2020, 03, 23);
+			$('.r-calendar-test-1').rCalendar({ "view" : "weeks", "language" : "ru", "selectTable" : selectTable, "selectCustomer" : selectCustomer, "arrayDataEvents" : data });
 		});
 	</script>
 
